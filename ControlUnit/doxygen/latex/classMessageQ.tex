@@ -1,0 +1,75 @@
+\hypertarget{classMessageQ}{}\section{MessageQ Class Reference}
+\label{classMessageQ}\index{MessageQ@{MessageQ}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMessageQ_aab147ebcd0b13fb87c5767738636ae1b}{MessageQ} (unsigned long max\+Q\+Capacity=20)
+\begin{DoxyCompactList}\small\item\em Klassens constructor Initialiserer køens størrelse. \end{DoxyCompactList}\item 
+void \hyperlink{classMessageQ_a7914a62e73bbdefa25db31e7279dd7bb}{send} (unsigned long ID, \hyperlink{classMessage}{Message} $\ast$msg=nullptr)
+\begin{DoxyCompactList}\small\item\em Lægger besked ind i køen. \end{DoxyCompactList}\item 
+\hyperlink{classMessage}{Message} $\ast$ \hyperlink{classMessageQ_a188ce4eab91cfe6dc0362d97f2a82f6e}{receive} (unsigned long \&ID)
+\begin{DoxyCompactList}\small\item\em Henter en besked fra køen. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classMessageQ_aab147ebcd0b13fb87c5767738636ae1b}\label{classMessageQ_aab147ebcd0b13fb87c5767738636ae1b}} 
+\index{MessageQ@{MessageQ}!MessageQ@{MessageQ}}
+\index{MessageQ@{MessageQ}!MessageQ@{MessageQ}}
+\subsubsection{\texorpdfstring{Message\+Q()}{MessageQ()}}
+{\footnotesize\ttfamily Message\+Q\+::\+MessageQ (\begin{DoxyParamCaption}\item[{unsigned long}]{max\+Q\+Capacity = {\ttfamily 20} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Klassens constructor Initialiserer køens størrelse. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Max\+Q\+Capacity} & Køens størrelse \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classMessageQ_a188ce4eab91cfe6dc0362d97f2a82f6e}\label{classMessageQ_a188ce4eab91cfe6dc0362d97f2a82f6e}} 
+\index{MessageQ@{MessageQ}!receive@{receive}}
+\index{receive@{receive}!MessageQ@{MessageQ}}
+\subsubsection{\texorpdfstring{receive()}{receive()}}
+{\footnotesize\ttfamily \hyperlink{classMessage}{Message}$\ast$ Message\+Q\+::receive (\begin{DoxyParamCaption}\item[{unsigned long \&}]{ID }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Henter en besked fra køen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & Reference til ID\textquotesingle{}et på den besked, der hentes fra køen \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returnerer en pointer til dataene for den besked, der hentes fra køen. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classMessageQ_a7914a62e73bbdefa25db31e7279dd7bb}\label{classMessageQ_a7914a62e73bbdefa25db31e7279dd7bb}} 
+\index{MessageQ@{MessageQ}!send@{send}}
+\index{send@{send}!MessageQ@{MessageQ}}
+\subsubsection{\texorpdfstring{send()}{send()}}
+{\footnotesize\ttfamily void Message\+Q\+::send (\begin{DoxyParamCaption}\item[{unsigned long}]{ID,  }\item[{\hyperlink{classMessage}{Message} $\ast$}]{msg = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Lægger besked ind i køen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & ID\textquotesingle{}et på det event, der lægges ind i køen \\
+\hline
+{\em msg} & Dataene for det event, der lægges ind i køen. Sættes til nullptr, hvis ikke der sendes noget data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{MessageQ_8hpp}{Message\+Q.\+hpp}\end{DoxyCompactItemize}

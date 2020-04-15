@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CyXmlSerializer>
+<!--This file is machine generated and read. It is not intended to be edited by hand.-->
+<!--Due to this, there is no schema for this file.-->
+<CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21 type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWrkspcCustomData" version="4">
+<CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997 type_name="CyDesigner.Common.Base.CyCustomData" version="2">
+<userData>
+<dataGuid v="1b906a0f-a7b6-4e4d-a428-82f98b53cb35">
+<CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35 type_name="CyDesigner.Common.ProjMgmt.GUI.CyExplorerWindow+CyExplorerWindowState" version="3" SelectedTab="Source">
+<TreeKeys>
+<v>Source</v>
+<v>Components</v>
+<v>Output</v>
+</TreeKeys>
+<TreeStates>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="sensor_reading_unit">
+<ExpandedNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\TopDesign</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Pins</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Analog</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Clocks</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Interrupts</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\DMA</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\System</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Directives</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Flash Security</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\EEPROM</v>
+<v>sensor_reading_unit\spi_slave\Header Files</v>
+<v>sensor_reading_unit\spi_slave\Header Files\Accelerometer.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\bikeState.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\cyapicallbacks.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\lockUnit.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\SPI.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\types.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\UART.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\wheelSensor.h</v>
+<v>sensor_reading_unit\spi_slave\Source Files</v>
+<v>sensor_reading_unit\spi_slave\Source Files\Accelerometer.c</v>
+<v>sensor_reading_unit\spi_slave\Source Files\lockUnit.c</v>
+<v>sensor_reading_unit\spi_slave\Source Files\main.c</v>
+<v>sensor_reading_unit\spi_slave\Source Files\SPI.c</v>
+<v>sensor_reading_unit\spi_slave\Source Files\UART.c</v>
+<v>sensor_reading_unit\spi_slave\Source Files\wheelSensor.c</v>
+<v>sensor_reading_unit\spi_slave\Generated_Source</v>
+<v>sensor_reading_unit\spi_slave\Generated_Source\PSoC5</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\TopDesign</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Pins</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Analog</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Clocks</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Interrupts</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\DMA</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\System</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Directives</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\Flash Security</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.cydwr\EEPROM</v>
+<v>sensor_reading_unit\spi_slave\Header Files</v>
+<v>sensor_reading_unit\spi_slave\Header Files\Accelerometer.h</v>
+<v>sensor_reading_unit\spi_slave\Header Files\bikeState.h</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\TopDesign</v>
+<v>sensor_reading_unit\spi_slave\TopDesign\TopDesign.cysch</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\TopDesign</v>
+<v>sensor_reading_unit\spi_slave\TopDesign\TopDesign.cysch</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\CortexM3</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer_Counter.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer_Counter_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\BTN.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_1_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\counter_clock_1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\counter_clock_2.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_clock1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_clock2.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\cy_em_eeprom.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\CyBootAsmGnu.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\CyDmac.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\CyFlash.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\CyLib.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\cyPm.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\CySpc.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\cyutils.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_bike_is_idle.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_bike_is_moving.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_bike_stopped.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\isr_wheel_tick.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\LED_pin.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\lockUnit.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\main.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\miso.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\mosi.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_1_ac_idle.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_2.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Pin_2_ac_moving.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\sclk.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\slave_rx_interrupt.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI_slave.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI_slave_BOOT.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI_slave_INT.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI_slave_IntClock.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\SPI_slave_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\ss.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Timer_Isr_BikeIsStopping.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_BOOT.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_INT.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_IntClock.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_1_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\UART_rx_interrupt.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\wheelSensor.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\spi_slave.elf</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\spi_slave.hex</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\spi_slave.map</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.gpdsc</v>
+<v>sensor_reading_unit\spi_slave\spi_slave.rpt</v>
+<v>sensor_reading_unit\spi_slave\spi_slave_timing.html</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\CortexM3</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer_Counter.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Accelerometer_Counter_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\BTN.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Cm3Start.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_1_PM.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\counter_clock_1.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\counter_clock_2.lst</v>
+<v>sensor_reading_unit\spi_slave\CortexM3\ARM_GCC_541\Debug\Listing Files\Counter_clock1.lst</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStates>
+<TreeKeysV2>
+<v>Datasheet</v>
+</TreeKeysV2>
+<TreeStatesV2>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\PSoC 5LP Architecture TRM</v>
+<v>sensor_reading_unit\spi_slave\CY8C58LP Family Datasheet</v>
+<v>sensor_reading_unit\spi_slave\System Reference Guides</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>sensor_reading_unit</v>
+<v>sensor_reading_unit\spi_slave</v>
+<v>sensor_reading_unit\spi_slave\PSoC 5LP Architecture TRM</v>
+<v>sensor_reading_unit\spi_slave\CY8C58LP Family Datasheet</v>
+<v>sensor_reading_unit\spi_slave\System Reference Guides</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStatesV2>
+</CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
+</dataGuid>
+</userData>
+</CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
+<Unloaded />
+<OpenDocs>
+<name v=".\spi_slave.cydsn\spi_slave.cydwr" />
+<name v=".\spi_slave.cydsn\main.c" />
+<name v=".\spi_slave.cydsn\Accelerometer.c" />
+<name v=".\spi_slave.cydsn\TopDesign\TopDesign.cysch" />
+<name v=".\spi_slave.cydsn\wheelSensor.c" />
+</OpenDocs>
+<OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
+
+  Actipro Docking/MDI for WinForms
+  Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
+  http://www.actiprosoftware.com
+
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1013, 339" SelectedTabbedMdiWindow="279ea16e-5c48-44a0-a316-590de7c52d7e"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="0afb91e7-8e30-48ac-a44a-3501654c16e5" /><DocumentWindow Key="C:\Users\Frederik\Desktop\sensor_reading_unit\spi_slave.cydsn\spi_slave.cydwr" Guid="88bb3b75-4386-4b79-b848-b6c5c35eb098" /><DocumentWindow Key="C:\Users\Frederik\Desktop\sensor_reading_unit\spi_slave.cydsn\main.c" Guid="279ea16e-5c48-44a0-a316-590de7c52d7e" /><DocumentWindow Key="C:\Users\Frederik\Desktop\sensor_reading_unit\spi_slave.cydsn\Accelerometer.c" Guid="6eaec407-2b8c-4571-afc3-94db98b00729" /><DocumentWindow Key="C:\Users\Frederik\Desktop\sensor_reading_unit\spi_slave.cydsn\TopDesign\TopDesign.cysch" Guid="5363c09b-cbd7-4a0d-a6bc-ee19607b68f1" /><DocumentWindow Key="C:\Users\Frederik\Desktop\sensor_reading_unit\spi_slave.cydsn\wheelSensor.c" Guid="ad948cc7-7dba-40a9-9d65-5c961ce32aa0" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="" />
+<AutoUpdate v="true" />
+</CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
+</CyXmlSerializer>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<head>
+
+	<meta http-equiv="Cache-Control" content="no-store" />
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>EDBIKE</title>
+
+	<link rel="stylesheet" type="text/css" href="myStyle.css" />
+	<script language="javascript" type="text/javascript" src="uWS.js"></script>
+	<script language="javascript" type="text/javascript" src="EDBike.js"></script>
+</head>
+
+<body>
+	<!-- lock_overlay -->
+	<div class="lock_overlay" id="lock_overlay">
+		<div class="lock_overlay_contents">
+			<h6>EDBike</h6>
+			<h1> Cyklen er </h1>
+			<h1 class="red" id="locktext1">låst </h1>
+			<h1 class="transparent" id="locktext2">op</h1>
+			<span class="lock_overlay_text">- indtast din pinkode for at låse op</span>
+			</br>
+			</br>
+			<input class="pin_input_field" autofocus type="password" name="pin_input" id="pin_input"
+				oninput="validatePin()" placeholder="PIN" />
+			</br>
+			</br>
+			<p style="color: #3a3a3a" id=wrongPinPrompt style="display:none"></p>
+		</div>
+	</div>
+	<!-- ride save popup -->
+	<div class="rideSavePopUp" id="rideSavePopUp" style="display:none">
+		<center>
+			<span>Vil du gemme din cykeltur? </span>
+			</br>
+			</br>
+			<button type="button" class="myButton" onclick="confirmSaveRideQuery()">Ja</button>
+			<button type="button" class="myButton" onclick="rejectSaveRideQuery()">Nej</button>
+		</center>
+	</div>
+
+	<!-- upper menu -->
+	<div class="top_bar">
+		<div class="top_bar_contents">
+			<h1> Cyklen er </h1>
+			<h1 class="red" id="locktext3">låst </h1>
+			<h1 class="transparent" id="locktext4">op</h1>
+		</div>
+		<button type="button" style="float:right;" class="myButton2" onclick="saveRideQuery()">Lås cykel</button>
+	</div>
+
+	<!-- content pages -->
+	<div class="page" id="page1" style="display:inline">
+		<h2>Hastighed</h2>
+		<div class="live_speed_outerdiv">
+			<div class="live_speed" id="live_speed">
+			</div>
+			<p style="display:inline;font-weight:bold">km/t</p>
+		</div>
+	</div>
+
+	<div class="page" id="page2" style="display:none">
+		<h2>Vælg tur</h2>
+		<p style="display:inline;font-weight:bold">Antal ture:</p>
+		<p style="display:inline;font-weight:bold" id="numOfRides"></p>
+		<div class="rideDataContent" id="rideDataContent"></div>
+	</div>
+	</div>
+
+	<div class="page" id="page3" style="display:none">
+		<h2>Indstillinger</h2>
+		<input type="text" id="wheel_input" placeholder="Indtast radius på cykelhjulet i cm..." autofocus />
+		</br>
+		<input type="submit" value="Indstil!" onclick="validateWheelSize()" />
+		</br>
+		<p id=illegalWheelSize style="display:none"></p>
+		<p id=legalWheelSize style="display:none"></p>
+	</div>
+	</div>
+
+	<!-- bottom menu -->
+	<div class="bottom_bar">
+		<button class="menu_button" onclick="selectPage(menu_button1)"><img id="menu_button1"
+				src="img/livedata_selected.png" height="100%" width="100%"></button>
+		<button class="menu_button" onclick="selectPage(menu_button2)"><img id="menu_button2"
+				src="img/ridedata_notselected.png" height="100%" width="100%"></button>
+		<button class="menu_button" onclick="selectPage(menu_button3)"><img id="menu_button3"
+				src="img/settings_notselected.png" height="100%" width="100%"></button>
+	</div>
+
+</body>

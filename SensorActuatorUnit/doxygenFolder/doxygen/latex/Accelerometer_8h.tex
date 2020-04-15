@@ -1,0 +1,96 @@
+\hypertarget{Accelerometer_8h}{}\section{Accelerometer.\+h File Reference}
+\label{Accelerometer_8h}\index{Accelerometer.\+h@{Accelerometer.\+h}}
+
+
+Funktions implementering til accelerometeret.  
+
+
+{\ttfamily \#include \char`\"{}project.\+h\char`\"{}}\newline
+Include dependency graph for Accelerometer.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=168pt]{Accelerometer_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=168pt]{Accelerometer_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{Accelerometer_8h_aedd212ed9cb67e88387fee6a77e97187}\label{Accelerometer_8h_aedd212ed9cb67e88387fee6a77e97187}} 
+void \hyperlink{Accelerometer_8h_aedd212ed9cb67e88387fee6a77e97187}{init\+\_\+accelerometer} ()
+\begin{DoxyCompactList}\small\item\em Init funktion til accelerometeret. Initiere interrupt rutinerne, som er forbundet med accelerometeret. \end{DoxyCompactList}\item 
+void \hyperlink{Accelerometer_8h_a5c823e0fb40fe73ee218325d6830e16f}{stop\+Accelerometer\+Timer} ()
+\begin{DoxyCompactList}\small\item\em Stopper accelerometerets timer. \end{DoxyCompactList}\item 
+void \hyperlink{Accelerometer_8h_ac015f7f6e3a104f94f1b6a862709aaf0}{start\+Accelerometer\+Timer} ()
+\begin{DoxyCompactList}\small\item\em Starter accelerometerets timer. \end{DoxyCompactList}\item 
+void \hyperlink{Accelerometer_8h_a67004092d5193d69d00f8b936e49ad16}{reset\+Accelerometer\+Timer} ()
+\begin{DoxyCompactList}\small\item\em resetter accelerometerets timer \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Funktions implementering til accelerometeret. 
+
+Funktions og interrupt prototyper til accelerometeret.
+
+Indeholder implementeringer af funktionerne fra accelerometer.\+h
+
+\begin{DoxyAuthor}{Author}
+Jonathan Hartvigsen Juncker 
+
+Frederik Runge-\/\+Dalager 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000001}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}
+
+
+Indeholder prototyperne til interrupt handlers som relaterer til accelerometeret og funktions prototyperne til Accelerometer.\+c
+
+\begin{DoxyAuthor}{Author}
+Jonathan Hartvigsen Juncker 
+
+Frederik Runge-\/\+Dalager 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000002}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{Accelerometer_8h_a67004092d5193d69d00f8b936e49ad16}\label{Accelerometer_8h_a67004092d5193d69d00f8b936e49ad16}} 
+\index{Accelerometer.\+h@{Accelerometer.\+h}!reset\+Accelerometer\+Timer@{reset\+Accelerometer\+Timer}}
+\index{reset\+Accelerometer\+Timer@{reset\+Accelerometer\+Timer}!Accelerometer.\+h@{Accelerometer.\+h}}
+\subsubsection{\texorpdfstring{reset\+Accelerometer\+Timer()}{resetAccelerometerTimer()}}
+{\footnotesize\ttfamily void reset\+Accelerometer\+Timer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+resetter accelerometerets timer 
+
+\mbox{\Hypertarget{Accelerometer_8h_ac015f7f6e3a104f94f1b6a862709aaf0}\label{Accelerometer_8h_ac015f7f6e3a104f94f1b6a862709aaf0}} 
+\index{Accelerometer.\+h@{Accelerometer.\+h}!start\+Accelerometer\+Timer@{start\+Accelerometer\+Timer}}
+\index{start\+Accelerometer\+Timer@{start\+Accelerometer\+Timer}!Accelerometer.\+h@{Accelerometer.\+h}}
+\subsubsection{\texorpdfstring{start\+Accelerometer\+Timer()}{startAccelerometerTimer()}}
+{\footnotesize\ttfamily void start\+Accelerometer\+Timer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Starter accelerometerets timer. 
+
+\mbox{\Hypertarget{Accelerometer_8h_a5c823e0fb40fe73ee218325d6830e16f}\label{Accelerometer_8h_a5c823e0fb40fe73ee218325d6830e16f}} 
+\index{Accelerometer.\+h@{Accelerometer.\+h}!stop\+Accelerometer\+Timer@{stop\+Accelerometer\+Timer}}
+\index{stop\+Accelerometer\+Timer@{stop\+Accelerometer\+Timer}!Accelerometer.\+h@{Accelerometer.\+h}}
+\subsubsection{\texorpdfstring{stop\+Accelerometer\+Timer()}{stopAccelerometerTimer()}}
+{\footnotesize\ttfamily void stop\+Accelerometer\+Timer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Stopper accelerometerets timer. 
+

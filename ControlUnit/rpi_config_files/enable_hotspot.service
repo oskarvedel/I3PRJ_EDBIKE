@@ -1,0 +1,16 @@
+ [Unit]
+ Description=Enable RPI hotspot
+ # Let this service start as the last thing after multi-user boot
+ After=multi-user.target
+ [Service]
+ #Fork service/application
+ Type=forking
+ #Following may be set 
+ #User=root
+ #WorkingDirectory=/home/root
+ #To get touchscreen to work, we have to source /etc/profile to get the right
+ # env variables. ExecStart only takes one parameter, therefore the call to sh
+ ExecStart=/bin/sh -c '/home/root/enable_hotspot.sh'
+ [Install]
+ #Top-level target is multi-user
+ WantedBy=multi-user.target

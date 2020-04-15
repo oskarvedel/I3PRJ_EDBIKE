@@ -1,0 +1,119 @@
+\hypertarget{classUserInterface}{}\section{User\+Interface Class Reference}
+\label{classUserInterface}\index{User\+Interface@{User\+Interface}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classUserInterface_ae6fb70370701b3bd6120e923df9705b0}\label{classUserInterface_ae6fb70370701b3bd6120e923df9705b0}} 
+\hyperlink{classUserInterface_ae6fb70370701b3bd6120e923df9705b0}{User\+Interface} ()
+\begin{DoxyCompactList}\small\item\em Klassens constructor. Har ingen funktionalitet, men er deklareret for en sikkerheds skyld. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classUserInterface_ae588b2ff1711a016dd4c6fc5002c0841}\label{classUserInterface_ae588b2ff1711a016dd4c6fc5002c0841}} 
+\hyperlink{classUserInterface_ae588b2ff1711a016dd4c6fc5002c0841}{$\sim$\+User\+Interface} ()
+\begin{DoxyCompactList}\small\item\em Klassens destructor Har ingen funktionalitet, men er deklareret for en sikkerheds skyld. \end{DoxyCompactList}\item 
+void \hyperlink{classUserInterface_a5a42468e90a1bbd89f6465ee11d56e93}{U\+I\+Receive\+To\+Dispatcher} (string event)
+\begin{DoxyCompactList}\small\item\em Modtager events fra brugerfladen Kaldes af User\+Interface\+::\+U\+I\+Receive og evaluerer eventets type på baggrund af den overordnede protokol for E\+D\+Bike. Eventet og relevant data sendes derefter videre til dispatcher-\/tråden via Message\+Queue. \end{DoxyCompactList}\item 
+bool \hyperlink{classUserInterface_a899642cb1d73de5804ac8b56d92ca94c}{validate\+Pin} (string input\+Pin)
+\begin{DoxyCompactList}\small\item\em Validerer P\+IN, der er indtastet af bruger i client browser. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classUserInterface_a80c3e5e03d4f7d57d339badb4cf1eae6}\label{classUserInterface_a80c3e5e03d4f7d57d339badb4cf1eae6}} 
+void \hyperlink{classUserInterface_a80c3e5e03d4f7d57d339badb4cf1eae6}{U\+I\+Receive} ()
+\begin{DoxyCompactList}\small\item\em Lytter efter data fra brugerflade i client browser. Indeholder en overloaded version af Hub\+::on\+Message lampda-\/funktionen fra u\+Web\+Sockets-\/biblioteket. Denne funktion kører som en tråd og lytter efter events fra client browser og kalder User\+Interface\+::\+U\+I\+Receive\+To\+Dispatcher, når der modtages et event. \end{DoxyCompactList}\item 
+void \hyperlink{classUserInterface_a44b574eb614bb90bb370f027ce88b8ea}{send\+To\+UI} (string event)
+\begin{DoxyCompactList}\small\item\em Sender event til brugerflade i client browser Sender en string til brugerflade i client browser via u\+Web\+Sockets-\/funktionen Hub\+\_\+\+::broadcast. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classUserInterface_add59ee8e8c6cd74bd89dc1b529e5db95}\label{classUserInterface_add59ee8e8c6cd74bd89dc1b529e5db95}} 
+void $\ast$ \hyperlink{classUserInterface_add59ee8e8c6cd74bd89dc1b529e5db95}{pin\+Timer} ()
+\begin{DoxyCompactList}\small\item\em Blokerer for tjek af P\+I\+N-\/kode i 5 minutter Køres som en tråd og blokerer for validering af P\+IN i 5 minutter, når den kaldes. Når de 5 minutter er gået sættes antallet af resterende P\+I\+N-\/forsøg til 5. \end{DoxyCompactList}\item 
+bool \hyperlink{classUserInterface_a569c725b82d4ba420574f072e0bfc866}{validate\+Wheel\+Size} (string wheel\+\_\+input)
+\begin{DoxyCompactList}\small\item\em Validerer den indtastede hjulstørrelse Tjekker om den indtastede hjulstørrelse overholder en række regler. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void $\ast$ \hyperlink{classUserInterface_a29bcf3e43b86bda0fcfb9b3bfce93308}{call\+Pin\+Timer} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em Kalder User\+Interface\+::pin\+Timer Denne funktion gør det muligt at kalde pin\+Timer() (Tabel 10) som en tråd fra andre medlemsklasser, og fungerer altså som ’limen’ mellem de andre medlemsfunktioner og den egentlige pin\+Timer-\/metode. Grunden er, atstd\+::thread i C++ skal kaldes på statiske medlemsfunktioner. Denne funktion returnerer en pointer til pin\+Timer-\/metoden for objekt, der gives med som argument. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classUserInterface_a29bcf3e43b86bda0fcfb9b3bfce93308}\label{classUserInterface_a29bcf3e43b86bda0fcfb9b3bfce93308}} 
+\index{User\+Interface@{User\+Interface}!call\+Pin\+Timer@{call\+Pin\+Timer}}
+\index{call\+Pin\+Timer@{call\+Pin\+Timer}!User\+Interface@{User\+Interface}}
+\subsubsection{\texorpdfstring{call\+Pin\+Timer()}{callPinTimer()}}
+{\footnotesize\ttfamily static void$\ast$ User\+Interface\+::call\+Pin\+Timer (\begin{DoxyParamCaption}\item[{void $\ast$}]{arg }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Kalder User\+Interface\+::pin\+Timer Denne funktion gør det muligt at kalde pin\+Timer() (Tabel 10) som en tråd fra andre medlemsklasser, og fungerer altså som ’limen’ mellem de andre medlemsfunktioner og den egentlige pin\+Timer-\/metode. Grunden er, atstd\+::thread i C++ skal kaldes på statiske medlemsfunktioner. Denne funktion returnerer en pointer til pin\+Timer-\/metoden for objekt, der gives med som argument. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em arg} & Void-\/pointer, som castes til User\+Interface\+::\+Pintimer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returnerer static void for at kunne blive kaldt af std\+::thread-\/biblioteket 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classUserInterface_a44b574eb614bb90bb370f027ce88b8ea}\label{classUserInterface_a44b574eb614bb90bb370f027ce88b8ea}} 
+\index{User\+Interface@{User\+Interface}!send\+To\+UI@{send\+To\+UI}}
+\index{send\+To\+UI@{send\+To\+UI}!User\+Interface@{User\+Interface}}
+\subsubsection{\texorpdfstring{send\+To\+U\+I()}{sendToUI()}}
+{\footnotesize\ttfamily void User\+Interface\+::send\+To\+UI (\begin{DoxyParamCaption}\item[{string}]{event }\end{DoxyParamCaption})}
+
+
+
+Sender event til brugerflade i client browser Sender en string til brugerflade i client browser via u\+Web\+Sockets-\/funktionen Hub\+\_\+\+::broadcast. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & String der indeholder det event der skal sendes til brugerflade i client browser \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classUserInterface_a5a42468e90a1bbd89f6465ee11d56e93}\label{classUserInterface_a5a42468e90a1bbd89f6465ee11d56e93}} 
+\index{User\+Interface@{User\+Interface}!U\+I\+Receive\+To\+Dispatcher@{U\+I\+Receive\+To\+Dispatcher}}
+\index{U\+I\+Receive\+To\+Dispatcher@{U\+I\+Receive\+To\+Dispatcher}!User\+Interface@{User\+Interface}}
+\subsubsection{\texorpdfstring{U\+I\+Receive\+To\+Dispatcher()}{UIReceiveToDispatcher()}}
+{\footnotesize\ttfamily void User\+Interface\+::\+U\+I\+Receive\+To\+Dispatcher (\begin{DoxyParamCaption}\item[{string}]{event }\end{DoxyParamCaption})}
+
+
+
+Modtager events fra brugerfladen Kaldes af User\+Interface\+::\+U\+I\+Receive og evaluerer eventets type på baggrund af den overordnede protokol for E\+D\+Bike. Eventet og relevant data sendes derefter videre til dispatcher-\/tråden via Message\+Queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & String der indeholder det event der skal sendes til brugerfladen \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classUserInterface_a899642cb1d73de5804ac8b56d92ca94c}\label{classUserInterface_a899642cb1d73de5804ac8b56d92ca94c}} 
+\index{User\+Interface@{User\+Interface}!validate\+Pin@{validate\+Pin}}
+\index{validate\+Pin@{validate\+Pin}!User\+Interface@{User\+Interface}}
+\subsubsection{\texorpdfstring{validate\+Pin()}{validatePin()}}
+{\footnotesize\ttfamily bool User\+Interface\+::validate\+Pin (\begin{DoxyParamCaption}\item[{string}]{input\+Pin }\end{DoxyParamCaption})}
+
+
+
+Validerer P\+IN, der er indtastet af bruger i client browser. 
+
+Tjekker, om den indtastede P\+IN stemmer overens med den korrekte P\+IN og kalder et P\+I\+N-\/timeout, (medlemsfunktionen pin\+Timer (Tabel 10)) hvis P\+IN er skrevet forkert 5 gange i brugerfladen. Antallet af brugte forsøg dekrementeres hver gang, funktionen kaldes med en forkert pin. 
+\begin{DoxyParams}{Parameters}
+{\em event} & String der indeholder den indtastede P\+IN som skal tjekkes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True, hvis den indtastede P\+IN stemmer overens med den korrekte P\+IN. False, hvis den indtastede P\+IN ikke stemmer overens med den korrekte P\+IN eller hvis P\+I\+N-\/timeoutet er aktivt. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classUserInterface_a569c725b82d4ba420574f072e0bfc866}\label{classUserInterface_a569c725b82d4ba420574f072e0bfc866}} 
+\index{User\+Interface@{User\+Interface}!validate\+Wheel\+Size@{validate\+Wheel\+Size}}
+\index{validate\+Wheel\+Size@{validate\+Wheel\+Size}!User\+Interface@{User\+Interface}}
+\subsubsection{\texorpdfstring{validate\+Wheel\+Size()}{validateWheelSize()}}
+{\footnotesize\ttfamily bool User\+Interface\+::validate\+Wheel\+Size (\begin{DoxyParamCaption}\item[{string}]{wheel\+\_\+input }\end{DoxyParamCaption})}
+
+
+
+Validerer den indtastede hjulstørrelse Tjekker om den indtastede hjulstørrelse overholder en række regler. 
+
+\begin{DoxyReturn}{Returns}
+Returnerer en bool, der indikerer om hjulstørrelsen er godkendt 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+.\+atom-\/beautify.\+User\+Interface.\+hpp\item 
+\hyperlink{UserInterface_8hpp}{User\+Interface.\+hpp}\item 
+\hyperlink{UserInterface_8cpp}{User\+Interface.\+cpp}\end{DoxyCompactItemize}

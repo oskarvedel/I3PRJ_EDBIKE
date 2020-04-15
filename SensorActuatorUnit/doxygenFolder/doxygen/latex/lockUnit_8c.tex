@@ -1,0 +1,46 @@
+\hypertarget{lockUnit_8c}{}\section{lock\+Unit.\+c File Reference}
+\label{lockUnit_8c}\index{lock\+Unit.\+c@{lock\+Unit.\+c}}
+
+
+funktions implementeringer til låsen  
+
+
+{\ttfamily \#include \char`\"{}lock\+Unit.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}E\+D\+Bike\+Protocol.\+h\char`\"{}}\newline
+Include dependency graph for lock\+Unit.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{lockUnit_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{lockUnit_8c_ae42548961b3afb4d6eda673e595f37d8}\label{lockUnit_8c_ae42548961b3afb4d6eda673e595f37d8}} 
+void \hyperlink{lockUnit_8c_ae42548961b3afb4d6eda673e595f37d8}{init\+Lock\+Unit} ()
+\begin{DoxyCompactList}\small\item\em Init funktion til låsen. Initiere interrupt rutinerne, som er forbundet med låsen. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{lockUnit_8c_a732e06dbf599e5ea946a66afe3ca0ed2}\label{lockUnit_8c_a732e06dbf599e5ea946a66afe3ca0ed2}} 
+void \hyperlink{lockUnit_8c_a732e06dbf599e5ea946a66afe3ca0ed2}{unlock\+Bike} ()
+\begin{DoxyCompactList}\small\item\em Unlock funktion til låsen. Låser låsen op og tænder for motor timeren. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{lockUnit_8c_ac801da6dcc1e4d828951c4f20d3b7631}\label{lockUnit_8c_ac801da6dcc1e4d828951c4f20d3b7631}} 
+void \hyperlink{lockUnit_8c_ac801da6dcc1e4d828951c4f20d3b7631}{lock\+Bike} ()
+\begin{DoxyCompactList}\small\item\em lock funktion til låsen. Låser låsen og tænder for motor timeren. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{lockUnit_8c_a5ee55fea0a10de0b232db271f0ee2c15}\label{lockUnit_8c_a5ee55fea0a10de0b232db271f0ee2c15}} 
+void \hyperlink{lockUnit_8c_a5ee55fea0a10de0b232db271f0ee2c15}{stop\+Lock\+Timer} ()
+\begin{DoxyCompactList}\small\item\em Stop funktion til motor timeren. Stopper motor timeren. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+funktions implementeringer til låsen 
+
+Indeholder implementeringer af funktionerne fra \hyperlink{lockUnit_8h}{lock\+Unit.\+h}
+
+\begin{DoxyAuthor}{Author}
+Jonathan Hartvigsen Juncker 
+
+Mortada Ismail 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000003}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}

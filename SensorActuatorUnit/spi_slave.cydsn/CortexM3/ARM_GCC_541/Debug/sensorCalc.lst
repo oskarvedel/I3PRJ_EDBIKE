@@ -1,0 +1,1038 @@
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"sensorCalc.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.global	__aeabi_i2d
+  20              		.global	__aeabi_dmul
+  21              		.global	__aeabi_dadd
+  22              		.global	__aeabi_ddiv
+  23              		.section	.text.calcDistance,"ax",%progbits
+  24              		.align	2
+  25              		.global	calcDistance
+  26              		.thumb
+  27              		.thumb_func
+  28              		.type	calcDistance, %function
+  29              	calcDistance:
+  30              	.LFB64:
+  31              		.file 1 "sensorCalc.c"
+   1:sensorCalc.c  **** /* ========================================
+   2:sensorCalc.c  ****  *
+   3:sensorCalc.c  ****  * Copyright YOUR COMPANY, THE YEAR
+   4:sensorCalc.c  ****  * All Rights Reserved
+   5:sensorCalc.c  ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:sensorCalc.c  ****  *
+   7:sensorCalc.c  ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:sensorCalc.c  ****  * WHICH IS THE PROPERTY OF your company.
+   9:sensorCalc.c  ****  *
+  10:sensorCalc.c  ****  * ========================================
+  11:sensorCalc.c  **** */
+  12:sensorCalc.c  **** #include "sensorCalc.h"
+  13:sensorCalc.c  **** 
+  14:sensorCalc.c  **** 
+  15:sensorCalc.c  **** 
+  16:sensorCalc.c  **** double calcDistance(int WR, double wheelSize)
+  17:sensorCalc.c  ****    {
+  32              		.loc 1 17 0
+  33              		.cfi_startproc
+  34              		@ args = 0, pretend = 0, frame = 0
+  35              		@ frame_needed = 0, uses_anonymous_args = 0
+  36              	.LVL0:
+  37 0000 38B5     		push	{r3, r4, r5, lr}
+  38              		.cfi_def_cfa_offset 16
+  39              		.cfi_offset 3, -16
+  40              		.cfi_offset 4, -12
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 2
+
+
+  41              		.cfi_offset 5, -8
+  42              		.cfi_offset 14, -4
+  43 0002 1446     		mov	r4, r2
+  44 0004 1D46     		mov	r5, r3
+  18:sensorCalc.c  ****         double dist = (WR * wheelSize * 3.14 * 2)/1000; 
+  45              		.loc 1 18 0
+  46 0006 FFF7FEFF 		bl	__aeabi_i2d
+  47              	.LVL1:
+  48 000a 2246     		mov	r2, r4
+  49 000c 2B46     		mov	r3, r5
+  50 000e FFF7FEFF 		bl	__aeabi_dmul
+  51              	.LVL2:
+  52 0012 07A3     		adr	r3, .L3
+  53 0014 D3E90023 		ldrd	r2, [r3]
+  54 0018 FFF7FEFF 		bl	__aeabi_dmul
+  55              	.LVL3:
+  56 001c 0246     		mov	r2, r0
+  57 001e 0B46     		mov	r3, r1
+  58 0020 FFF7FEFF 		bl	__aeabi_dadd
+  59              	.LVL4:
+  60 0024 0022     		movs	r2, #0
+  61 0026 044B     		ldr	r3, .L3+8
+  62 0028 FFF7FEFF 		bl	__aeabi_ddiv
+  63              	.LVL5:
+  19:sensorCalc.c  ****         
+  20:sensorCalc.c  ****         return dist;
+  21:sensorCalc.c  ****    } 
+  64              		.loc 1 21 0
+  65 002c 38BD     		pop	{r3, r4, r5, pc}
+  66              	.L4:
+  67 002e 00BF     		.align	3
+  68              	.L3:
+  69 0030 1F85EB51 		.word	1374389535
+  70 0034 B81E0940 		.word	1074339512
+  71 0038 00408F40 		.word	1083129856
+  72              		.cfi_endproc
+  73              	.LFE64:
+  74              		.size	calcDistance, .-calcDistance
+  75              		.section	.text.calcSpeed,"ax",%progbits
+  76              		.align	2
+  77              		.global	calcSpeed
+  78              		.thumb
+  79              		.thumb_func
+  80              		.type	calcSpeed, %function
+  81              	calcSpeed:
+  82              	.LFB65:
+  22:sensorCalc.c  ****     
+  23:sensorCalc.c  **** double calcSpeed(double time_ms, double dist)
+  24:sensorCalc.c  ****     {
+  83              		.loc 1 24 0
+  84              		.cfi_startproc
+  85              		@ args = 0, pretend = 0, frame = 0
+  86              		@ frame_needed = 0, uses_anonymous_args = 0
+  87              	.LVL6:
+  88 0000 38B5     		push	{r3, r4, r5, lr}
+  89              		.cfi_def_cfa_offset 16
+  90              		.cfi_offset 3, -16
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 3
+
+
+  91              		.cfi_offset 4, -12
+  92              		.cfi_offset 5, -8
+  93              		.cfi_offset 14, -4
+  94 0002 1446     		mov	r4, r2
+  95 0004 1D46     		mov	r5, r3
+  25:sensorCalc.c  ****         double time_temp = time_ms/3600000;
+  96              		.loc 1 25 0
+  97 0006 06A3     		adr	r3, .L7
+  98 0008 D3E90023 		ldrd	r2, [r3]
+  99              	.LVL7:
+ 100 000c FFF7FEFF 		bl	__aeabi_ddiv
+ 101              	.LVL8:
+  26:sensorCalc.c  ****         double  speed = dist/time_temp;
+ 102              		.loc 1 26 0
+ 103 0010 0246     		mov	r2, r0
+ 104 0012 0B46     		mov	r3, r1
+ 105 0014 2046     		mov	r0, r4
+ 106              	.LVL9:
+ 107 0016 2946     		mov	r1, r5
+ 108 0018 FFF7FEFF 		bl	__aeabi_ddiv
+ 109              	.LVL10:
+  27:sensorCalc.c  ****     
+  28:sensorCalc.c  ****         return speed;    
+  29:sensorCalc.c  ****     }    
+ 110              		.loc 1 29 0
+ 111 001c 38BD     		pop	{r3, r4, r5, pc}
+ 112              	.L8:
+ 113 001e 00BF     		.align	3
+ 114              	.L7:
+ 115 0020 00000000 		.word	0
+ 116 0024 40774B41 		.word	1095464768
+ 117              		.cfi_endproc
+ 118              	.LFE65:
+ 119              		.size	calcSpeed, .-calcSpeed
+ 120              		.global	__aeabi_ui2d
+ 121              		.section	.text.WheelRadiusToMetres,"ax",%progbits
+ 122              		.align	2
+ 123              		.global	WheelRadiusToMetres
+ 124              		.thumb
+ 125              		.thumb_func
+ 126              		.type	WheelRadiusToMetres, %function
+ 127              	WheelRadiusToMetres:
+ 128              	.LFB66:
+  30:sensorCalc.c  **** 
+  31:sensorCalc.c  **** double WheelRadiusToMetres(uint8 userInputInCentimeters)
+  32:sensorCalc.c  ****     {
+ 129              		.loc 1 32 0
+ 130              		.cfi_startproc
+ 131              		@ args = 0, pretend = 0, frame = 0
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133              	.LVL11:
+ 134 0000 08B5     		push	{r3, lr}
+ 135              		.cfi_def_cfa_offset 8
+ 136              		.cfi_offset 3, -8
+ 137              		.cfi_offset 14, -4
+  33:sensorCalc.c  ****         double wheelRadiusInMeters = (double)userInputInCentimeters/100;
+ 138              		.loc 1 33 0
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 4
+
+
+ 139 0002 FFF7FEFF 		bl	__aeabi_ui2d
+ 140              	.LVL12:
+ 141 0006 0022     		movs	r2, #0
+ 142 0008 014B     		ldr	r3, .L11
+ 143 000a FFF7FEFF 		bl	__aeabi_ddiv
+ 144              	.LVL13:
+  34:sensorCalc.c  ****     
+  35:sensorCalc.c  ****         return wheelRadiusInMeters;
+  36:sensorCalc.c  ****     }
+ 145              		.loc 1 36 0
+ 146 000e 08BD     		pop	{r3, pc}
+ 147              	.L12:
+ 148              		.align	2
+ 149              	.L11:
+ 150 0010 00005940 		.word	1079574528
+ 151              		.cfi_endproc
+ 152              	.LFE66:
+ 153              		.size	WheelRadiusToMetres, .-WheelRadiusToMetres
+ 154              		.section	.text.calcWheelCirc,"ax",%progbits
+ 155              		.align	2
+ 156              		.global	calcWheelCirc
+ 157              		.thumb
+ 158              		.thumb_func
+ 159              		.type	calcWheelCirc, %function
+ 160              	calcWheelCirc:
+ 161              	.LFB67:
+  37:sensorCalc.c  **** 
+  38:sensorCalc.c  **** double calcWheelCirc(double radius)
+  39:sensorCalc.c  ****     {
+ 162              		.loc 1 39 0
+ 163              		.cfi_startproc
+ 164              		@ args = 0, pretend = 0, frame = 0
+ 165              		@ frame_needed = 0, uses_anonymous_args = 0
+ 166              	.LVL14:
+ 167 0000 08B5     		push	{r3, lr}
+ 168              		.cfi_def_cfa_offset 8
+ 169              		.cfi_offset 3, -8
+ 170              		.cfi_offset 14, -4
+  40:sensorCalc.c  ****         double wheelCirc = (radius * 3.14 * 2)/1000;
+ 171              		.loc 1 40 0
+ 172 0002 07A3     		adr	r3, .L15
+ 173 0004 D3E90023 		ldrd	r2, [r3]
+ 174 0008 FFF7FEFF 		bl	__aeabi_dmul
+ 175              	.LVL15:
+ 176 000c 0246     		mov	r2, r0
+ 177 000e 0B46     		mov	r3, r1
+ 178 0010 FFF7FEFF 		bl	__aeabi_dadd
+ 179              	.LVL16:
+ 180 0014 0022     		movs	r2, #0
+ 181 0016 044B     		ldr	r3, .L15+8
+ 182 0018 FFF7FEFF 		bl	__aeabi_ddiv
+ 183              	.LVL17:
+  41:sensorCalc.c  ****     
+  42:sensorCalc.c  ****         return wheelCirc;
+  43:sensorCalc.c  ****     }
+ 184              		.loc 1 43 0
+ 185 001c 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 5
+
+
+ 186              	.L16:
+ 187 001e 00BF     		.align	3
+ 188              	.L15:
+ 189 0020 1F85EB51 		.word	1374389535
+ 190 0024 B81E0940 		.word	1074339512
+ 191 0028 00408F40 		.word	1083129856
+ 192              		.cfi_endproc
+ 193              	.LFE67:
+ 194              		.size	calcWheelCirc, .-calcWheelCirc
+ 195              		.text
+ 196              	.Letext0:
+ 197              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 198              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 199              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 200              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 201              		.section	.debug_info,"",%progbits
+ 202              	.Ldebug_info0:
+ 203 0000 D6010000 		.4byte	0x1d6
+ 204 0004 0400     		.2byte	0x4
+ 205 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 206 000a 04       		.byte	0x4
+ 207 000b 01       		.uleb128 0x1
+ 208 000c 4E000000 		.4byte	.LASF30
+ 209 0010 0C       		.byte	0xc
+ 210 0011 3A020000 		.4byte	.LASF31
+ 211 0015 2D010000 		.4byte	.LASF32
+ 212 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 213 001d 00000000 		.4byte	0
+ 214 0021 00000000 		.4byte	.Ldebug_line0
+ 215 0025 02       		.uleb128 0x2
+ 216 0026 08       		.byte	0x8
+ 217 0027 04       		.byte	0x4
+ 218 0028 26010000 		.4byte	.LASF0
+ 219 002c 02       		.uleb128 0x2
+ 220 002d 01       		.byte	0x1
+ 221 002e 06       		.byte	0x6
+ 222 002f 2E020000 		.4byte	.LASF1
+ 223 0033 02       		.uleb128 0x2
+ 224 0034 01       		.byte	0x1
+ 225 0035 08       		.byte	0x8
+ 226 0036 40000000 		.4byte	.LASF2
+ 227 003a 02       		.uleb128 0x2
+ 228 003b 02       		.byte	0x2
+ 229 003c 05       		.byte	0x5
+ 230 003d EB010000 		.4byte	.LASF3
+ 231 0041 02       		.uleb128 0x2
+ 232 0042 02       		.byte	0x2
+ 233 0043 07       		.byte	0x7
+ 234 0044 05010000 		.4byte	.LASF4
+ 235 0048 03       		.uleb128 0x3
+ 236 0049 1B000000 		.4byte	.LASF10
+ 237 004d 02       		.byte	0x2
+ 238 004e 3F       		.byte	0x3f
+ 239 004f 53000000 		.4byte	0x53
+ 240 0053 02       		.uleb128 0x2
+ 241 0054 04       		.byte	0x4
+ 242 0055 05       		.byte	0x5
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 6
+
+
+ 243 0056 FB010000 		.4byte	.LASF5
+ 244 005a 02       		.uleb128 0x2
+ 245 005b 04       		.byte	0x4
+ 246 005c 07       		.byte	0x7
+ 247 005d F3000000 		.4byte	.LASF6
+ 248 0061 02       		.uleb128 0x2
+ 249 0062 08       		.byte	0x8
+ 250 0063 05       		.byte	0x5
+ 251 0064 D8010000 		.4byte	.LASF7
+ 252 0068 02       		.uleb128 0x2
+ 253 0069 08       		.byte	0x8
+ 254 006a 07       		.byte	0x7
+ 255 006b 99010000 		.4byte	.LASF8
+ 256 006f 04       		.uleb128 0x4
+ 257 0070 04       		.byte	0x4
+ 258 0071 05       		.byte	0x5
+ 259 0072 696E7400 		.ascii	"int\000"
+ 260 0076 02       		.uleb128 0x2
+ 261 0077 04       		.byte	0x4
+ 262 0078 07       		.byte	0x7
+ 263 0079 8C010000 		.4byte	.LASF9
+ 264 007d 03       		.uleb128 0x3
+ 265 007e 32000000 		.4byte	.LASF11
+ 266 0082 03       		.byte	0x3
+ 267 0083 2C       		.byte	0x2c
+ 268 0084 48000000 		.4byte	0x48
+ 269 0088 05       		.uleb128 0x5
+ 270 0089 F5010000 		.4byte	.LASF12
+ 271 008d 04       		.byte	0x4
+ 272 008e E401     		.2byte	0x1e4
+ 273 0090 33000000 		.4byte	0x33
+ 274 0094 02       		.uleb128 0x2
+ 275 0095 04       		.byte	0x4
+ 276 0096 04       		.byte	0x4
+ 277 0097 3A000000 		.4byte	.LASF13
+ 278 009b 02       		.uleb128 0x2
+ 279 009c 01       		.byte	0x1
+ 280 009d 08       		.byte	0x8
+ 281 009e E6010000 		.4byte	.LASF14
+ 282 00a2 02       		.uleb128 0x2
+ 283 00a3 08       		.byte	0x8
+ 284 00a4 04       		.byte	0x4
+ 285 00a5 22020000 		.4byte	.LASF15
+ 286 00a9 02       		.uleb128 0x2
+ 287 00aa 04       		.byte	0x4
+ 288 00ab 07       		.byte	0x7
+ 289 00ac CF010000 		.4byte	.LASF16
+ 290 00b0 06       		.uleb128 0x6
+ 291 00b1 25000000 		.4byte	.LASF18
+ 292 00b5 01       		.byte	0x1
+ 293 00b6 10       		.byte	0x10
+ 294 00b7 25000000 		.4byte	0x25
+ 295 00bb 00000000 		.4byte	.LFB64
+ 296 00bf 3C000000 		.4byte	.LFE64-.LFB64
+ 297 00c3 01       		.uleb128 0x1
+ 298 00c4 9C       		.byte	0x9c
+ 299 00c5 F9000000 		.4byte	0xf9
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 7
+
+
+ 300 00c9 07       		.uleb128 0x7
+ 301 00ca 575200   		.ascii	"WR\000"
+ 302 00cd 01       		.byte	0x1
+ 303 00ce 10       		.byte	0x10
+ 304 00cf 6F000000 		.4byte	0x6f
+ 305 00d3 00000000 		.4byte	.LLST0
+ 306 00d7 08       		.uleb128 0x8
+ 307 00d8 75010000 		.4byte	.LASF17
+ 308 00dc 01       		.byte	0x1
+ 309 00dd 10       		.byte	0x10
+ 310 00de 25000000 		.4byte	0x25
+ 311 00e2 21000000 		.4byte	.LLST1
+ 312 00e6 09       		.uleb128 0x9
+ 313 00e7 BA010000 		.4byte	.LASF21
+ 314 00eb 01       		.byte	0x1
+ 315 00ec 12       		.byte	0x12
+ 316 00ed 25000000 		.4byte	0x25
+ 317 00f1 06       		.uleb128 0x6
+ 318 00f2 50       		.byte	0x50
+ 319 00f3 93       		.byte	0x93
+ 320 00f4 04       		.uleb128 0x4
+ 321 00f5 51       		.byte	0x51
+ 322 00f6 93       		.byte	0x93
+ 323 00f7 04       		.uleb128 0x4
+ 324 00f8 00       		.byte	0
+ 325 00f9 06       		.uleb128 0x6
+ 326 00fa C5010000 		.4byte	.LASF19
+ 327 00fe 01       		.byte	0x1
+ 328 00ff 17       		.byte	0x17
+ 329 0100 25000000 		.4byte	0x25
+ 330 0104 00000000 		.4byte	.LFB65
+ 331 0108 28000000 		.4byte	.LFE65-.LFB65
+ 332 010c 01       		.uleb128 0x1
+ 333 010d 9C       		.byte	0x9c
+ 334 010e 52010000 		.4byte	0x152
+ 335 0112 08       		.uleb128 0x8
+ 336 0113 47020000 		.4byte	.LASF20
+ 337 0117 01       		.byte	0x1
+ 338 0118 17       		.byte	0x17
+ 339 0119 25000000 		.4byte	0x25
+ 340 011d 49000000 		.4byte	.LLST2
+ 341 0121 08       		.uleb128 0x8
+ 342 0122 BA010000 		.4byte	.LASF21
+ 343 0126 01       		.byte	0x1
+ 344 0127 17       		.byte	0x17
+ 345 0128 25000000 		.4byte	0x25
+ 346 012c 71000000 		.4byte	.LLST3
+ 347 0130 0A       		.uleb128 0xa
+ 348 0131 B0010000 		.4byte	.LASF22
+ 349 0135 01       		.byte	0x1
+ 350 0136 19       		.byte	0x19
+ 351 0137 25000000 		.4byte	0x25
+ 352 013b 99000000 		.4byte	.LLST4
+ 353 013f 09       		.uleb128 0x9
+ 354 0140 BF010000 		.4byte	.LASF23
+ 355 0144 01       		.byte	0x1
+ 356 0145 1A       		.byte	0x1a
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 8
+
+
+ 357 0146 25000000 		.4byte	0x25
+ 358 014a 06       		.uleb128 0x6
+ 359 014b 50       		.byte	0x50
+ 360 014c 93       		.byte	0x93
+ 361 014d 04       		.uleb128 0x4
+ 362 014e 51       		.byte	0x51
+ 363 014f 93       		.byte	0x93
+ 364 0150 04       		.uleb128 0x4
+ 365 0151 00       		.byte	0
+ 366 0152 06       		.uleb128 0x6
+ 367 0153 04020000 		.4byte	.LASF24
+ 368 0157 01       		.byte	0x1
+ 369 0158 1F       		.byte	0x1f
+ 370 0159 25000000 		.4byte	0x25
+ 371 015d 00000000 		.4byte	.LFB66
+ 372 0161 14000000 		.4byte	.LFE66-.LFB66
+ 373 0165 01       		.uleb128 0x1
+ 374 0166 9C       		.byte	0x9c
+ 375 0167 8D010000 		.4byte	0x18d
+ 376 016b 08       		.uleb128 0x8
+ 377 016c DC000000 		.4byte	.LASF25
+ 378 0170 01       		.byte	0x1
+ 379 0171 1F       		.byte	0x1f
+ 380 0172 88000000 		.4byte	0x88
+ 381 0176 B1000000 		.4byte	.LLST5
+ 382 017a 09       		.uleb128 0x9
+ 383 017b 07000000 		.4byte	.LASF26
+ 384 017f 01       		.byte	0x1
+ 385 0180 21       		.byte	0x21
+ 386 0181 25000000 		.4byte	0x25
+ 387 0185 06       		.uleb128 0x6
+ 388 0186 50       		.byte	0x50
+ 389 0187 93       		.byte	0x93
+ 390 0188 04       		.uleb128 0x4
+ 391 0189 51       		.byte	0x51
+ 392 018a 93       		.byte	0x93
+ 393 018b 04       		.uleb128 0x4
+ 394 018c 00       		.byte	0
+ 395 018d 06       		.uleb128 0x6
+ 396 018e 18010000 		.4byte	.LASF27
+ 397 0192 01       		.byte	0x1
+ 398 0193 26       		.byte	0x26
+ 399 0194 25000000 		.4byte	0x25
+ 400 0198 00000000 		.4byte	.LFB67
+ 401 019c 2C000000 		.4byte	.LFE67-.LFB67
+ 402 01a0 01       		.uleb128 0x1
+ 403 01a1 9C       		.byte	0x9c
+ 404 01a2 C8010000 		.4byte	0x1c8
+ 405 01a6 08       		.uleb128 0x8
+ 406 01a7 00000000 		.4byte	.LASF28
+ 407 01ab 01       		.byte	0x1
+ 408 01ac 26       		.byte	0x26
+ 409 01ad 25000000 		.4byte	0x25
+ 410 01b1 D2000000 		.4byte	.LLST6
+ 411 01b5 09       		.uleb128 0x9
+ 412 01b6 18020000 		.4byte	.LASF29
+ 413 01ba 01       		.byte	0x1
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 9
+
+
+ 414 01bb 28       		.byte	0x28
+ 415 01bc 25000000 		.4byte	0x25
+ 416 01c0 06       		.uleb128 0x6
+ 417 01c1 50       		.byte	0x50
+ 418 01c2 93       		.byte	0x93
+ 419 01c3 04       		.uleb128 0x4
+ 420 01c4 51       		.byte	0x51
+ 421 01c5 93       		.byte	0x93
+ 422 01c6 04       		.uleb128 0x4
+ 423 01c7 00       		.byte	0
+ 424 01c8 0B       		.uleb128 0xb
+ 425 01c9 7F010000 		.4byte	.LASF33
+ 426 01cd 05       		.byte	0x5
+ 427 01ce 1207     		.2byte	0x712
+ 428 01d0 D4010000 		.4byte	0x1d4
+ 429 01d4 0C       		.uleb128 0xc
+ 430 01d5 7D000000 		.4byte	0x7d
+ 431 01d9 00       		.byte	0
+ 432              		.section	.debug_abbrev,"",%progbits
+ 433              	.Ldebug_abbrev0:
+ 434 0000 01       		.uleb128 0x1
+ 435 0001 11       		.uleb128 0x11
+ 436 0002 01       		.byte	0x1
+ 437 0003 25       		.uleb128 0x25
+ 438 0004 0E       		.uleb128 0xe
+ 439 0005 13       		.uleb128 0x13
+ 440 0006 0B       		.uleb128 0xb
+ 441 0007 03       		.uleb128 0x3
+ 442 0008 0E       		.uleb128 0xe
+ 443 0009 1B       		.uleb128 0x1b
+ 444 000a 0E       		.uleb128 0xe
+ 445 000b 55       		.uleb128 0x55
+ 446 000c 17       		.uleb128 0x17
+ 447 000d 11       		.uleb128 0x11
+ 448 000e 01       		.uleb128 0x1
+ 449 000f 10       		.uleb128 0x10
+ 450 0010 17       		.uleb128 0x17
+ 451 0011 00       		.byte	0
+ 452 0012 00       		.byte	0
+ 453 0013 02       		.uleb128 0x2
+ 454 0014 24       		.uleb128 0x24
+ 455 0015 00       		.byte	0
+ 456 0016 0B       		.uleb128 0xb
+ 457 0017 0B       		.uleb128 0xb
+ 458 0018 3E       		.uleb128 0x3e
+ 459 0019 0B       		.uleb128 0xb
+ 460 001a 03       		.uleb128 0x3
+ 461 001b 0E       		.uleb128 0xe
+ 462 001c 00       		.byte	0
+ 463 001d 00       		.byte	0
+ 464 001e 03       		.uleb128 0x3
+ 465 001f 16       		.uleb128 0x16
+ 466 0020 00       		.byte	0
+ 467 0021 03       		.uleb128 0x3
+ 468 0022 0E       		.uleb128 0xe
+ 469 0023 3A       		.uleb128 0x3a
+ 470 0024 0B       		.uleb128 0xb
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 10
+
+
+ 471 0025 3B       		.uleb128 0x3b
+ 472 0026 0B       		.uleb128 0xb
+ 473 0027 49       		.uleb128 0x49
+ 474 0028 13       		.uleb128 0x13
+ 475 0029 00       		.byte	0
+ 476 002a 00       		.byte	0
+ 477 002b 04       		.uleb128 0x4
+ 478 002c 24       		.uleb128 0x24
+ 479 002d 00       		.byte	0
+ 480 002e 0B       		.uleb128 0xb
+ 481 002f 0B       		.uleb128 0xb
+ 482 0030 3E       		.uleb128 0x3e
+ 483 0031 0B       		.uleb128 0xb
+ 484 0032 03       		.uleb128 0x3
+ 485 0033 08       		.uleb128 0x8
+ 486 0034 00       		.byte	0
+ 487 0035 00       		.byte	0
+ 488 0036 05       		.uleb128 0x5
+ 489 0037 16       		.uleb128 0x16
+ 490 0038 00       		.byte	0
+ 491 0039 03       		.uleb128 0x3
+ 492 003a 0E       		.uleb128 0xe
+ 493 003b 3A       		.uleb128 0x3a
+ 494 003c 0B       		.uleb128 0xb
+ 495 003d 3B       		.uleb128 0x3b
+ 496 003e 05       		.uleb128 0x5
+ 497 003f 49       		.uleb128 0x49
+ 498 0040 13       		.uleb128 0x13
+ 499 0041 00       		.byte	0
+ 500 0042 00       		.byte	0
+ 501 0043 06       		.uleb128 0x6
+ 502 0044 2E       		.uleb128 0x2e
+ 503 0045 01       		.byte	0x1
+ 504 0046 3F       		.uleb128 0x3f
+ 505 0047 19       		.uleb128 0x19
+ 506 0048 03       		.uleb128 0x3
+ 507 0049 0E       		.uleb128 0xe
+ 508 004a 3A       		.uleb128 0x3a
+ 509 004b 0B       		.uleb128 0xb
+ 510 004c 3B       		.uleb128 0x3b
+ 511 004d 0B       		.uleb128 0xb
+ 512 004e 27       		.uleb128 0x27
+ 513 004f 19       		.uleb128 0x19
+ 514 0050 49       		.uleb128 0x49
+ 515 0051 13       		.uleb128 0x13
+ 516 0052 11       		.uleb128 0x11
+ 517 0053 01       		.uleb128 0x1
+ 518 0054 12       		.uleb128 0x12
+ 519 0055 06       		.uleb128 0x6
+ 520 0056 40       		.uleb128 0x40
+ 521 0057 18       		.uleb128 0x18
+ 522 0058 9642     		.uleb128 0x2116
+ 523 005a 19       		.uleb128 0x19
+ 524 005b 01       		.uleb128 0x1
+ 525 005c 13       		.uleb128 0x13
+ 526 005d 00       		.byte	0
+ 527 005e 00       		.byte	0
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 11
+
+
+ 528 005f 07       		.uleb128 0x7
+ 529 0060 05       		.uleb128 0x5
+ 530 0061 00       		.byte	0
+ 531 0062 03       		.uleb128 0x3
+ 532 0063 08       		.uleb128 0x8
+ 533 0064 3A       		.uleb128 0x3a
+ 534 0065 0B       		.uleb128 0xb
+ 535 0066 3B       		.uleb128 0x3b
+ 536 0067 0B       		.uleb128 0xb
+ 537 0068 49       		.uleb128 0x49
+ 538 0069 13       		.uleb128 0x13
+ 539 006a 02       		.uleb128 0x2
+ 540 006b 17       		.uleb128 0x17
+ 541 006c 00       		.byte	0
+ 542 006d 00       		.byte	0
+ 543 006e 08       		.uleb128 0x8
+ 544 006f 05       		.uleb128 0x5
+ 545 0070 00       		.byte	0
+ 546 0071 03       		.uleb128 0x3
+ 547 0072 0E       		.uleb128 0xe
+ 548 0073 3A       		.uleb128 0x3a
+ 549 0074 0B       		.uleb128 0xb
+ 550 0075 3B       		.uleb128 0x3b
+ 551 0076 0B       		.uleb128 0xb
+ 552 0077 49       		.uleb128 0x49
+ 553 0078 13       		.uleb128 0x13
+ 554 0079 02       		.uleb128 0x2
+ 555 007a 17       		.uleb128 0x17
+ 556 007b 00       		.byte	0
+ 557 007c 00       		.byte	0
+ 558 007d 09       		.uleb128 0x9
+ 559 007e 34       		.uleb128 0x34
+ 560 007f 00       		.byte	0
+ 561 0080 03       		.uleb128 0x3
+ 562 0081 0E       		.uleb128 0xe
+ 563 0082 3A       		.uleb128 0x3a
+ 564 0083 0B       		.uleb128 0xb
+ 565 0084 3B       		.uleb128 0x3b
+ 566 0085 0B       		.uleb128 0xb
+ 567 0086 49       		.uleb128 0x49
+ 568 0087 13       		.uleb128 0x13
+ 569 0088 02       		.uleb128 0x2
+ 570 0089 18       		.uleb128 0x18
+ 571 008a 00       		.byte	0
+ 572 008b 00       		.byte	0
+ 573 008c 0A       		.uleb128 0xa
+ 574 008d 34       		.uleb128 0x34
+ 575 008e 00       		.byte	0
+ 576 008f 03       		.uleb128 0x3
+ 577 0090 0E       		.uleb128 0xe
+ 578 0091 3A       		.uleb128 0x3a
+ 579 0092 0B       		.uleb128 0xb
+ 580 0093 3B       		.uleb128 0x3b
+ 581 0094 0B       		.uleb128 0xb
+ 582 0095 49       		.uleb128 0x49
+ 583 0096 13       		.uleb128 0x13
+ 584 0097 02       		.uleb128 0x2
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 12
+
+
+ 585 0098 17       		.uleb128 0x17
+ 586 0099 00       		.byte	0
+ 587 009a 00       		.byte	0
+ 588 009b 0B       		.uleb128 0xb
+ 589 009c 34       		.uleb128 0x34
+ 590 009d 00       		.byte	0
+ 591 009e 03       		.uleb128 0x3
+ 592 009f 0E       		.uleb128 0xe
+ 593 00a0 3A       		.uleb128 0x3a
+ 594 00a1 0B       		.uleb128 0xb
+ 595 00a2 3B       		.uleb128 0x3b
+ 596 00a3 05       		.uleb128 0x5
+ 597 00a4 49       		.uleb128 0x49
+ 598 00a5 13       		.uleb128 0x13
+ 599 00a6 3F       		.uleb128 0x3f
+ 600 00a7 19       		.uleb128 0x19
+ 601 00a8 3C       		.uleb128 0x3c
+ 602 00a9 19       		.uleb128 0x19
+ 603 00aa 00       		.byte	0
+ 604 00ab 00       		.byte	0
+ 605 00ac 0C       		.uleb128 0xc
+ 606 00ad 35       		.uleb128 0x35
+ 607 00ae 00       		.byte	0
+ 608 00af 49       		.uleb128 0x49
+ 609 00b0 13       		.uleb128 0x13
+ 610 00b1 00       		.byte	0
+ 611 00b2 00       		.byte	0
+ 612 00b3 00       		.byte	0
+ 613              		.section	.debug_loc,"",%progbits
+ 614              	.Ldebug_loc0:
+ 615              	.LLST0:
+ 616 0000 00000000 		.4byte	.LVL0
+ 617 0004 09000000 		.4byte	.LVL1-1
+ 618 0008 0100     		.2byte	0x1
+ 619 000a 50       		.byte	0x50
+ 620 000b 09000000 		.4byte	.LVL1-1
+ 621 000f 3C000000 		.4byte	.LFE64
+ 622 0013 0400     		.2byte	0x4
+ 623 0015 F3       		.byte	0xf3
+ 624 0016 01       		.uleb128 0x1
+ 625 0017 50       		.byte	0x50
+ 626 0018 9F       		.byte	0x9f
+ 627 0019 00000000 		.4byte	0
+ 628 001d 00000000 		.4byte	0
+ 629              	.LLST1:
+ 630 0021 00000000 		.4byte	.LVL0
+ 631 0025 09000000 		.4byte	.LVL1-1
+ 632 0029 0600     		.2byte	0x6
+ 633 002b 52       		.byte	0x52
+ 634 002c 93       		.byte	0x93
+ 635 002d 04       		.uleb128 0x4
+ 636 002e 53       		.byte	0x53
+ 637 002f 93       		.byte	0x93
+ 638 0030 04       		.uleb128 0x4
+ 639 0031 09000000 		.4byte	.LVL1-1
+ 640 0035 3C000000 		.4byte	.LFE64
+ 641 0039 0600     		.2byte	0x6
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 13
+
+
+ 642 003b F3       		.byte	0xf3
+ 643 003c 03       		.uleb128 0x3
+ 644 003d F5       		.byte	0xf5
+ 645 003e 02       		.uleb128 0x2
+ 646 003f 25       		.uleb128 0x25
+ 647 0040 9F       		.byte	0x9f
+ 648 0041 00000000 		.4byte	0
+ 649 0045 00000000 		.4byte	0
+ 650              	.LLST2:
+ 651 0049 00000000 		.4byte	.LVL6
+ 652 004d 0F000000 		.4byte	.LVL8-1
+ 653 0051 0600     		.2byte	0x6
+ 654 0053 50       		.byte	0x50
+ 655 0054 93       		.byte	0x93
+ 656 0055 04       		.uleb128 0x4
+ 657 0056 51       		.byte	0x51
+ 658 0057 93       		.byte	0x93
+ 659 0058 04       		.uleb128 0x4
+ 660 0059 0F000000 		.4byte	.LVL8-1
+ 661 005d 28000000 		.4byte	.LFE65
+ 662 0061 0600     		.2byte	0x6
+ 663 0063 F3       		.byte	0xf3
+ 664 0064 03       		.uleb128 0x3
+ 665 0065 F5       		.byte	0xf5
+ 666 0066 00       		.uleb128 0
+ 667 0067 25       		.uleb128 0x25
+ 668 0068 9F       		.byte	0x9f
+ 669 0069 00000000 		.4byte	0
+ 670 006d 00000000 		.4byte	0
+ 671              	.LLST3:
+ 672 0071 00000000 		.4byte	.LVL6
+ 673 0075 0C000000 		.4byte	.LVL7
+ 674 0079 0600     		.2byte	0x6
+ 675 007b 52       		.byte	0x52
+ 676 007c 93       		.byte	0x93
+ 677 007d 04       		.uleb128 0x4
+ 678 007e 53       		.byte	0x53
+ 679 007f 93       		.byte	0x93
+ 680 0080 04       		.uleb128 0x4
+ 681 0081 0C000000 		.4byte	.LVL7
+ 682 0085 28000000 		.4byte	.LFE65
+ 683 0089 0600     		.2byte	0x6
+ 684 008b F3       		.byte	0xf3
+ 685 008c 03       		.uleb128 0x3
+ 686 008d F5       		.byte	0xf5
+ 687 008e 02       		.uleb128 0x2
+ 688 008f 25       		.uleb128 0x25
+ 689 0090 9F       		.byte	0x9f
+ 690 0091 00000000 		.4byte	0
+ 691 0095 00000000 		.4byte	0
+ 692              	.LLST4:
+ 693 0099 10000000 		.4byte	.LVL8
+ 694 009d 16000000 		.4byte	.LVL9
+ 695 00a1 0600     		.2byte	0x6
+ 696 00a3 50       		.byte	0x50
+ 697 00a4 93       		.byte	0x93
+ 698 00a5 04       		.uleb128 0x4
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 14
+
+
+ 699 00a6 51       		.byte	0x51
+ 700 00a7 93       		.byte	0x93
+ 701 00a8 04       		.uleb128 0x4
+ 702 00a9 00000000 		.4byte	0
+ 703 00ad 00000000 		.4byte	0
+ 704              	.LLST5:
+ 705 00b1 00000000 		.4byte	.LVL11
+ 706 00b5 05000000 		.4byte	.LVL12-1
+ 707 00b9 0100     		.2byte	0x1
+ 708 00bb 50       		.byte	0x50
+ 709 00bc 05000000 		.4byte	.LVL12-1
+ 710 00c0 14000000 		.4byte	.LFE66
+ 711 00c4 0400     		.2byte	0x4
+ 712 00c6 F3       		.byte	0xf3
+ 713 00c7 01       		.uleb128 0x1
+ 714 00c8 50       		.byte	0x50
+ 715 00c9 9F       		.byte	0x9f
+ 716 00ca 00000000 		.4byte	0
+ 717 00ce 00000000 		.4byte	0
+ 718              	.LLST6:
+ 719 00d2 00000000 		.4byte	.LVL14
+ 720 00d6 0B000000 		.4byte	.LVL15-1
+ 721 00da 0600     		.2byte	0x6
+ 722 00dc 50       		.byte	0x50
+ 723 00dd 93       		.byte	0x93
+ 724 00de 04       		.uleb128 0x4
+ 725 00df 51       		.byte	0x51
+ 726 00e0 93       		.byte	0x93
+ 727 00e1 04       		.uleb128 0x4
+ 728 00e2 0B000000 		.4byte	.LVL15-1
+ 729 00e6 2C000000 		.4byte	.LFE67
+ 730 00ea 0600     		.2byte	0x6
+ 731 00ec F3       		.byte	0xf3
+ 732 00ed 03       		.uleb128 0x3
+ 733 00ee F5       		.byte	0xf5
+ 734 00ef 00       		.uleb128 0
+ 735 00f0 25       		.uleb128 0x25
+ 736 00f1 9F       		.byte	0x9f
+ 737 00f2 00000000 		.4byte	0
+ 738 00f6 00000000 		.4byte	0
+ 739              		.section	.debug_aranges,"",%progbits
+ 740 0000 34000000 		.4byte	0x34
+ 741 0004 0200     		.2byte	0x2
+ 742 0006 00000000 		.4byte	.Ldebug_info0
+ 743 000a 04       		.byte	0x4
+ 744 000b 00       		.byte	0
+ 745 000c 0000     		.2byte	0
+ 746 000e 0000     		.2byte	0
+ 747 0010 00000000 		.4byte	.LFB64
+ 748 0014 3C000000 		.4byte	.LFE64-.LFB64
+ 749 0018 00000000 		.4byte	.LFB65
+ 750 001c 28000000 		.4byte	.LFE65-.LFB65
+ 751 0020 00000000 		.4byte	.LFB66
+ 752 0024 14000000 		.4byte	.LFE66-.LFB66
+ 753 0028 00000000 		.4byte	.LFB67
+ 754 002c 2C000000 		.4byte	.LFE67-.LFB67
+ 755 0030 00000000 		.4byte	0
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 15
+
+
+ 756 0034 00000000 		.4byte	0
+ 757              		.section	.debug_ranges,"",%progbits
+ 758              	.Ldebug_ranges0:
+ 759 0000 00000000 		.4byte	.LFB64
+ 760 0004 3C000000 		.4byte	.LFE64
+ 761 0008 00000000 		.4byte	.LFB65
+ 762 000c 28000000 		.4byte	.LFE65
+ 763 0010 00000000 		.4byte	.LFB66
+ 764 0014 14000000 		.4byte	.LFE66
+ 765 0018 00000000 		.4byte	.LFB67
+ 766 001c 2C000000 		.4byte	.LFE67
+ 767 0020 00000000 		.4byte	0
+ 768 0024 00000000 		.4byte	0
+ 769              		.section	.debug_line,"",%progbits
+ 770              	.Ldebug_line0:
+ 771 0000 9E010000 		.section	.debug_str,"MS",%progbits,1
+ 771      02005201 
+ 771      00000201 
+ 771      FB0E0D00 
+ 771      01010101 
+ 772              	.LASF28:
+ 773 0000 72616469 		.ascii	"radius\000"
+ 773      757300
+ 774              	.LASF26:
+ 775 0007 77686565 		.ascii	"wheelRadiusInMeters\000"
+ 775      6C526164 
+ 775      69757349 
+ 775      6E4D6574 
+ 775      65727300 
+ 776              	.LASF10:
+ 777 001b 5F5F696E 		.ascii	"__int32_t\000"
+ 777      7433325F 
+ 777      7400
+ 778              	.LASF18:
+ 779 0025 63616C63 		.ascii	"calcDistance\000"
+ 779      44697374 
+ 779      616E6365 
+ 779      00
+ 780              	.LASF11:
+ 781 0032 696E7433 		.ascii	"int32_t\000"
+ 781      325F7400 
+ 782              	.LASF13:
+ 783 003a 666C6F61 		.ascii	"float\000"
+ 783      7400
+ 784              	.LASF2:
+ 785 0040 756E7369 		.ascii	"unsigned char\000"
+ 785      676E6564 
+ 785      20636861 
+ 785      7200
+ 786              	.LASF30:
+ 787 004e 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 787      43313120 
+ 787      352E342E 
+ 787      31203230 
+ 787      31363036 
+ 788 0081 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 788      20726576 
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 16
+
+
+ 788      6973696F 
+ 788      6E203233 
+ 788      37373135 
+ 789 00b4 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 789      66756E63 
+ 789      74696F6E 
+ 789      2D736563 
+ 789      74696F6E 
+ 790              	.LASF25:
+ 791 00dc 75736572 		.ascii	"userInputInCentimeters\000"
+ 791      496E7075 
+ 791      74496E43 
+ 791      656E7469 
+ 791      6D657465 
+ 792              	.LASF6:
+ 793 00f3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 793      20756E73 
+ 793      69676E65 
+ 793      6420696E 
+ 793      7400
+ 794              	.LASF4:
+ 795 0105 73686F72 		.ascii	"short unsigned int\000"
+ 795      7420756E 
+ 795      7369676E 
+ 795      65642069 
+ 795      6E7400
+ 796              	.LASF27:
+ 797 0118 63616C63 		.ascii	"calcWheelCirc\000"
+ 797      57686565 
+ 797      6C436972 
+ 797      6300
+ 798              	.LASF0:
+ 799 0126 646F7562 		.ascii	"double\000"
+ 799      6C6500
+ 800              	.LASF32:
+ 801 012d 5A3A5C49 		.ascii	"Z:\\IKT\\3_semester\\prj3\\spi_slave_v5\\sensor_rea"
+ 801      4B545C33 
+ 801      5F73656D 
+ 801      65737465 
+ 801      725C7072 
+ 802 015b 64696E67 		.ascii	"ding_unit\\spi_slave.cydsn\000"
+ 802      5F756E69 
+ 802      745C7370 
+ 802      695F736C 
+ 802      6176652E 
+ 803              	.LASF17:
+ 804 0175 77686565 		.ascii	"wheelSize\000"
+ 804      6C53697A 
+ 804      6500
+ 805              	.LASF33:
+ 806 017f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 806      52784275 
+ 806      66666572 
+ 806      00
+ 807              	.LASF9:
+ 808 018c 756E7369 		.ascii	"unsigned int\000"
+ 808      676E6564 
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 17
+
+
+ 808      20696E74 
+ 808      00
+ 809              	.LASF8:
+ 810 0199 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 810      206C6F6E 
+ 810      6720756E 
+ 810      7369676E 
+ 810      65642069 
+ 811              	.LASF22:
+ 812 01b0 74696D65 		.ascii	"time_temp\000"
+ 812      5F74656D 
+ 812      7000
+ 813              	.LASF21:
+ 814 01ba 64697374 		.ascii	"dist\000"
+ 814      00
+ 815              	.LASF23:
+ 816 01bf 73706565 		.ascii	"speed\000"
+ 816      6400
+ 817              	.LASF19:
+ 818 01c5 63616C63 		.ascii	"calcSpeed\000"
+ 818      53706565 
+ 818      6400
+ 819              	.LASF16:
+ 820 01cf 73697A65 		.ascii	"sizetype\000"
+ 820      74797065 
+ 820      00
+ 821              	.LASF7:
+ 822 01d8 6C6F6E67 		.ascii	"long long int\000"
+ 822      206C6F6E 
+ 822      6720696E 
+ 822      7400
+ 823              	.LASF14:
+ 824 01e6 63686172 		.ascii	"char\000"
+ 824      00
+ 825              	.LASF3:
+ 826 01eb 73686F72 		.ascii	"short int\000"
+ 826      7420696E 
+ 826      7400
+ 827              	.LASF12:
+ 828 01f5 75696E74 		.ascii	"uint8\000"
+ 828      3800
+ 829              	.LASF5:
+ 830 01fb 6C6F6E67 		.ascii	"long int\000"
+ 830      20696E74 
+ 830      00
+ 831              	.LASF24:
+ 832 0204 57686565 		.ascii	"WheelRadiusToMetres\000"
+ 832      6C526164 
+ 832      69757354 
+ 832      6F4D6574 
+ 832      72657300 
+ 833              	.LASF29:
+ 834 0218 77686565 		.ascii	"wheelCirc\000"
+ 834      6C436972 
+ 834      6300
+ 835              	.LASF15:
+ 836 0222 6C6F6E67 		.ascii	"long double\000"
+ARM GAS  C:\Users\KRISTI~1\AppData\Local\Temp\cc6twe0z.s 			page 18
+
+
+ 836      20646F75 
+ 836      626C6500 
+ 837              	.LASF1:
+ 838 022e 7369676E 		.ascii	"signed char\000"
+ 838      65642063 
+ 838      68617200 
+ 839              	.LASF31:
+ 840 023a 73656E73 		.ascii	"sensorCalc.c\000"
+ 840      6F724361 
+ 840      6C632E63 
+ 840      00
+ 841              	.LASF20:
+ 842 0247 74696D65 		.ascii	"time_ms\000"
+ 842      5F6D7300 
+ 843              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

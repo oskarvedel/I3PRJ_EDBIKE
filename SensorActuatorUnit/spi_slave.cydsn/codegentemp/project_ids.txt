@@ -1,0 +1,6 @@
+C:\Users\sebbe\Desktop\spi_slave_v15\sensor_reading_unit\spi_slave.cydsn\spi_slave.cyprj|5d1f0530-30db-4892-a381-9596b68e30c5
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|2668ff0e-080a-4b98-92c5-958c7777d24b
+C:\Users\sebbe\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|7d85409c-1255-43a7-b237-e4601d066e21
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|733b045e-b871-4619-9747-b39dcf1fbdd7
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|457e3c86-3964-4678-88fe-3bcf5c2f9304
+C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|dfc3ec74-bc81-4816-861a-78c484647a7d

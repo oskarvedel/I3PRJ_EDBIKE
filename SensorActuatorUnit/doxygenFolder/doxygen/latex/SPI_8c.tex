@@ -1,0 +1,95 @@
+\hypertarget{SPI_8c}{}\section{S\+P\+I.\+c File Reference}
+\label{SPI_8c}\index{S\+P\+I.\+c@{S\+P\+I.\+c}}
+
+
+funktions implementeringer til S\+PI kommunikation  
+
+
+{\ttfamily \#include \char`\"{}S\+P\+I.\+h\char`\"{}}\newline
+Include dependency graph for S\+P\+I.\+c\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{SPI_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{SPI_8c_a070402cc6c1cae693d10f59f9c483f76}\label{SPI_8c_a070402cc6c1cae693d10f59f9c483f76}} 
+void \hyperlink{SPI_8c_a070402cc6c1cae693d10f59f9c483f76}{init\+S\+PI} ()
+\begin{DoxyCompactList}\small\item\em Init funktion til låsen. Initiere interrupt rutinerne som er forbundet med S\+PI, og tømmer F\+I\+FO\textquotesingle{}en og starter S\+PI komponenten. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{SPI_8c_aa7447a8d9d037be043d4ac67d91b099c}\label{SPI_8c_aa7447a8d9d037be043d4ac67d91b099c}} 
+void \hyperlink{SPI_8c_aa7447a8d9d037be043d4ac67d91b099c}{terminate\+S\+PI} ()
+\begin{DoxyCompactList}\small\item\em Stop funktion til S\+PI komponenten. Slukker S\+PI Komponenten. \end{DoxyCompactList}\item 
+void \hyperlink{SPI_8c_abac47ea38c38eb86456d9d41752778bb}{receive\+S\+PI} (uint8 $\ast$rx\+Buffer)
+\begin{DoxyCompactList}\small\item\em Funktion til modtagelse af information fra S\+P\+I-\/\+Master. Læser fra rx bufferen. \end{DoxyCompactList}\item 
+void \hyperlink{SPI_8c_a5d180e90614c451cdd2cfe65c6875963}{load\+To\+Specific\+Tx\+Buffer\+Index} (uint8 $\ast$tx\+Buffer, uint8 index, uint8 data)
+\begin{DoxyCompactList}\small\item\em Funktion til indlæsning af information til tx S\+P\+I-\/masteren Indlæser information til tx bufferen. \end{DoxyCompactList}\item 
+void \hyperlink{SPI_8c_af3ae4b62f31497bf152aa1008a266d75}{transfer\+Is\+Ready} (uint8 $\ast$tx\+Buffer)
+\begin{DoxyCompactList}\small\item\em Funktion der sørger for at lægge data klar i S\+P\+I-\/enhedens F\+I\+F\+O-\/kø Når \hyperlink{SPI_8h_af3ae4b62f31497bf152aa1008a266d75}{transfer\+Is\+Ready()} kaldes med variablen tx\+Buffer som parameter, laves 5 kopier af indholdet i tx\+Buffer, hvilke placeres i den 6 gange så lange buffer tx\+Clone\+Buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+funktions implementeringer til S\+PI kommunikation 
+
+Indeholder implementeringer af funktionerne fra \hyperlink{SPI_8h}{S\+P\+I.\+h}
+
+\begin{DoxyAuthor}{Author}
+Kristian Lau Jespersen 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000006}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{SPI_8c_a5d180e90614c451cdd2cfe65c6875963}\label{SPI_8c_a5d180e90614c451cdd2cfe65c6875963}} 
+\index{S\+P\+I.\+c@{S\+P\+I.\+c}!load\+To\+Specific\+Tx\+Buffer\+Index@{load\+To\+Specific\+Tx\+Buffer\+Index}}
+\index{load\+To\+Specific\+Tx\+Buffer\+Index@{load\+To\+Specific\+Tx\+Buffer\+Index}!S\+P\+I.\+c@{S\+P\+I.\+c}}
+\subsubsection{\texorpdfstring{load\+To\+Specific\+Tx\+Buffer\+Index()}{loadToSpecificTxBufferIndex()}}
+{\footnotesize\ttfamily void load\+To\+Specific\+Tx\+Buffer\+Index (\begin{DoxyParamCaption}\item[{uint8 $\ast$}]{tx\+Buffer,  }\item[{uint8}]{index,  }\item[{uint8}]{data }\end{DoxyParamCaption})}
+
+
+
+Funktion til indlæsning af information til tx S\+P\+I-\/masteren Indlæser information til tx bufferen. 
+
+tx\+Buffer bufferen hvor informationen som S\+PI slaven skal sende til S\+PI Masteren bliver lagt.
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & de index informationen skal indsættes i.\\
+\hline
+{\em data} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{SPI_8c_abac47ea38c38eb86456d9d41752778bb}\label{SPI_8c_abac47ea38c38eb86456d9d41752778bb}} 
+\index{S\+P\+I.\+c@{S\+P\+I.\+c}!receive\+S\+PI@{receive\+S\+PI}}
+\index{receive\+S\+PI@{receive\+S\+PI}!S\+P\+I.\+c@{S\+P\+I.\+c}}
+\subsubsection{\texorpdfstring{receive\+S\+P\+I()}{receiveSPI()}}
+{\footnotesize\ttfamily void receive\+S\+PI (\begin{DoxyParamCaption}\item[{uint8 $\ast$}]{rx\+Buffer }\end{DoxyParamCaption})}
+
+
+
+Funktion til modtagelse af information fra S\+P\+I-\/\+Master. Læser fra rx bufferen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rx\+Buffer} & bufferen hvori informationen som S\+PI masteren har sendt ligger. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{SPI_8c_af3ae4b62f31497bf152aa1008a266d75}\label{SPI_8c_af3ae4b62f31497bf152aa1008a266d75}} 
+\index{S\+P\+I.\+c@{S\+P\+I.\+c}!transfer\+Is\+Ready@{transfer\+Is\+Ready}}
+\index{transfer\+Is\+Ready@{transfer\+Is\+Ready}!S\+P\+I.\+c@{S\+P\+I.\+c}}
+\subsubsection{\texorpdfstring{transfer\+Is\+Ready()}{transferIsReady()}}
+{\footnotesize\ttfamily void transfer\+Is\+Ready (\begin{DoxyParamCaption}\item[{uint8 $\ast$}]{tx\+Buffer }\end{DoxyParamCaption})}
+
+
+
+Funktion der sørger for at lægge data klar i S\+P\+I-\/enhedens F\+I\+F\+O-\/kø Når \hyperlink{SPI_8h_af3ae4b62f31497bf152aa1008a266d75}{transfer\+Is\+Ready()} kaldes med variablen tx\+Buffer som parameter, laves 5 kopier af indholdet i tx\+Buffer, hvilke placeres i den 6 gange så lange buffer tx\+Clone\+Buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tx\+Buffer} & bufferen hvor informationen som S\+PI slaven skal sende til S\+PI Masteren bliver lagt. \\
+\hline
+\end{DoxyParams}

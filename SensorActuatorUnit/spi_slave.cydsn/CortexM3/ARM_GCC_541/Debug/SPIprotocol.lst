@@ -1,0 +1,1349 @@
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SPIprotocol.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.extractFromBuffer,"ax",%progbits
+  20              		.align	2
+  21              		.global	extractFromBuffer
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	extractFromBuffer, %function
+  25              	extractFromBuffer:
+  26              	.LFB63:
+  27              		.file 1 "SPIprotocol.c"
+   1:SPIprotocol.c **** /* ========================================
+   2:SPIprotocol.c ****  *
+   3:SPIprotocol.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:SPIprotocol.c ****  * All Rights Reserved
+   5:SPIprotocol.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:SPIprotocol.c ****  *
+   7:SPIprotocol.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:SPIprotocol.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:SPIprotocol.c ****  *
+  10:SPIprotocol.c ****  * ========================================
+  11:SPIprotocol.c **** */
+  12:SPIprotocol.c **** #include "SPIprotocol.h"
+  13:SPIprotocol.c **** 
+  14:SPIprotocol.c **** void extractFromBuffer(uint8_t* speed, uint8_t* distance, uint8_t* buffer)
+  15:SPIprotocol.c **** {
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33              	.LVL0:
+  16:SPIprotocol.c ****     *speed=buffer[SPEED_INDEX];
+  34              		.loc 1 16 0
+  35 0000 5378     		ldrb	r3, [r2, #1]	@ zero_extendqisi2
+  36 0002 0370     		strb	r3, [r0]
+  17:SPIprotocol.c ****     *distance=buffer[DISTANCE_INDEX];
+  37              		.loc 1 17 0
+  38 0004 9378     		ldrb	r3, [r2, #2]	@ zero_extendqisi2
+  39 0006 0B70     		strb	r3, [r1]
+  40 0008 7047     		bx	lr
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 2
+
+
+  41              		.cfi_endproc
+  42              	.LFE63:
+  43              		.size	extractFromBuffer, .-extractFromBuffer
+  44 000a 00BF     		.section	.text.errorCheckWithOddParity,"ax",%progbits
+  45              		.align	2
+  46              		.global	errorCheckWithOddParity
+  47              		.thumb
+  48              		.thumb_func
+  49              		.type	errorCheckWithOddParity, %function
+  50              	errorCheckWithOddParity:
+  51              	.LFB64:
+  18:SPIprotocol.c **** }
+  19:SPIprotocol.c **** 
+  20:SPIprotocol.c **** 
+  21:SPIprotocol.c **** uint8_t errorCheckWithOddParity(uint8_t* buffer, uint8_t lengthOfBuffer)
+  22:SPIprotocol.c **** {
+  52              		.loc 1 22 0
+  53              		.cfi_startproc
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56              		@ link register save eliminated.
+  57              	.LVL1:
+  58 0000 70B4     		push	{r4, r5, r6}
+  59              		.cfi_def_cfa_offset 12
+  60              		.cfi_offset 4, -12
+  61              		.cfi_offset 5, -8
+  62              		.cfi_offset 6, -4
+  23:SPIprotocol.c ****     uint8_t parityBitsReceived = buffer[ERROR_CHECK_INDEX];
+  63              		.loc 1 23 0
+  64 0002 C678     		ldrb	r6, [r0, #3]	@ zero_extendqisi2
+  65              	.LVL2:
+  66              	.LBB2:
+  24:SPIprotocol.c **** 
+  25:SPIprotocol.c ****     for (uint8_t i = 0; i < (lengthOfBuffer-1); i++)
+  67              		.loc 1 25 0
+  68 0004 0024     		movs	r4, #0
+  69 0006 1EE0     		b	.L3
+  70              	.LVL3:
+  71              	.L10:
+  72              	.LBB3:
+  26:SPIprotocol.c ****     {
+  27:SPIprotocol.c ****         uint8_t numberOfOnes=0;
+  28:SPIprotocol.c ****         uint8_t byteToBeChecked = buffer[i];
+  73              		.loc 1 28 0
+  74 0008 035D     		ldrb	r3, [r0, r4]	@ zero_extendqisi2
+  75              	.LVL4:
+  27:SPIprotocol.c ****         uint8_t byteToBeChecked = buffer[i];
+  76              		.loc 1 27 0
+  77 000a 0022     		movs	r2, #0
+  29:SPIprotocol.c ****         uint8_t checkedByteHasOddNumberOfOnes = 0;
+  30:SPIprotocol.c ****         uint8_t parityBitReceivedFromSender = 0;
+  31:SPIprotocol.c **** 
+  32:SPIprotocol.c ****         while(byteToBeChecked>0)
+  78              		.loc 1 32 0
+  79 000c 05E0     		b	.L4
+  80              	.LVL5:
+  81              	.L6:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 3
+
+
+  33:SPIprotocol.c ****         {
+  34:SPIprotocol.c ****             if(byteToBeChecked & 0b00000001)
+  82              		.loc 1 34 0
+  83 000e 13F0010F 		tst	r3, #1
+  84 0012 01D0     		beq	.L5
+  35:SPIprotocol.c ****             {
+  36:SPIprotocol.c ****                 numberOfOnes++;
+  85              		.loc 1 36 0
+  86 0014 0132     		adds	r2, r2, #1
+  87              	.LVL6:
+  88 0016 D2B2     		uxtb	r2, r2
+  89              	.LVL7:
+  90              	.L5:
+  37:SPIprotocol.c ****             }
+  38:SPIprotocol.c ****             byteToBeChecked = byteToBeChecked>>1;
+  91              		.loc 1 38 0
+  92 0018 5B08     		lsrs	r3, r3, #1
+  93              	.LVL8:
+  94              	.L4:
+  32:SPIprotocol.c ****         {
+  95              		.loc 1 32 0
+  96 001a 002B     		cmp	r3, #0
+  97 001c F7D1     		bne	.L6
+  39:SPIprotocol.c ****         }
+  40:SPIprotocol.c **** 
+  41:SPIprotocol.c ****         if (numberOfOnes & 0b00000001)
+  98              		.loc 1 41 0
+  99 001e 12F0010F 		tst	r2, #1
+ 100 0022 01D1     		bne	.L11
+  29:SPIprotocol.c ****         uint8_t parityBitReceivedFromSender = 0;
+ 101              		.loc 1 29 0
+ 102 0024 0022     		movs	r2, #0
+ 103              	.LVL9:
+ 104 0026 00E0     		b	.L7
+ 105              	.LVL10:
+ 106              	.L11:
+  42:SPIprotocol.c ****         {
+  43:SPIprotocol.c ****             checkedByteHasOddNumberOfOnes = 1;
+ 107              		.loc 1 43 0
+ 108 0028 0122     		movs	r2, #1
+ 109              	.LVL11:
+ 110              	.L7:
+  44:SPIprotocol.c ****         }
+  45:SPIprotocol.c **** 
+  46:SPIprotocol.c ****         //Extraction of parity bit from byte of parity bits.
+  47:SPIprotocol.c ****         if ((parityBitsReceived & (1<<(7-i))))
+ 111              		.loc 1 47 0
+ 112 002a C5F10705 		rsb	r5, r5, #7
+ 113 002e 46FA05F5 		asr	r5, r6, r5
+ 114 0032 15F0010F 		tst	r5, #1
+ 115 0036 01D1     		bne	.L12
+  30:SPIprotocol.c **** 
+ 116              		.loc 1 30 0
+ 117 0038 0023     		movs	r3, #0
+ 118              	.LVL12:
+ 119 003a 00E0     		b	.L8
+ 120              	.LVL13:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 4
+
+
+ 121              	.L12:
+  48:SPIprotocol.c ****         {
+  49:SPIprotocol.c ****             parityBitReceivedFromSender = 1;
+ 122              		.loc 1 49 0
+ 123 003c 0123     		movs	r3, #1
+ 124              	.LVL14:
+ 125              	.L8:
+  50:SPIprotocol.c ****         }
+  51:SPIprotocol.c ****         
+  52:SPIprotocol.c ****         //if checked byte has odd number of ones, the corresponding parity bit is expected to be ze
+  53:SPIprotocol.c ****         if (checkedByteHasOddNumberOfOnes == parityBitReceivedFromSender)
+ 126              		.loc 1 53 0
+ 127 003e 9A42     		cmp	r2, r3
+ 128 0040 07D0     		beq	.L13
+ 129              	.LBE3:
+  25:SPIprotocol.c ****     {
+ 130              		.loc 1 25 0 discriminator 2
+ 131 0042 0134     		adds	r4, r4, #1
+ 132              	.LVL15:
+ 133 0044 E4B2     		uxtb	r4, r4
+ 134              	.LVL16:
+ 135              	.L3:
+  25:SPIprotocol.c ****     {
+ 136              		.loc 1 25 0 is_stmt 0 discriminator 1
+ 137 0046 2546     		mov	r5, r4
+ 138 0048 4B1E     		subs	r3, r1, #1
+ 139 004a 9C42     		cmp	r4, r3
+ 140 004c DCDB     		blt	.L10
+ 141              	.LBE2:
+  54:SPIprotocol.c ****         {
+  55:SPIprotocol.c ****             return 0;
+  56:SPIprotocol.c ****         }
+  57:SPIprotocol.c ****     }
+  58:SPIprotocol.c ****     return 1;
+ 142              		.loc 1 58 0 is_stmt 1
+ 143 004e 0120     		movs	r0, #1
+ 144              	.LVL17:
+ 145              	.LBB5:
+ 146 0050 00E0     		b	.L9
+ 147              	.LVL18:
+ 148              	.L13:
+ 149              	.LBB4:
+  55:SPIprotocol.c ****         }
+ 150              		.loc 1 55 0
+ 151 0052 0020     		movs	r0, #0
+ 152              	.LVL19:
+ 153              	.L9:
+ 154              	.LBE4:
+ 155              	.LBE5:
+  59:SPIprotocol.c **** }
+ 156              		.loc 1 59 0
+ 157 0054 70BC     		pop	{r4, r5, r6}
+ 158              		.cfi_restore 6
+ 159              		.cfi_restore 5
+ 160              		.cfi_restore 4
+ 161              		.cfi_def_cfa_offset 0
+ 162              	.LVL20:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 5
+
+
+ 163 0056 7047     		bx	lr
+ 164              		.cfi_endproc
+ 165              	.LFE64:
+ 166              		.size	errorCheckWithOddParity, .-errorCheckWithOddParity
+ 167              		.section	.text.createParityBits,"ax",%progbits
+ 168              		.align	2
+ 169              		.global	createParityBits
+ 170              		.thumb
+ 171              		.thumb_func
+ 172              		.type	createParityBits, %function
+ 173              	createParityBits:
+ 174              	.LFB65:
+  60:SPIprotocol.c **** 
+  61:SPIprotocol.c **** void createParityBits(uint8_t* buffer, uint8_t lengthOfBuffer)
+  62:SPIprotocol.c **** {
+ 175              		.loc 1 62 0
+ 176              		.cfi_startproc
+ 177              		@ args = 0, pretend = 0, frame = 0
+ 178              		@ frame_needed = 0, uses_anonymous_args = 0
+ 179              		@ link register save eliminated.
+ 180              	.LVL21:
+ 181 0000 70B4     		push	{r4, r5, r6}
+ 182              		.cfi_def_cfa_offset 12
+ 183              		.cfi_offset 4, -12
+ 184              		.cfi_offset 5, -8
+ 185              		.cfi_offset 6, -4
+ 186              	.LVL22:
+ 187              	.LBB6:
+  63:SPIprotocol.c ****     for (uint8_t i = 0; i < (lengthOfBuffer-1); i++)
+ 188              		.loc 1 63 0
+ 189 0002 0024     		movs	r4, #0
+ 190 0004 17E0     		b	.L16
+ 191              	.LVL23:
+ 192              	.L21:
+ 193              	.LBB7:
+  64:SPIprotocol.c ****     {
+  65:SPIprotocol.c **** 
+  66:SPIprotocol.c ****         uint8_t numberOfOnes=0;
+  67:SPIprotocol.c ****         uint8_t byteToBeChecked = buffer[i];
+ 194              		.loc 1 67 0
+ 195 0006 035D     		ldrb	r3, [r0, r4]	@ zero_extendqisi2
+ 196              	.LVL24:
+  66:SPIprotocol.c ****         uint8_t byteToBeChecked = buffer[i];
+ 197              		.loc 1 66 0
+ 198 0008 0022     		movs	r2, #0
+  68:SPIprotocol.c ****         
+  69:SPIprotocol.c **** 
+  70:SPIprotocol.c ****          while(byteToBeChecked>0)
+ 199              		.loc 1 70 0
+ 200 000a 05E0     		b	.L17
+ 201              	.LVL25:
+ 202              	.L19:
+  71:SPIprotocol.c ****         {
+  72:SPIprotocol.c ****             if(byteToBeChecked & 0b00000001)
+ 203              		.loc 1 72 0
+ 204 000c 13F0010F 		tst	r3, #1
+ 205 0010 01D0     		beq	.L18
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 6
+
+
+  73:SPIprotocol.c ****             {
+  74:SPIprotocol.c ****                 numberOfOnes++;
+ 206              		.loc 1 74 0
+ 207 0012 0132     		adds	r2, r2, #1
+ 208              	.LVL26:
+ 209 0014 D2B2     		uxtb	r2, r2
+ 210              	.LVL27:
+ 211              	.L18:
+  75:SPIprotocol.c ****             }
+  76:SPIprotocol.c ****             byteToBeChecked = byteToBeChecked>>1;
+ 212              		.loc 1 76 0
+ 213 0016 5B08     		lsrs	r3, r3, #1
+ 214              	.LVL28:
+ 215              	.L17:
+  70:SPIprotocol.c ****         {
+ 216              		.loc 1 70 0
+ 217 0018 002B     		cmp	r3, #0
+ 218 001a F7D1     		bne	.L19
+  77:SPIprotocol.c ****         }
+  78:SPIprotocol.c **** 
+  79:SPIprotocol.c ****         //If number of ones in checked byte isn't odd, the corresponding parity bit is set to 1.
+  80:SPIprotocol.c ****         if (!(numberOfOnes & 0b00000001))
+ 219              		.loc 1 80 0
+ 220 001c 12F0010F 		tst	r2, #1
+ 221 0020 07D1     		bne	.L20
+  81:SPIprotocol.c ****         {
+  82:SPIprotocol.c ****             buffer[ERROR_CHECK_INDEX]=(buffer[ERROR_CHECK_INDEX] | (1<<(7-i)));
+ 222              		.loc 1 82 0
+ 223 0022 C678     		ldrb	r6, [r0, #3]	@ zero_extendqisi2
+ 224 0024 C5F10703 		rsb	r3, r5, #7
+ 225              	.LVL29:
+ 226 0028 0122     		movs	r2, #1
+ 227              	.LVL30:
+ 228 002a 02FA03F3 		lsl	r3, r2, r3
+ 229 002e 3343     		orrs	r3, r3, r6
+ 230 0030 C370     		strb	r3, [r0, #3]
+ 231              	.L20:
+ 232              	.LBE7:
+  63:SPIprotocol.c ****     {
+ 233              		.loc 1 63 0 discriminator 2
+ 234 0032 0134     		adds	r4, r4, #1
+ 235              	.LVL31:
+ 236 0034 E4B2     		uxtb	r4, r4
+ 237              	.LVL32:
+ 238              	.L16:
+  63:SPIprotocol.c ****     {
+ 239              		.loc 1 63 0 is_stmt 0 discriminator 1
+ 240 0036 2546     		mov	r5, r4
+ 241 0038 4B1E     		subs	r3, r1, #1
+ 242 003a 9C42     		cmp	r4, r3
+ 243 003c E3DB     		blt	.L21
+ 244              	.LBE6:
+  83:SPIprotocol.c ****         }
+  84:SPIprotocol.c ****     }
+  85:SPIprotocol.c **** }
+ 245              		.loc 1 85 0 is_stmt 1
+ 246 003e 70BC     		pop	{r4, r5, r6}
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 7
+
+
+ 247              		.cfi_restore 6
+ 248              		.cfi_restore 5
+ 249              		.cfi_restore 4
+ 250              		.cfi_def_cfa_offset 0
+ 251              	.LVL33:
+ 252 0040 7047     		bx	lr
+ 253              		.cfi_endproc
+ 254              	.LFE65:
+ 255              		.size	createParityBits, .-createParityBits
+ 256 0042 00BF     		.text
+ 257              	.Letext0:
+ 258              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 259              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 260              		.file 4 "SPIprotocol.h"
+ 261              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 262              		.section	.debug_info,"",%progbits
+ 263              	.Ldebug_info0:
+ 264 0000 3D020000 		.4byte	0x23d
+ 265 0004 0400     		.2byte	0x4
+ 266 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 267 000a 04       		.byte	0x4
+ 268 000b 01       		.uleb128 0x1
+ 269 000c A0000000 		.4byte	.LASF33
+ 270 0010 0C       		.byte	0xc
+ 271 0011 32020000 		.4byte	.LASF34
+ 272 0015 78020000 		.4byte	.LASF35
+ 273 0019 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 274 001d 00000000 		.4byte	0
+ 275 0021 00000000 		.4byte	.Ldebug_line0
+ 276 0025 02       		.uleb128 0x2
+ 277 0026 01       		.byte	0x1
+ 278 0027 06       		.byte	0x6
+ 279 0028 CD020000 		.4byte	.LASF0
+ 280 002c 03       		.uleb128 0x3
+ 281 002d 00000000 		.4byte	.LASF4
+ 282 0031 02       		.byte	0x2
+ 283 0032 1D       		.byte	0x1d
+ 284 0033 37000000 		.4byte	0x37
+ 285 0037 02       		.uleb128 0x2
+ 286 0038 01       		.byte	0x1
+ 287 0039 08       		.byte	0x8
+ 288 003a 92000000 		.4byte	.LASF1
+ 289 003e 02       		.uleb128 0x2
+ 290 003f 02       		.byte	0x2
+ 291 0040 05       		.byte	0x5
+ 292 0041 5E020000 		.4byte	.LASF2
+ 293 0045 02       		.uleb128 0x2
+ 294 0046 02       		.byte	0x2
+ 295 0047 07       		.byte	0x7
+ 296 0048 40010000 		.4byte	.LASF3
+ 297 004c 03       		.uleb128 0x3
+ 298 004d 24000000 		.4byte	.LASF5
+ 299 0051 02       		.byte	0x2
+ 300 0052 3F       		.byte	0x3f
+ 301 0053 57000000 		.4byte	0x57
+ 302 0057 02       		.uleb128 0x2
+ 303 0058 04       		.byte	0x4
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 8
+
+
+ 304 0059 05       		.byte	0x5
+ 305 005a 6F020000 		.4byte	.LASF6
+ 306 005e 02       		.uleb128 0x2
+ 307 005f 04       		.byte	0x4
+ 308 0060 07       		.byte	0x7
+ 309 0061 2E010000 		.4byte	.LASF7
+ 310 0065 02       		.uleb128 0x2
+ 311 0066 08       		.byte	0x8
+ 312 0067 05       		.byte	0x5
+ 313 0068 1F020000 		.4byte	.LASF8
+ 314 006c 02       		.uleb128 0x2
+ 315 006d 08       		.byte	0x8
+ 316 006e 07       		.byte	0x7
+ 317 006f DF010000 		.4byte	.LASF9
+ 318 0073 04       		.uleb128 0x4
+ 319 0074 04       		.byte	0x4
+ 320 0075 05       		.byte	0x5
+ 321 0076 696E7400 		.ascii	"int\000"
+ 322 007a 02       		.uleb128 0x2
+ 323 007b 04       		.byte	0x4
+ 324 007c 07       		.byte	0x7
+ 325 007d B4010000 		.4byte	.LASF10
+ 326 0081 03       		.uleb128 0x3
+ 327 0082 F6010000 		.4byte	.LASF11
+ 328 0086 03       		.byte	0x3
+ 329 0087 18       		.byte	0x18
+ 330 0088 2C000000 		.4byte	0x2c
+ 331 008c 03       		.uleb128 0x3
+ 332 008d 63000000 		.4byte	.LASF12
+ 333 0091 03       		.byte	0x3
+ 334 0092 2C       		.byte	0x2c
+ 335 0093 4C000000 		.4byte	0x4c
+ 336 0097 02       		.uleb128 0x2
+ 337 0098 04       		.byte	0x4
+ 338 0099 04       		.byte	0x4
+ 339 009a 74000000 		.4byte	.LASF13
+ 340 009e 02       		.uleb128 0x2
+ 341 009f 08       		.byte	0x8
+ 342 00a0 04       		.byte	0x4
+ 343 00a1 8D010000 		.4byte	.LASF14
+ 344 00a5 02       		.uleb128 0x2
+ 345 00a6 01       		.byte	0x1
+ 346 00a7 08       		.byte	0x8
+ 347 00a8 2D020000 		.4byte	.LASF15
+ 348 00ac 02       		.uleb128 0x2
+ 349 00ad 08       		.byte	0x8
+ 350 00ae 04       		.byte	0x4
+ 351 00af C1020000 		.4byte	.LASF16
+ 352 00b3 02       		.uleb128 0x2
+ 353 00b4 04       		.byte	0x4
+ 354 00b5 07       		.byte	0x7
+ 355 00b6 16020000 		.4byte	.LASF17
+ 356 00ba 05       		.uleb128 0x5
+ 357 00bb 0A000000 		.4byte	.LASF36
+ 358 00bf 01       		.byte	0x1
+ 359 00c0 37000000 		.4byte	0x37
+ 360 00c4 04       		.byte	0x4
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 9
+
+
+ 361 00c5 18       		.byte	0x18
+ 362 00c6 E3000000 		.4byte	0xe3
+ 363 00ca 06       		.uleb128 0x6
+ 364 00cb 3E000000 		.4byte	.LASF18
+ 365 00cf 00       		.byte	0
+ 366 00d0 06       		.uleb128 0x6
+ 367 00d1 81010000 		.4byte	.LASF19
+ 368 00d5 01       		.byte	0x1
+ 369 00d6 06       		.uleb128 0x6
+ 370 00d7 D9020000 		.4byte	.LASF20
+ 371 00db 02       		.byte	0x2
+ 372 00dc 06       		.uleb128 0x6
+ 373 00dd FE010000 		.4byte	.LASF21
+ 374 00e1 03       		.byte	0x3
+ 375 00e2 00       		.byte	0
+ 376 00e3 07       		.uleb128 0x7
+ 377 00e4 53010000 		.4byte	.LASF31
+ 378 00e8 01       		.byte	0x1
+ 379 00e9 0E       		.byte	0xe
+ 380 00ea 00000000 		.4byte	.LFB63
+ 381 00ee 0A000000 		.4byte	.LFE63-.LFB63
+ 382 00f2 01       		.uleb128 0x1
+ 383 00f3 9C       		.byte	0x9c
+ 384 00f4 20010000 		.4byte	0x120
+ 385 00f8 08       		.uleb128 0x8
+ 386 00f9 10020000 		.4byte	.LASF22
+ 387 00fd 01       		.byte	0x1
+ 388 00fe 0E       		.byte	0xe
+ 389 00ff 20010000 		.4byte	0x120
+ 390 0103 01       		.uleb128 0x1
+ 391 0104 50       		.byte	0x50
+ 392 0105 08       		.uleb128 0x8
+ 393 0106 6B000000 		.4byte	.LASF23
+ 394 010a 01       		.byte	0x1
+ 395 010b 0E       		.byte	0xe
+ 396 010c 20010000 		.4byte	0x120
+ 397 0110 01       		.uleb128 0x1
+ 398 0111 51       		.byte	0x51
+ 399 0112 08       		.uleb128 0x8
+ 400 0113 68020000 		.4byte	.LASF24
+ 401 0117 01       		.byte	0x1
+ 402 0118 0E       		.byte	0xe
+ 403 0119 20010000 		.4byte	0x120
+ 404 011d 01       		.uleb128 0x1
+ 405 011e 52       		.byte	0x52
+ 406 011f 00       		.byte	0
+ 407 0120 09       		.uleb128 0x9
+ 408 0121 04       		.byte	0x4
+ 409 0122 81000000 		.4byte	0x81
+ 410 0126 0A       		.uleb128 0xa
+ 411 0127 7A000000 		.4byte	.LASF37
+ 412 012b 01       		.byte	0x1
+ 413 012c 15       		.byte	0x15
+ 414 012d 81000000 		.4byte	0x81
+ 415 0131 00000000 		.4byte	.LFB64
+ 416 0135 58000000 		.4byte	.LFE64-.LFB64
+ 417 0139 01       		.uleb128 0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 10
+
+
+ 418 013a 9C       		.byte	0x9c
+ 419 013b C0010000 		.4byte	0x1c0
+ 420 013f 0B       		.uleb128 0xb
+ 421 0140 68020000 		.4byte	.LASF24
+ 422 0144 01       		.byte	0x1
+ 423 0145 15       		.byte	0x15
+ 424 0146 20010000 		.4byte	0x120
+ 425 014a 00000000 		.4byte	.LLST0
+ 426 014e 08       		.uleb128 0x8
+ 427 014f 54000000 		.4byte	.LASF25
+ 428 0153 01       		.byte	0x1
+ 429 0154 15       		.byte	0x15
+ 430 0155 81000000 		.4byte	0x81
+ 431 0159 01       		.uleb128 0x1
+ 432 015a 51       		.byte	0x51
+ 433 015b 0C       		.uleb128 0xc
+ 434 015c 94010000 		.4byte	.LASF26
+ 435 0160 01       		.byte	0x1
+ 436 0161 17       		.byte	0x17
+ 437 0162 81000000 		.4byte	0x81
+ 438 0166 3A000000 		.4byte	.LLST1
+ 439 016a 0D       		.uleb128 0xd
+ 440 016b 00000000 		.4byte	.Ldebug_ranges0+0
+ 441 016f 0E       		.uleb128 0xe
+ 442 0170 6900     		.ascii	"i\000"
+ 443 0172 01       		.byte	0x1
+ 444 0173 19       		.byte	0x19
+ 445 0174 81000000 		.4byte	0x81
+ 446 0178 5C000000 		.4byte	.LLST2
+ 447 017c 0D       		.uleb128 0xd
+ 448 017d 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 449 0181 0C       		.uleb128 0xc
+ 450 0182 40020000 		.4byte	.LASF27
+ 451 0186 01       		.byte	0x1
+ 452 0187 1B       		.byte	0x1b
+ 453 0188 81000000 		.4byte	0x81
+ 454 018c 86000000 		.4byte	.LLST3
+ 455 0190 0C       		.uleb128 0xc
+ 456 0191 2E000000 		.4byte	.LASF28
+ 457 0195 01       		.byte	0x1
+ 458 0196 1C       		.byte	0x1c
+ 459 0197 81000000 		.4byte	0x81
+ 460 019b BB000000 		.4byte	.LLST4
+ 461 019f 0C       		.uleb128 0xc
+ 462 01a0 C1010000 		.4byte	.LASF29
+ 463 01a4 01       		.byte	0x1
+ 464 01a5 1D       		.byte	0x1d
+ 465 01a6 81000000 		.4byte	0x81
+ 466 01aa D9000000 		.4byte	.LLST5
+ 467 01ae 0C       		.uleb128 0xc
+ 468 01af 65010000 		.4byte	.LASF30
+ 469 01b3 01       		.byte	0x1
+ 470 01b4 1E       		.byte	0x1e
+ 471 01b5 81000000 		.4byte	0x81
+ 472 01b9 03010000 		.4byte	.LLST6
+ 473 01bd 00       		.byte	0
+ 474 01be 00       		.byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 11
+
+
+ 475 01bf 00       		.byte	0
+ 476 01c0 07       		.uleb128 0x7
+ 477 01c1 4D020000 		.4byte	.LASF32
+ 478 01c5 01       		.byte	0x1
+ 479 01c6 3D       		.byte	0x3d
+ 480 01c7 00000000 		.4byte	.LFB65
+ 481 01cb 42000000 		.4byte	.LFE65-.LFB65
+ 482 01cf 01       		.uleb128 0x1
+ 483 01d0 9C       		.byte	0x9c
+ 484 01d1 2F020000 		.4byte	0x22f
+ 485 01d5 08       		.uleb128 0x8
+ 486 01d6 68020000 		.4byte	.LASF24
+ 487 01da 01       		.byte	0x1
+ 488 01db 3D       		.byte	0x3d
+ 489 01dc 20010000 		.4byte	0x120
+ 490 01e0 01       		.uleb128 0x1
+ 491 01e1 50       		.byte	0x50
+ 492 01e2 08       		.uleb128 0x8
+ 493 01e3 54000000 		.4byte	.LASF25
+ 494 01e7 01       		.byte	0x1
+ 495 01e8 3D       		.byte	0x3d
+ 496 01e9 81000000 		.4byte	0x81
+ 497 01ed 01       		.uleb128 0x1
+ 498 01ee 51       		.byte	0x51
+ 499 01ef 0F       		.uleb128 0xf
+ 500 01f0 02000000 		.4byte	.LBB6
+ 501 01f4 3C000000 		.4byte	.LBE6-.LBB6
+ 502 01f8 0E       		.uleb128 0xe
+ 503 01f9 6900     		.ascii	"i\000"
+ 504 01fb 01       		.byte	0x1
+ 505 01fc 3F       		.byte	0x3f
+ 506 01fd 81000000 		.4byte	0x81
+ 507 0201 2D010000 		.4byte	.LLST7
+ 508 0205 0F       		.uleb128 0xf
+ 509 0206 06000000 		.4byte	.LBB7
+ 510 020a 2C000000 		.4byte	.LBE7-.LBB7
+ 511 020e 0C       		.uleb128 0xc
+ 512 020f 40020000 		.4byte	.LASF27
+ 513 0213 01       		.byte	0x1
+ 514 0214 42       		.byte	0x42
+ 515 0215 81000000 		.4byte	0x81
+ 516 0219 57010000 		.4byte	.LLST8
+ 517 021d 0C       		.uleb128 0xc
+ 518 021e 2E000000 		.4byte	.LASF28
+ 519 0222 01       		.byte	0x1
+ 520 0223 43       		.byte	0x43
+ 521 0224 81000000 		.4byte	0x81
+ 522 0228 81010000 		.4byte	.LLST9
+ 523 022c 00       		.byte	0
+ 524 022d 00       		.byte	0
+ 525 022e 00       		.byte	0
+ 526 022f 10       		.uleb128 0x10
+ 527 0230 A7010000 		.4byte	.LASF38
+ 528 0234 05       		.byte	0x5
+ 529 0235 1207     		.2byte	0x712
+ 530 0237 3B020000 		.4byte	0x23b
+ 531 023b 11       		.uleb128 0x11
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 12
+
+
+ 532 023c 8C000000 		.4byte	0x8c
+ 533 0240 00       		.byte	0
+ 534              		.section	.debug_abbrev,"",%progbits
+ 535              	.Ldebug_abbrev0:
+ 536 0000 01       		.uleb128 0x1
+ 537 0001 11       		.uleb128 0x11
+ 538 0002 01       		.byte	0x1
+ 539 0003 25       		.uleb128 0x25
+ 540 0004 0E       		.uleb128 0xe
+ 541 0005 13       		.uleb128 0x13
+ 542 0006 0B       		.uleb128 0xb
+ 543 0007 03       		.uleb128 0x3
+ 544 0008 0E       		.uleb128 0xe
+ 545 0009 1B       		.uleb128 0x1b
+ 546 000a 0E       		.uleb128 0xe
+ 547 000b 55       		.uleb128 0x55
+ 548 000c 17       		.uleb128 0x17
+ 549 000d 11       		.uleb128 0x11
+ 550 000e 01       		.uleb128 0x1
+ 551 000f 10       		.uleb128 0x10
+ 552 0010 17       		.uleb128 0x17
+ 553 0011 00       		.byte	0
+ 554 0012 00       		.byte	0
+ 555 0013 02       		.uleb128 0x2
+ 556 0014 24       		.uleb128 0x24
+ 557 0015 00       		.byte	0
+ 558 0016 0B       		.uleb128 0xb
+ 559 0017 0B       		.uleb128 0xb
+ 560 0018 3E       		.uleb128 0x3e
+ 561 0019 0B       		.uleb128 0xb
+ 562 001a 03       		.uleb128 0x3
+ 563 001b 0E       		.uleb128 0xe
+ 564 001c 00       		.byte	0
+ 565 001d 00       		.byte	0
+ 566 001e 03       		.uleb128 0x3
+ 567 001f 16       		.uleb128 0x16
+ 568 0020 00       		.byte	0
+ 569 0021 03       		.uleb128 0x3
+ 570 0022 0E       		.uleb128 0xe
+ 571 0023 3A       		.uleb128 0x3a
+ 572 0024 0B       		.uleb128 0xb
+ 573 0025 3B       		.uleb128 0x3b
+ 574 0026 0B       		.uleb128 0xb
+ 575 0027 49       		.uleb128 0x49
+ 576 0028 13       		.uleb128 0x13
+ 577 0029 00       		.byte	0
+ 578 002a 00       		.byte	0
+ 579 002b 04       		.uleb128 0x4
+ 580 002c 24       		.uleb128 0x24
+ 581 002d 00       		.byte	0
+ 582 002e 0B       		.uleb128 0xb
+ 583 002f 0B       		.uleb128 0xb
+ 584 0030 3E       		.uleb128 0x3e
+ 585 0031 0B       		.uleb128 0xb
+ 586 0032 03       		.uleb128 0x3
+ 587 0033 08       		.uleb128 0x8
+ 588 0034 00       		.byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 13
+
+
+ 589 0035 00       		.byte	0
+ 590 0036 05       		.uleb128 0x5
+ 591 0037 04       		.uleb128 0x4
+ 592 0038 01       		.byte	0x1
+ 593 0039 03       		.uleb128 0x3
+ 594 003a 0E       		.uleb128 0xe
+ 595 003b 0B       		.uleb128 0xb
+ 596 003c 0B       		.uleb128 0xb
+ 597 003d 49       		.uleb128 0x49
+ 598 003e 13       		.uleb128 0x13
+ 599 003f 3A       		.uleb128 0x3a
+ 600 0040 0B       		.uleb128 0xb
+ 601 0041 3B       		.uleb128 0x3b
+ 602 0042 0B       		.uleb128 0xb
+ 603 0043 01       		.uleb128 0x1
+ 604 0044 13       		.uleb128 0x13
+ 605 0045 00       		.byte	0
+ 606 0046 00       		.byte	0
+ 607 0047 06       		.uleb128 0x6
+ 608 0048 28       		.uleb128 0x28
+ 609 0049 00       		.byte	0
+ 610 004a 03       		.uleb128 0x3
+ 611 004b 0E       		.uleb128 0xe
+ 612 004c 1C       		.uleb128 0x1c
+ 613 004d 0B       		.uleb128 0xb
+ 614 004e 00       		.byte	0
+ 615 004f 00       		.byte	0
+ 616 0050 07       		.uleb128 0x7
+ 617 0051 2E       		.uleb128 0x2e
+ 618 0052 01       		.byte	0x1
+ 619 0053 3F       		.uleb128 0x3f
+ 620 0054 19       		.uleb128 0x19
+ 621 0055 03       		.uleb128 0x3
+ 622 0056 0E       		.uleb128 0xe
+ 623 0057 3A       		.uleb128 0x3a
+ 624 0058 0B       		.uleb128 0xb
+ 625 0059 3B       		.uleb128 0x3b
+ 626 005a 0B       		.uleb128 0xb
+ 627 005b 27       		.uleb128 0x27
+ 628 005c 19       		.uleb128 0x19
+ 629 005d 11       		.uleb128 0x11
+ 630 005e 01       		.uleb128 0x1
+ 631 005f 12       		.uleb128 0x12
+ 632 0060 06       		.uleb128 0x6
+ 633 0061 40       		.uleb128 0x40
+ 634 0062 18       		.uleb128 0x18
+ 635 0063 9742     		.uleb128 0x2117
+ 636 0065 19       		.uleb128 0x19
+ 637 0066 01       		.uleb128 0x1
+ 638 0067 13       		.uleb128 0x13
+ 639 0068 00       		.byte	0
+ 640 0069 00       		.byte	0
+ 641 006a 08       		.uleb128 0x8
+ 642 006b 05       		.uleb128 0x5
+ 643 006c 00       		.byte	0
+ 644 006d 03       		.uleb128 0x3
+ 645 006e 0E       		.uleb128 0xe
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 14
+
+
+ 646 006f 3A       		.uleb128 0x3a
+ 647 0070 0B       		.uleb128 0xb
+ 648 0071 3B       		.uleb128 0x3b
+ 649 0072 0B       		.uleb128 0xb
+ 650 0073 49       		.uleb128 0x49
+ 651 0074 13       		.uleb128 0x13
+ 652 0075 02       		.uleb128 0x2
+ 653 0076 18       		.uleb128 0x18
+ 654 0077 00       		.byte	0
+ 655 0078 00       		.byte	0
+ 656 0079 09       		.uleb128 0x9
+ 657 007a 0F       		.uleb128 0xf
+ 658 007b 00       		.byte	0
+ 659 007c 0B       		.uleb128 0xb
+ 660 007d 0B       		.uleb128 0xb
+ 661 007e 49       		.uleb128 0x49
+ 662 007f 13       		.uleb128 0x13
+ 663 0080 00       		.byte	0
+ 664 0081 00       		.byte	0
+ 665 0082 0A       		.uleb128 0xa
+ 666 0083 2E       		.uleb128 0x2e
+ 667 0084 01       		.byte	0x1
+ 668 0085 3F       		.uleb128 0x3f
+ 669 0086 19       		.uleb128 0x19
+ 670 0087 03       		.uleb128 0x3
+ 671 0088 0E       		.uleb128 0xe
+ 672 0089 3A       		.uleb128 0x3a
+ 673 008a 0B       		.uleb128 0xb
+ 674 008b 3B       		.uleb128 0x3b
+ 675 008c 0B       		.uleb128 0xb
+ 676 008d 27       		.uleb128 0x27
+ 677 008e 19       		.uleb128 0x19
+ 678 008f 49       		.uleb128 0x49
+ 679 0090 13       		.uleb128 0x13
+ 680 0091 11       		.uleb128 0x11
+ 681 0092 01       		.uleb128 0x1
+ 682 0093 12       		.uleb128 0x12
+ 683 0094 06       		.uleb128 0x6
+ 684 0095 40       		.uleb128 0x40
+ 685 0096 18       		.uleb128 0x18
+ 686 0097 9742     		.uleb128 0x2117
+ 687 0099 19       		.uleb128 0x19
+ 688 009a 01       		.uleb128 0x1
+ 689 009b 13       		.uleb128 0x13
+ 690 009c 00       		.byte	0
+ 691 009d 00       		.byte	0
+ 692 009e 0B       		.uleb128 0xb
+ 693 009f 05       		.uleb128 0x5
+ 694 00a0 00       		.byte	0
+ 695 00a1 03       		.uleb128 0x3
+ 696 00a2 0E       		.uleb128 0xe
+ 697 00a3 3A       		.uleb128 0x3a
+ 698 00a4 0B       		.uleb128 0xb
+ 699 00a5 3B       		.uleb128 0x3b
+ 700 00a6 0B       		.uleb128 0xb
+ 701 00a7 49       		.uleb128 0x49
+ 702 00a8 13       		.uleb128 0x13
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 15
+
+
+ 703 00a9 02       		.uleb128 0x2
+ 704 00aa 17       		.uleb128 0x17
+ 705 00ab 00       		.byte	0
+ 706 00ac 00       		.byte	0
+ 707 00ad 0C       		.uleb128 0xc
+ 708 00ae 34       		.uleb128 0x34
+ 709 00af 00       		.byte	0
+ 710 00b0 03       		.uleb128 0x3
+ 711 00b1 0E       		.uleb128 0xe
+ 712 00b2 3A       		.uleb128 0x3a
+ 713 00b3 0B       		.uleb128 0xb
+ 714 00b4 3B       		.uleb128 0x3b
+ 715 00b5 0B       		.uleb128 0xb
+ 716 00b6 49       		.uleb128 0x49
+ 717 00b7 13       		.uleb128 0x13
+ 718 00b8 02       		.uleb128 0x2
+ 719 00b9 17       		.uleb128 0x17
+ 720 00ba 00       		.byte	0
+ 721 00bb 00       		.byte	0
+ 722 00bc 0D       		.uleb128 0xd
+ 723 00bd 0B       		.uleb128 0xb
+ 724 00be 01       		.byte	0x1
+ 725 00bf 55       		.uleb128 0x55
+ 726 00c0 17       		.uleb128 0x17
+ 727 00c1 00       		.byte	0
+ 728 00c2 00       		.byte	0
+ 729 00c3 0E       		.uleb128 0xe
+ 730 00c4 34       		.uleb128 0x34
+ 731 00c5 00       		.byte	0
+ 732 00c6 03       		.uleb128 0x3
+ 733 00c7 08       		.uleb128 0x8
+ 734 00c8 3A       		.uleb128 0x3a
+ 735 00c9 0B       		.uleb128 0xb
+ 736 00ca 3B       		.uleb128 0x3b
+ 737 00cb 0B       		.uleb128 0xb
+ 738 00cc 49       		.uleb128 0x49
+ 739 00cd 13       		.uleb128 0x13
+ 740 00ce 02       		.uleb128 0x2
+ 741 00cf 17       		.uleb128 0x17
+ 742 00d0 00       		.byte	0
+ 743 00d1 00       		.byte	0
+ 744 00d2 0F       		.uleb128 0xf
+ 745 00d3 0B       		.uleb128 0xb
+ 746 00d4 01       		.byte	0x1
+ 747 00d5 11       		.uleb128 0x11
+ 748 00d6 01       		.uleb128 0x1
+ 749 00d7 12       		.uleb128 0x12
+ 750 00d8 06       		.uleb128 0x6
+ 751 00d9 00       		.byte	0
+ 752 00da 00       		.byte	0
+ 753 00db 10       		.uleb128 0x10
+ 754 00dc 34       		.uleb128 0x34
+ 755 00dd 00       		.byte	0
+ 756 00de 03       		.uleb128 0x3
+ 757 00df 0E       		.uleb128 0xe
+ 758 00e0 3A       		.uleb128 0x3a
+ 759 00e1 0B       		.uleb128 0xb
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 16
+
+
+ 760 00e2 3B       		.uleb128 0x3b
+ 761 00e3 05       		.uleb128 0x5
+ 762 00e4 49       		.uleb128 0x49
+ 763 00e5 13       		.uleb128 0x13
+ 764 00e6 3F       		.uleb128 0x3f
+ 765 00e7 19       		.uleb128 0x19
+ 766 00e8 3C       		.uleb128 0x3c
+ 767 00e9 19       		.uleb128 0x19
+ 768 00ea 00       		.byte	0
+ 769 00eb 00       		.byte	0
+ 770 00ec 11       		.uleb128 0x11
+ 771 00ed 35       		.uleb128 0x35
+ 772 00ee 00       		.byte	0
+ 773 00ef 49       		.uleb128 0x49
+ 774 00f0 13       		.uleb128 0x13
+ 775 00f1 00       		.byte	0
+ 776 00f2 00       		.byte	0
+ 777 00f3 00       		.byte	0
+ 778              		.section	.debug_loc,"",%progbits
+ 779              	.Ldebug_loc0:
+ 780              	.LLST0:
+ 781 0000 00000000 		.4byte	.LVL1
+ 782 0004 50000000 		.4byte	.LVL17
+ 783 0008 0100     		.2byte	0x1
+ 784 000a 50       		.byte	0x50
+ 785 000b 50000000 		.4byte	.LVL17
+ 786 000f 52000000 		.4byte	.LVL18
+ 787 0013 0400     		.2byte	0x4
+ 788 0015 F3       		.byte	0xf3
+ 789 0016 01       		.uleb128 0x1
+ 790 0017 50       		.byte	0x50
+ 791 0018 9F       		.byte	0x9f
+ 792 0019 52000000 		.4byte	.LVL18
+ 793 001d 54000000 		.4byte	.LVL19
+ 794 0021 0100     		.2byte	0x1
+ 795 0023 50       		.byte	0x50
+ 796 0024 54000000 		.4byte	.LVL19
+ 797 0028 58000000 		.4byte	.LFE64
+ 798 002c 0400     		.2byte	0x4
+ 799 002e F3       		.byte	0xf3
+ 800 002f 01       		.uleb128 0x1
+ 801 0030 50       		.byte	0x50
+ 802 0031 9F       		.byte	0x9f
+ 803 0032 00000000 		.4byte	0
+ 804 0036 00000000 		.4byte	0
+ 805              	.LLST1:
+ 806 003a 04000000 		.4byte	.LVL2
+ 807 003e 56000000 		.4byte	.LVL20
+ 808 0042 0100     		.2byte	0x1
+ 809 0044 56       		.byte	0x56
+ 810 0045 56000000 		.4byte	.LVL20
+ 811 0049 58000000 		.4byte	.LFE64
+ 812 004d 0500     		.2byte	0x5
+ 813 004f F3       		.byte	0xf3
+ 814 0050 01       		.uleb128 0x1
+ 815 0051 50       		.byte	0x50
+ 816 0052 23       		.byte	0x23
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 17
+
+
+ 817 0053 03       		.uleb128 0x3
+ 818 0054 00000000 		.4byte	0
+ 819 0058 00000000 		.4byte	0
+ 820              	.LLST2:
+ 821 005c 04000000 		.4byte	.LVL2
+ 822 0060 08000000 		.4byte	.LVL3
+ 823 0064 0200     		.2byte	0x2
+ 824 0066 30       		.byte	0x30
+ 825 0067 9F       		.byte	0x9f
+ 826 0068 08000000 		.4byte	.LVL3
+ 827 006c 44000000 		.4byte	.LVL15
+ 828 0070 0100     		.2byte	0x1
+ 829 0072 54       		.byte	0x54
+ 830 0073 46000000 		.4byte	.LVL16
+ 831 0077 56000000 		.4byte	.LVL20
+ 832 007b 0100     		.2byte	0x1
+ 833 007d 54       		.byte	0x54
+ 834 007e 00000000 		.4byte	0
+ 835 0082 00000000 		.4byte	0
+ 836              	.LLST3:
+ 837 0086 08000000 		.4byte	.LVL3
+ 838 008a 0E000000 		.4byte	.LVL5
+ 839 008e 0200     		.2byte	0x2
+ 840 0090 30       		.byte	0x30
+ 841 0091 9F       		.byte	0x9f
+ 842 0092 0E000000 		.4byte	.LVL5
+ 843 0096 16000000 		.4byte	.LVL6
+ 844 009a 0100     		.2byte	0x1
+ 845 009c 52       		.byte	0x52
+ 846 009d 18000000 		.4byte	.LVL7
+ 847 00a1 26000000 		.4byte	.LVL9
+ 848 00a5 0100     		.2byte	0x1
+ 849 00a7 52       		.byte	0x52
+ 850 00a8 28000000 		.4byte	.LVL10
+ 851 00ac 2A000000 		.4byte	.LVL11
+ 852 00b0 0100     		.2byte	0x1
+ 853 00b2 52       		.byte	0x52
+ 854 00b3 00000000 		.4byte	0
+ 855 00b7 00000000 		.4byte	0
+ 856              	.LLST4:
+ 857 00bb 0A000000 		.4byte	.LVL4
+ 858 00bf 3A000000 		.4byte	.LVL12
+ 859 00c3 0100     		.2byte	0x1
+ 860 00c5 53       		.byte	0x53
+ 861 00c6 3C000000 		.4byte	.LVL13
+ 862 00ca 3E000000 		.4byte	.LVL14
+ 863 00ce 0100     		.2byte	0x1
+ 864 00d0 53       		.byte	0x53
+ 865 00d1 00000000 		.4byte	0
+ 866 00d5 00000000 		.4byte	0
+ 867              	.LLST5:
+ 868 00d9 0A000000 		.4byte	.LVL4
+ 869 00dd 2A000000 		.4byte	.LVL11
+ 870 00e1 0200     		.2byte	0x2
+ 871 00e3 30       		.byte	0x30
+ 872 00e4 9F       		.byte	0x9f
+ 873 00e5 2A000000 		.4byte	.LVL11
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 18
+
+
+ 874 00e9 46000000 		.4byte	.LVL16
+ 875 00ed 0100     		.2byte	0x1
+ 876 00ef 52       		.byte	0x52
+ 877 00f0 52000000 		.4byte	.LVL18
+ 878 00f4 54000000 		.4byte	.LVL19
+ 879 00f8 0100     		.2byte	0x1
+ 880 00fa 52       		.byte	0x52
+ 881 00fb 00000000 		.4byte	0
+ 882 00ff 00000000 		.4byte	0
+ 883              	.LLST6:
+ 884 0103 0A000000 		.4byte	.LVL4
+ 885 0107 3E000000 		.4byte	.LVL14
+ 886 010b 0200     		.2byte	0x2
+ 887 010d 30       		.byte	0x30
+ 888 010e 9F       		.byte	0x9f
+ 889 010f 3E000000 		.4byte	.LVL14
+ 890 0113 46000000 		.4byte	.LVL16
+ 891 0117 0100     		.2byte	0x1
+ 892 0119 53       		.byte	0x53
+ 893 011a 52000000 		.4byte	.LVL18
+ 894 011e 54000000 		.4byte	.LVL19
+ 895 0122 0100     		.2byte	0x1
+ 896 0124 53       		.byte	0x53
+ 897 0125 00000000 		.4byte	0
+ 898 0129 00000000 		.4byte	0
+ 899              	.LLST7:
+ 900 012d 02000000 		.4byte	.LVL22
+ 901 0131 06000000 		.4byte	.LVL23
+ 902 0135 0200     		.2byte	0x2
+ 903 0137 30       		.byte	0x30
+ 904 0138 9F       		.byte	0x9f
+ 905 0139 06000000 		.4byte	.LVL23
+ 906 013d 34000000 		.4byte	.LVL31
+ 907 0141 0100     		.2byte	0x1
+ 908 0143 54       		.byte	0x54
+ 909 0144 36000000 		.4byte	.LVL32
+ 910 0148 40000000 		.4byte	.LVL33
+ 911 014c 0100     		.2byte	0x1
+ 912 014e 54       		.byte	0x54
+ 913 014f 00000000 		.4byte	0
+ 914 0153 00000000 		.4byte	0
+ 915              	.LLST8:
+ 916 0157 06000000 		.4byte	.LVL23
+ 917 015b 0C000000 		.4byte	.LVL25
+ 918 015f 0200     		.2byte	0x2
+ 919 0161 30       		.byte	0x30
+ 920 0162 9F       		.byte	0x9f
+ 921 0163 0C000000 		.4byte	.LVL25
+ 922 0167 14000000 		.4byte	.LVL26
+ 923 016b 0100     		.2byte	0x1
+ 924 016d 52       		.byte	0x52
+ 925 016e 16000000 		.4byte	.LVL27
+ 926 0172 2A000000 		.4byte	.LVL30
+ 927 0176 0100     		.2byte	0x1
+ 928 0178 52       		.byte	0x52
+ 929 0179 00000000 		.4byte	0
+ 930 017d 00000000 		.4byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 19
+
+
+ 931              	.LLST9:
+ 932 0181 08000000 		.4byte	.LVL24
+ 933 0185 28000000 		.4byte	.LVL29
+ 934 0189 0100     		.2byte	0x1
+ 935 018b 53       		.byte	0x53
+ 936 018c 00000000 		.4byte	0
+ 937 0190 00000000 		.4byte	0
+ 938              		.section	.debug_aranges,"",%progbits
+ 939 0000 2C000000 		.4byte	0x2c
+ 940 0004 0200     		.2byte	0x2
+ 941 0006 00000000 		.4byte	.Ldebug_info0
+ 942 000a 04       		.byte	0x4
+ 943 000b 00       		.byte	0
+ 944 000c 0000     		.2byte	0
+ 945 000e 0000     		.2byte	0
+ 946 0010 00000000 		.4byte	.LFB63
+ 947 0014 0A000000 		.4byte	.LFE63-.LFB63
+ 948 0018 00000000 		.4byte	.LFB64
+ 949 001c 58000000 		.4byte	.LFE64-.LFB64
+ 950 0020 00000000 		.4byte	.LFB65
+ 951 0024 42000000 		.4byte	.LFE65-.LFB65
+ 952 0028 00000000 		.4byte	0
+ 953 002c 00000000 		.4byte	0
+ 954              		.section	.debug_ranges,"",%progbits
+ 955              	.Ldebug_ranges0:
+ 956 0000 04000000 		.4byte	.LBB2
+ 957 0004 4E000000 		.4byte	.LBE2
+ 958 0008 50000000 		.4byte	.LBB5
+ 959 000c 54000000 		.4byte	.LBE5
+ 960 0010 00000000 		.4byte	0
+ 961 0014 00000000 		.4byte	0
+ 962 0018 08000000 		.4byte	.LBB3
+ 963 001c 42000000 		.4byte	.LBE3
+ 964 0020 52000000 		.4byte	.LBB4
+ 965 0024 54000000 		.4byte	.LBE4
+ 966 0028 00000000 		.4byte	0
+ 967 002c 00000000 		.4byte	0
+ 968 0030 00000000 		.4byte	.LFB63
+ 969 0034 0A000000 		.4byte	.LFE63
+ 970 0038 00000000 		.4byte	.LFB64
+ 971 003c 58000000 		.4byte	.LFE64
+ 972 0040 00000000 		.4byte	.LFB65
+ 973 0044 42000000 		.4byte	.LFE65
+ 974 0048 00000000 		.4byte	0
+ 975 004c 00000000 		.4byte	0
+ 976              		.section	.debug_line,"",%progbits
+ 977              	.Ldebug_line0:
+ 978 0000 DA010000 		.section	.debug_str,"MS",%progbits,1
+ 978      02005701 
+ 978      00000201 
+ 978      FB0E0D00 
+ 978      01010101 
+ 979              	.LASF4:
+ 980 0000 5F5F7569 		.ascii	"__uint8_t\000"
+ 980      6E74385F 
+ 980      7400
+ 981              	.LASF36:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 20
+
+
+ 982 000a 64617461 		.ascii	"data_transmission_indexes\000"
+ 982      5F747261 
+ 982      6E736D69 
+ 982      7373696F 
+ 982      6E5F696E 
+ 983              	.LASF5:
+ 984 0024 5F5F696E 		.ascii	"__int32_t\000"
+ 984      7433325F 
+ 984      7400
+ 985              	.LASF28:
+ 986 002e 62797465 		.ascii	"byteToBeChecked\000"
+ 986      546F4265 
+ 986      43686563 
+ 986      6B656400 
+ 987              	.LASF18:
+ 988 003e 4D455353 		.ascii	"MESSAGE_TYPE_ID_INDEX\000"
+ 988      4147455F 
+ 988      54595045 
+ 988      5F49445F 
+ 988      494E4445 
+ 989              	.LASF25:
+ 990 0054 6C656E67 		.ascii	"lengthOfBuffer\000"
+ 990      74684F66 
+ 990      42756666 
+ 990      657200
+ 991              	.LASF12:
+ 992 0063 696E7433 		.ascii	"int32_t\000"
+ 992      325F7400 
+ 993              	.LASF23:
+ 994 006b 64697374 		.ascii	"distance\000"
+ 994      616E6365 
+ 994      00
+ 995              	.LASF13:
+ 996 0074 666C6F61 		.ascii	"float\000"
+ 996      7400
+ 997              	.LASF37:
+ 998 007a 6572726F 		.ascii	"errorCheckWithOddParity\000"
+ 998      72436865 
+ 998      636B5769 
+ 998      74684F64 
+ 998      64506172 
+ 999              	.LASF1:
+ 1000 0092 756E7369 		.ascii	"unsigned char\000"
+ 1000      676E6564 
+ 1000      20636861 
+ 1000      7200
+ 1001              	.LASF33:
+ 1002 00a0 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1002      43313120 
+ 1002      352E342E 
+ 1002      31203230 
+ 1002      31363036 
+ 1003 00d3 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1003      20726576 
+ 1003      6973696F 
+ 1003      6E203233 
+ 1003      37373135 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 21
+
+
+ 1004 0106 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1004      66756E63 
+ 1004      74696F6E 
+ 1004      2D736563 
+ 1004      74696F6E 
+ 1005              	.LASF7:
+ 1006 012e 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1006      20756E73 
+ 1006      69676E65 
+ 1006      6420696E 
+ 1006      7400
+ 1007              	.LASF3:
+ 1008 0140 73686F72 		.ascii	"short unsigned int\000"
+ 1008      7420756E 
+ 1008      7369676E 
+ 1008      65642069 
+ 1008      6E7400
+ 1009              	.LASF31:
+ 1010 0153 65787472 		.ascii	"extractFromBuffer\000"
+ 1010      61637446 
+ 1010      726F6D42 
+ 1010      75666665 
+ 1010      7200
+ 1011              	.LASF30:
+ 1012 0165 70617269 		.ascii	"parityBitReceivedFromSender\000"
+ 1012      74794269 
+ 1012      74526563 
+ 1012      65697665 
+ 1012      6446726F 
+ 1013              	.LASF19:
+ 1014 0181 53504545 		.ascii	"SPEED_INDEX\000"
+ 1014      445F494E 
+ 1014      44455800 
+ 1015              	.LASF14:
+ 1016 018d 646F7562 		.ascii	"double\000"
+ 1016      6C6500
+ 1017              	.LASF26:
+ 1018 0194 70617269 		.ascii	"parityBitsReceived\000"
+ 1018      74794269 
+ 1018      74735265 
+ 1018      63656976 
+ 1018      656400
+ 1019              	.LASF38:
+ 1020 01a7 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1020      52784275 
+ 1020      66666572 
+ 1020      00
+ 1021              	.LASF10:
+ 1022 01b4 756E7369 		.ascii	"unsigned int\000"
+ 1022      676E6564 
+ 1022      20696E74 
+ 1022      00
+ 1023              	.LASF29:
+ 1024 01c1 63686563 		.ascii	"checkedByteHasOddNumberOfOnes\000"
+ 1024      6B656442 
+ 1024      79746548 
+ 1024      61734F64 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 22
+
+
+ 1024      644E756D 
+ 1025              	.LASF9:
+ 1026 01df 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1026      206C6F6E 
+ 1026      6720756E 
+ 1026      7369676E 
+ 1026      65642069 
+ 1027              	.LASF11:
+ 1028 01f6 75696E74 		.ascii	"uint8_t\000"
+ 1028      385F7400 
+ 1029              	.LASF21:
+ 1030 01fe 4552524F 		.ascii	"ERROR_CHECK_INDEX\000"
+ 1030      525F4348 
+ 1030      45434B5F 
+ 1030      494E4445 
+ 1030      5800
+ 1031              	.LASF22:
+ 1032 0210 73706565 		.ascii	"speed\000"
+ 1032      6400
+ 1033              	.LASF17:
+ 1034 0216 73697A65 		.ascii	"sizetype\000"
+ 1034      74797065 
+ 1034      00
+ 1035              	.LASF8:
+ 1036 021f 6C6F6E67 		.ascii	"long long int\000"
+ 1036      206C6F6E 
+ 1036      6720696E 
+ 1036      7400
+ 1037              	.LASF15:
+ 1038 022d 63686172 		.ascii	"char\000"
+ 1038      00
+ 1039              	.LASF34:
+ 1040 0232 53504970 		.ascii	"SPIprotocol.c\000"
+ 1040      726F746F 
+ 1040      636F6C2E 
+ 1040      6300
+ 1041              	.LASF27:
+ 1042 0240 6E756D62 		.ascii	"numberOfOnes\000"
+ 1042      65724F66 
+ 1042      4F6E6573 
+ 1042      00
+ 1043              	.LASF32:
+ 1044 024d 63726561 		.ascii	"createParityBits\000"
+ 1044      74655061 
+ 1044      72697479 
+ 1044      42697473 
+ 1044      00
+ 1045              	.LASF2:
+ 1046 025e 73686F72 		.ascii	"short int\000"
+ 1046      7420696E 
+ 1046      7400
+ 1047              	.LASF24:
+ 1048 0268 62756666 		.ascii	"buffer\000"
+ 1048      657200
+ 1049              	.LASF6:
+ 1050 026f 6C6F6E67 		.ascii	"long int\000"
+ 1050      20696E74 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccAdERtK.s 			page 23
+
+
+ 1050      00
+ 1051              	.LASF35:
+ 1052 0278 433A5C55 		.ascii	"C:\\Users\\sebbe\\Desktop\\spi_slave_v15\\sensor_re"
+ 1052      73657273 
+ 1052      5C736562 
+ 1052      62655C44 
+ 1052      65736B74 
+ 1053 02a6 6164696E 		.ascii	"ading_unit\\spi_slave.cydsn\000"
+ 1053      675F756E 
+ 1053      69745C73 
+ 1053      70695F73 
+ 1053      6C617665 
+ 1054              	.LASF16:
+ 1055 02c1 6C6F6E67 		.ascii	"long double\000"
+ 1055      20646F75 
+ 1055      626C6500 
+ 1056              	.LASF0:
+ 1057 02cd 7369676E 		.ascii	"signed char\000"
+ 1057      65642063 
+ 1057      68617200 
+ 1058              	.LASF20:
+ 1059 02d9 44495354 		.ascii	"DISTANCE_INDEX\000"
+ 1059      414E4345 
+ 1059      5F494E44 
+ 1059      455800
+ 1060              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

@@ -1,0 +1,4017 @@
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.centralDispatcher,"ax",%progbits
+  20              		.align	2
+  21              		.global	centralDispatcher
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	centralDispatcher, %function
+  25              	centralDispatcher:
+  26              	.LFB65:
+  27              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  * AUTHOR: Kristian Lau Jespersen, Jonathan Hartvigsen Juncker
+   4:main.c        ****  *  SPI slave version 12
+   5:main.c        ****     
+   6:main.c        ****     Error checks added.
+   7:main.c        ****  * ========================================
+   8:main.c        **** */
+   9:main.c        **** #include <stdio.h>
+  10:main.c        **** #include "project.h"
+  11:main.c        **** #include "EDBikeProtocol.h"
+  12:main.c        **** #include "lockUnit.h"
+  13:main.c        **** #include "SPI.h"
+  14:main.c        **** #include "wheelSensor.h"
+  15:main.c        **** #include "Accelerometer.h"
+  16:main.c        **** #include "UART.h"
+  17:main.c        **** #include "bikeState.h"
+  18:main.c        **** #include "SPIprotocol.h"
+  19:main.c        **** 
+  20:main.c        **** /***********************initial state************************/
+  21:main.c        ****  enum bikeState STATE=LOCKED;
+  22:main.c        **** 
+  23:main.c        **** /***********************SPI variables************************/
+  24:main.c        ****  uint8 rxBuffer[maxMessageLength]={'#','#','#','#'};
+  25:main.c        ****  uint8 txBuffer[maxMessageLength]={'#','#','#','#'};
+  26:main.c        ****  uint8 txCloneBuffer[maxMessageLength*6];
+  27:main.c        **** 
+  28:main.c        **** 
+  29:main.c        **** /***********************UART variables************************/
+  30:main.c        **** char8 UART_buffer[16];
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 2
+
+
+  31:main.c        **** 
+  32:main.c        **** /*******************Wheel sensor variables*******************/
+  33:main.c        **** int wheel_revolutions = 0;
+  34:main.c        **** uint8 speed = 0;
+  35:main.c        **** uint8 dist = 0;
+  36:main.c        **** double time_temp = 0;
+  37:main.c        **** double wheelRadius = 25;
+  38:main.c        **** double wheelCirc = 0.00314;
+  39:main.c        **** 
+  40:main.c        **** /************************handler declarations*************************/
+  41:main.c        **** void handleCommandReceived(uint8* rxBuffer);
+  42:main.c        **** void centralDispatcher(uint16 STATE);
+  43:main.c        **** 
+  44:main.c        **** /************************handler definitions*************************/
+  45:main.c        **** void handleCommandReceived(uint8* rxBuffer)
+  46:main.c        **** {
+  47:main.c        ****     
+  48:main.c        **** //    for (uint32_t i = 0; i < maxMessageLength; i++)
+  49:main.c        **** //        {
+  50:main.c        **** //       
+  51:main.c        **** //        sprintf(UART_buffer,"rx Byte %d: %d \n\r",i,rxBuffer[i]);
+  52:main.c        **** //        UART_1_PutString(UART_buffer);
+  53:main.c        **** //        }
+  54:main.c        ****     
+  55:main.c        ****     
+  56:main.c        ****     switch (rxBuffer[FIRST_EVENT_INDEX])
+  57:main.c        ****     {
+  58:main.c        ****         //CASE LOCK
+  59:main.c        ****         case USER_LOCK:
+  60:main.c        ****         {
+  61:main.c        ****             STATE=LOCKING;
+  62:main.c        ****             centralDispatcher(STATE);
+  63:main.c        ****             break;
+  64:main.c        ****         }
+  65:main.c        ****         
+  66:main.c        ****         //CASE UNLOCK
+  67:main.c        ****         case USER_UNLOCK:
+  68:main.c        ****         {
+  69:main.c        ****             STATE=UNLOCKING;
+  70:main.c        ****             centralDispatcher(STATE);
+  71:main.c        ****             break;
+  72:main.c        ****         }
+  73:main.c        ****         case USER_SET_WHEELCIRCUMFERENCE:
+  74:main.c        ****         {
+  75:main.c        ****             wheelCirc = calcWheelCirc(WheelRadiusToMetres(rxBuffer[FIRST_EVENT_INDEX]));
+  76:main.c        ****             break;
+  77:main.c        ****         }
+  78:main.c        ****         
+  79:main.c        ****         default:
+  80:main.c        ****         break;
+  81:main.c        **** }   
+  82:main.c        **** }
+  83:main.c        **** 
+  84:main.c        **** 
+  85:main.c        **** void centralDispatcher(uint16 STATE)
+  86:main.c        **** {
+  28              		.loc 1 86 0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 3
+
+
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  87:main.c        ****     switch(STATE)
+  37              		.loc 1 87 0
+  38 0002 6F28     		cmp	r0, #111
+  39 0004 39D0     		beq	.L3
+  40 0006 7528     		cmp	r0, #117
+  41 0008 02D0     		beq	.L4
+  42 000a 6C28     		cmp	r0, #108
+  43 000c 43D1     		bne	.L1
+  44 000e 15E0     		b	.L5
+  45              	.L4:
+  88:main.c        ****         {
+  89:main.c        ****             case UNLOCKING:
+  90:main.c        ****             {
+  91:main.c        ****                 //UART_1_PutString("\nDispatcher: unlocking bike %d\n");
+  92:main.c        ****                 unlockBike();
+  46              		.loc 1 92 0
+  47 0010 FFF7FEFF 		bl	unlockBike
+  48              	.LVL1:
+  93:main.c        ****                 LED_pin_Write(1);
+  49              		.loc 1 93 0
+  50 0014 0120     		movs	r0, #1
+  51 0016 FFF7FEFF 		bl	LED_pin_Write
+  52              	.LVL2:
+  94:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,MESSAGE_TYPE_ID_INDEX,EVENT_TRANSMISSION_TO_MA
+  53              		.loc 1 94 0
+  54 001a 1F4C     		ldr	r4, .L7
+  55 001c 6522     		movs	r2, #101
+  56 001e 0021     		movs	r1, #0
+  57 0020 2046     		mov	r0, r4
+  58 0022 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+  59              	.LVL3:
+  95:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,FIRST_EVENT_INDEX,UNLOCKING);
+  60              		.loc 1 95 0
+  61 0026 7522     		movs	r2, #117
+  62 0028 0121     		movs	r1, #1
+  63 002a 2046     		mov	r0, r4
+  64 002c FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+  65              	.LVL4:
+  96:main.c        ****                 transferIsReady(txBuffer);
+  66              		.loc 1 96 0
+  67 0030 2046     		mov	r0, r4
+  68 0032 FFF7FEFF 		bl	transferIsReady
+  69              	.LVL5:
+  97:main.c        ****                 isr_bike_is_idle_Enable();
+  70              		.loc 1 97 0
+  71 0036 FFF7FEFF 		bl	isr_bike_is_idle_Enable
+  72              	.LVL6:
+  98:main.c        ****                 break;
+  73              		.loc 1 98 0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 4
+
+
+  74 003a 10BD     		pop	{r4, pc}
+  75              	.LVL7:
+  76              	.L5:
+  99:main.c        ****             }
+ 100:main.c        ****             case UNLOCKED_AND_ACTIVE:
+ 101:main.c        ****             {
+ 102:main.c        ****                 break;
+ 103:main.c        ****             }
+ 104:main.c        ****             case UNLOCKED_AND_IDLE:
+ 105:main.c        ****             {
+ 106:main.c        ****                 break;
+ 107:main.c        ****             }
+ 108:main.c        ****             case UNLOCKED_AND_IDLE_READY_TO_LOCK:
+ 109:main.c        ****             {
+ 110:main.c        ****                 break;
+ 111:main.c        ****             }
+ 112:main.c        ****             case LOCKING:
+ 113:main.c        ****             {
+ 114:main.c        ****                 //UART_1_PutString("\nDispatcher: locking bike %d\n");
+ 115:main.c        ****                 lockBike();
+  77              		.loc 1 115 0
+  78 003c FFF7FEFF 		bl	lockBike
+  79              	.LVL8:
+ 116:main.c        ****                 LED_pin_Write(0);
+  80              		.loc 1 116 0
+  81 0040 0020     		movs	r0, #0
+  82 0042 FFF7FEFF 		bl	LED_pin_Write
+  83              	.LVL9:
+ 117:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,MESSAGE_TYPE_ID_INDEX,EVENT_TRANSMISSION_TO_MA
+  84              		.loc 1 117 0
+  85 0046 144C     		ldr	r4, .L7
+  86 0048 6522     		movs	r2, #101
+  87 004a 0021     		movs	r1, #0
+  88 004c 2046     		mov	r0, r4
+  89 004e FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+  90              	.LVL10:
+ 118:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,FIRST_EVENT_INDEX,LOCKING);
+  91              		.loc 1 118 0
+  92 0052 6C22     		movs	r2, #108
+  93 0054 0121     		movs	r1, #1
+  94 0056 2046     		mov	r0, r4
+  95 0058 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+  96              	.LVL11:
+ 119:main.c        ****                 transferIsReady(txBuffer);
+  97              		.loc 1 119 0
+  98 005c 2046     		mov	r0, r4
+  99 005e FFF7FEFF 		bl	transferIsReady
+ 100              	.LVL12:
+ 120:main.c        ****                 isr_bike_is_idle_Disable();
+ 101              		.loc 1 120 0
+ 102 0062 FFF7FEFF 		bl	isr_bike_is_idle_Disable
+ 103              	.LVL13:
+ 121:main.c        ****              
+ 122:main.c        ****                 stopAccelerometerTimer();
+ 104              		.loc 1 122 0
+ 105 0066 FFF7FEFF 		bl	stopAccelerometerTimer
+ 106              	.LVL14:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 5
+
+
+ 123:main.c        ****                 dist=0;
+ 107              		.loc 1 123 0
+ 108 006a 0C4B     		ldr	r3, .L7+4
+ 109 006c 0022     		movs	r2, #0
+ 110 006e 1A70     		strb	r2, [r3]
+ 124:main.c        ****                 wheel_revolutions=0;
+ 111              		.loc 1 124 0
+ 112 0070 5A60     		str	r2, [r3, #4]
+ 113              	.LVL15:
+ 125:main.c        ****                 
+ 126:main.c        ****                 //pseudo implementation. Actual lock confirm needs to be received from sensor. 
+ 127:main.c        ****                 STATE=LOCKED;
+ 128:main.c        ****                 centralDispatcher(STATE);
+ 114              		.loc 1 128 0
+ 115 0072 6F20     		movs	r0, #111
+ 116 0074 FFF7FEFF 		bl	centralDispatcher
+ 117              	.LVL16:
+ 129:main.c        ****                 break;
+ 118              		.loc 1 129 0
+ 119 0078 10BD     		pop	{r4, pc}
+ 120              	.LVL17:
+ 121              	.L3:
+ 130:main.c        ****             }
+ 131:main.c        ****             case LOCKED:
+ 132:main.c        ****             {
+ 133:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,MESSAGE_TYPE_ID_INDEX,EVENT_TRANSMISSION_TO_MA
+ 122              		.loc 1 133 0
+ 123 007a 074C     		ldr	r4, .L7
+ 124 007c 6522     		movs	r2, #101
+ 125 007e 0021     		movs	r1, #0
+ 126 0080 2046     		mov	r0, r4
+ 127              	.LVL18:
+ 128 0082 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 129              	.LVL19:
+ 134:main.c        ****                 loadToSpecificTxBufferIndex(txBuffer,FIRST_EVENT_INDEX,LOCKED);
+ 130              		.loc 1 134 0
+ 131 0086 6F22     		movs	r2, #111
+ 132 0088 0121     		movs	r1, #1
+ 133 008a 2046     		mov	r0, r4
+ 134 008c FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 135              	.LVL20:
+ 135:main.c        ****                 transferIsReady(txBuffer);
+ 136              		.loc 1 135 0
+ 137 0090 2046     		mov	r0, r4
+ 138 0092 FFF7FEFF 		bl	transferIsReady
+ 139              	.LVL21:
+ 140              	.L1:
+ 141 0096 10BD     		pop	{r4, pc}
+ 142              	.L8:
+ 143              		.align	2
+ 144              	.L7:
+ 145 0098 00000000 		.word	.LANCHOR0
+ 146 009c 00000000 		.word	.LANCHOR1
+ 147              		.cfi_endproc
+ 148              	.LFE65:
+ 149              		.size	centralDispatcher, .-centralDispatcher
+ 150              		.section	.text.handleCommandReceived,"ax",%progbits
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 6
+
+
+ 151              		.align	2
+ 152              		.global	handleCommandReceived
+ 153              		.thumb
+ 154              		.thumb_func
+ 155              		.type	handleCommandReceived, %function
+ 156              	handleCommandReceived:
+ 157              	.LFB64:
+  46:main.c        ****     
+ 158              		.loc 1 46 0
+ 159              		.cfi_startproc
+ 160              		@ args = 0, pretend = 0, frame = 0
+ 161              		@ frame_needed = 0, uses_anonymous_args = 0
+ 162              	.LVL22:
+ 163 0000 08B5     		push	{r3, lr}
+ 164              		.cfi_def_cfa_offset 8
+ 165              		.cfi_offset 3, -8
+ 166              		.cfi_offset 14, -4
+  56:main.c        ****     {
+ 167              		.loc 1 56 0
+ 168 0002 4078     		ldrb	r0, [r0, #1]	@ zero_extendqisi2
+ 169              	.LVL23:
+ 170 0004 5528     		cmp	r0, #85
+ 171 0006 09D0     		beq	.L11
+ 172 0008 5728     		cmp	r0, #87
+ 173 000a 0DD0     		beq	.L12
+ 174 000c 4C28     		cmp	r0, #76
+ 175 000e 12D1     		bne	.L9
+  61:main.c        ****             centralDispatcher(STATE);
+ 176              		.loc 1 61 0
+ 177 0010 6C20     		movs	r0, #108
+ 178 0012 094B     		ldr	r3, .L15
+ 179 0014 1871     		strb	r0, [r3, #4]
+  62:main.c        ****             break;
+ 180              		.loc 1 62 0
+ 181 0016 FFF7FEFF 		bl	centralDispatcher
+ 182              	.LVL24:
+  63:main.c        ****         }
+ 183              		.loc 1 63 0
+ 184 001a 08BD     		pop	{r3, pc}
+ 185              	.L11:
+  69:main.c        ****             centralDispatcher(STATE);
+ 186              		.loc 1 69 0
+ 187 001c 7520     		movs	r0, #117
+ 188 001e 064B     		ldr	r3, .L15
+ 189 0020 1871     		strb	r0, [r3, #4]
+  70:main.c        ****             break;
+ 190              		.loc 1 70 0
+ 191 0022 FFF7FEFF 		bl	centralDispatcher
+ 192              	.LVL25:
+  71:main.c        ****         }
+ 193              		.loc 1 71 0
+ 194 0026 08BD     		pop	{r3, pc}
+ 195              	.L12:
+  75:main.c        ****             break;
+ 196              		.loc 1 75 0
+ 197 0028 FFF7FEFF 		bl	WheelRadiusToMetres
+ 198              	.LVL26:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 7
+
+
+ 199 002c FFF7FEFF 		bl	calcWheelCirc
+ 200              	.LVL27:
+ 201 0030 014B     		ldr	r3, .L15
+ 202 0032 C3E90201 		strd	r0, [r3, #8]
+ 203              	.L9:
+ 204 0036 08BD     		pop	{r3, pc}
+ 205              	.L16:
+ 206              		.align	2
+ 207              	.L15:
+ 208 0038 00000000 		.word	.LANCHOR0
+ 209              		.cfi_endproc
+ 210              	.LFE64:
+ 211              		.size	handleCommandReceived, .-handleCommandReceived
+ 212              		.section	.text.slave_rx_interrupt_handler,"ax",%progbits
+ 213              		.align	2
+ 214              		.global	slave_rx_interrupt_handler
+ 215              		.thumb
+ 216              		.thumb_func
+ 217              		.type	slave_rx_interrupt_handler, %function
+ 218              	slave_rx_interrupt_handler:
+ 219              	.LFB66:
+ 136:main.c        ****                 break;
+ 137:main.c        ****             }
+ 138:main.c        ****         }
+ 139:main.c        **** }
+ 140:main.c        **** 
+ 141:main.c        **** 
+ 142:main.c        **** /************************definition of SPI ISR*************************/
+ 143:main.c        **** CY_ISR(slave_rx_interrupt_handler)         
+ 144:main.c        **** {
+ 220              		.loc 1 144 0
+ 221              		.cfi_startproc
+ 222              		@ args = 0, pretend = 0, frame = 0
+ 223              		@ frame_needed = 0, uses_anonymous_args = 0
+ 224 0000 10B5     		push	{r4, lr}
+ 225              		.cfi_def_cfa_offset 8
+ 226              		.cfi_offset 4, -8
+ 227              		.cfi_offset 14, -4
+ 145:main.c        ****     //UART_1_PutString("SLAVE RX ISR CALLED \n\r");
+ 146:main.c        ****     receiveSPI(rxBuffer);
+ 228              		.loc 1 146 0
+ 229 0002 044C     		ldr	r4, .L19
+ 230 0004 2046     		mov	r0, r4
+ 231 0006 FFF7FEFF 		bl	receiveSPI
+ 232              	.LVL28:
+ 147:main.c        ****     handleCommandReceived(rxBuffer);
+ 233              		.loc 1 147 0
+ 234 000a 2046     		mov	r0, r4
+ 235 000c FFF7FEFF 		bl	handleCommandReceived
+ 236              	.LVL29:
+ 237 0010 10BD     		pop	{r4, pc}
+ 238              	.L20:
+ 239 0012 00BF     		.align	2
+ 240              	.L19:
+ 241 0014 10000000 		.word	.LANCHOR0+16
+ 242              		.cfi_endproc
+ 243              	.LFE66:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 8
+
+
+ 244              		.size	slave_rx_interrupt_handler, .-slave_rx_interrupt_handler
+ 245              		.global	__aeabi_ui2d
+ 246              		.global	__aeabi_dsub
+ 247              		.global	__aeabi_d2uiz
+ 248              		.section	.text.isr_wheel_tick_Handler,"ax",%progbits
+ 249              		.align	2
+ 250              		.global	isr_wheel_tick_Handler
+ 251              		.thumb
+ 252              		.thumb_func
+ 253              		.type	isr_wheel_tick_Handler, %function
+ 254              	isr_wheel_tick_Handler:
+ 255              	.LFB67:
+ 148:main.c        ****     /*
+ 149:main.c        ****     if (SPI_slave_ReadTxStatus()==SPI_slave_STS_TX_FIFO_EMPTY_SHIFT)
+ 150:main.c        ****     {
+ 151:main.c        ****         SPI_slave_PutArray(txBuffer,maxMessageLength);
+ 152:main.c        ****      }
+ 153:main.c        ****     */
+ 154:main.c        ****   
+ 155:main.c        ****     
+ 156:main.c        ****     
+ 157:main.c        **** }
+ 158:main.c        **** 
+ 159:main.c        **** /************************definition of wheel tick ISR*************************/
+ 160:main.c        **** CY_ISR( isr_wheel_tick_Handler )
+ 161:main.c        **** {  
+ 256              		.loc 1 161 0
+ 257              		.cfi_startproc
+ 258              		@ args = 0, pretend = 0, frame = 0
+ 259              		@ frame_needed = 0, uses_anonymous_args = 0
+ 260 0000 70B5     		push	{r4, r5, r6, lr}
+ 261              		.cfi_def_cfa_offset 16
+ 262              		.cfi_offset 4, -16
+ 263              		.cfi_offset 5, -12
+ 264              		.cfi_offset 6, -8
+ 265              		.cfi_offset 14, -4
+ 162:main.c        ****     time_temp = WheelTickTimer_ReadCounter();
+ 266              		.loc 1 162 0
+ 267 0002 FFF7FEFF 		bl	WheelTickTimer_ReadCounter
+ 268              	.LVL30:
+ 269 0006 244C     		ldr	r4, .L23+8
+ 270 0008 FFF7FEFF 		bl	__aeabi_ui2d
+ 271              	.LVL31:
+ 272 000c C4E90201 		strd	r0, [r4, #8]
+ 163:main.c        ****     resetSpeedTimer();
+ 273              		.loc 1 163 0
+ 274 0010 FFF7FEFF 		bl	resetSpeedTimer
+ 275              	.LVL32:
+ 164:main.c        ****     wheel_revolutions ++;
+ 276              		.loc 1 164 0
+ 277 0014 6668     		ldr	r6, [r4, #4]
+ 278 0016 0136     		adds	r6, r6, #1
+ 279 0018 6660     		str	r6, [r4, #4]
+ 165:main.c        ****     time_temp = 3000 - time_temp;
+ 280              		.loc 1 165 0
+ 281 001a D4E90223 		ldrd	r2, [r4, #8]
+ 282 001e 1CA1     		adr	r1, .L23
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 9
+
+
+ 283 0020 D1E90001 		ldrd	r0, [r1]
+ 284 0024 FFF7FEFF 		bl	__aeabi_dsub
+ 285              	.LVL33:
+ 286 0028 C4E90201 		strd	r0, [r4, #8]
+ 166:main.c        ****     
+ 167:main.c        ****     dist = (uint8)calcDistance(wheel_revolutions, wheelCirc);
+ 287              		.loc 1 167 0
+ 288 002c 1B4D     		ldr	r5, .L23+12
+ 289 002e D5E90223 		ldrd	r2, [r5, #8]
+ 290 0032 3046     		mov	r0, r6
+ 291 0034 FFF7FEFF 		bl	calcDistance
+ 292              	.LVL34:
+ 293 0038 FFF7FEFF 		bl	__aeabi_d2uiz
+ 294              	.LVL35:
+ 295 003c 2070     		strb	r0, [r4]
+ 168:main.c        ****     speed = (uint8)calcSpeed(time_temp, wheelCirc);
+ 296              		.loc 1 168 0
+ 297 003e D5E90223 		ldrd	r2, [r5, #8]
+ 298 0042 D4E90201 		ldrd	r0, [r4, #8]
+ 299 0046 FFF7FEFF 		bl	calcSpeed
+ 300              	.LVL36:
+ 301 004a FFF7FEFF 		bl	__aeabi_d2uiz
+ 302              	.LVL37:
+ 303 004e 2074     		strb	r0, [r4, #16]
+ 169:main.c        ****     
+ 170:main.c        **** 
+ 171:main.c        **** 
+ 172:main.c        ****     //debug
+ 173:main.c        ****     /*
+ 174:main.c        ****     
+ 175:main.c        ****     sprintf(UART_buffer,"\n\rtime_temp: %f\n",time_temp);
+ 176:main.c        ****     UART_1_PutString(UART_buffer);
+ 177:main.c        ****     
+ 178:main.c        ****     sprintf(UART_buffer,"\n\rSpeed calc read: %d\n",speed);
+ 179:main.c        ****     UART_1_PutString(UART_buffer);
+ 180:main.c        ****     
+ 181:main.c        ****     sprintf(UART_buffer,"\n\rDist calc read: %d\n",dist);
+ 182:main.c        ****     UART_1_PutString(UART_buffer);
+ 183:main.c        ****     
+ 184:main.c        ****     UART_1_PutString("printing tx buffer before send in wheel tick handler\n\r");
+ 185:main.c        ****     for (uint32_t i = 0; i < maxMessageLength; i++)
+ 186:main.c        ****     {
+ 187:main.c        ****        
+ 188:main.c        ****         sprintf(UART_buffer,"tx Byte %d: %d \n\r",i,txBuffer[i]);
+ 189:main.c        ****         UART_1_PutString(UART_buffer);
+ 190:main.c        ****     }
+ 191:main.c        ****     */
+ 192:main.c        ****     
+ 193:main.c        ****     time_temp = 0;
+ 304              		.loc 1 193 0
+ 305 0050 0022     		movs	r2, #0
+ 306 0052 0023     		movs	r3, #0
+ 307 0054 C4E90223 		strd	r2, [r4, #8]
+ 194:main.c        ****     
+ 195:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,MESSAGE_TYPE_ID_INDEX,LIVE_DATA_TRANSMISSION);
+ 308              		.loc 1 195 0
+ 309 0058 6422     		movs	r2, #100
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 10
+
+
+ 310 005a 0021     		movs	r1, #0
+ 311 005c 2846     		mov	r0, r5
+ 312 005e FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 313              	.LVL38:
+ 196:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,SPEED_INDEX,speed);
+ 314              		.loc 1 196 0
+ 315 0062 227C     		ldrb	r2, [r4, #16]	@ zero_extendqisi2
+ 316 0064 0121     		movs	r1, #1
+ 317 0066 2846     		mov	r0, r5
+ 318 0068 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 319              	.LVL39:
+ 197:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,DISTANCE_INDEX,dist);
+ 320              		.loc 1 197 0
+ 321 006c 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 322 006e 0221     		movs	r1, #2
+ 323 0070 2846     		mov	r0, r5
+ 324 0072 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 325              	.LVL40:
+ 198:main.c        ****     createParityBits(txBuffer,4);
+ 326              		.loc 1 198 0
+ 327 0076 0421     		movs	r1, #4
+ 328 0078 2846     		mov	r0, r5
+ 329 007a FFF7FEFF 		bl	createParityBits
+ 330              	.LVL41:
+ 199:main.c        ****     transferIsReady(txBuffer);
+ 331              		.loc 1 199 0
+ 332 007e 2846     		mov	r0, r5
+ 333 0080 FFF7FEFF 		bl	transferIsReady
+ 334              	.LVL42:
+ 200:main.c        ****     
+ 201:main.c        ****     WheelTickPin_ClearInterrupt();
+ 335              		.loc 1 201 0
+ 336 0084 FFF7FEFF 		bl	WheelTickPin_ClearInterrupt
+ 337              	.LVL43:
+ 338 0088 70BD     		pop	{r4, r5, r6, pc}
+ 339              	.L24:
+ 340 008a 00BFAFF3 		.align	3
+ 340      0080
+ 341              	.L23:
+ 342 0090 00000000 		.word	0
+ 343 0094 0070A740 		.word	1084715008
+ 344 0098 00000000 		.word	.LANCHOR1
+ 345 009c 00000000 		.word	.LANCHOR0
+ 346              		.cfi_endproc
+ 347              	.LFE67:
+ 348              		.size	isr_wheel_tick_Handler, .-isr_wheel_tick_Handler
+ 349              		.section	.text.Timer_Isr_BikeIsStopping_handler,"ax",%progbits
+ 350              		.align	2
+ 351              		.global	Timer_Isr_BikeIsStopping_handler
+ 352              		.thumb
+ 353              		.thumb_func
+ 354              		.type	Timer_Isr_BikeIsStopping_handler, %function
+ 355              	Timer_Isr_BikeIsStopping_handler:
+ 356              	.LFB68:
+ 202:main.c        **** }
+ 203:main.c        **** /************************definition of Counter ISR*************************/
+ 204:main.c        **** CY_ISR( Timer_Isr_BikeIsStopping_handler )
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 11
+
+
+ 205:main.c        **** {   
+ 357              		.loc 1 205 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 0
+ 360              		@ frame_needed = 0, uses_anonymous_args = 0
+ 361 0000 38B5     		push	{r3, r4, r5, lr}
+ 362              		.cfi_def_cfa_offset 16
+ 363              		.cfi_offset 3, -16
+ 364              		.cfi_offset 4, -12
+ 365              		.cfi_offset 5, -8
+ 366              		.cfi_offset 14, -4
+ 206:main.c        ****     setSpeedToZero(&speed);
+ 367              		.loc 1 206 0
+ 368 0002 0F4D     		ldr	r5, .L27
+ 369 0004 05F11000 		add	r0, r5, #16
+ 370 0008 FFF7FEFF 		bl	setSpeedToZero
+ 371              	.LVL44:
+ 207:main.c        ****        
+ 208:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,MESSAGE_TYPE_ID_INDEX,LIVE_DATA_TRANSMISSION);
+ 372              		.loc 1 208 0
+ 373 000c 0D4C     		ldr	r4, .L27+4
+ 374 000e 6422     		movs	r2, #100
+ 375 0010 0021     		movs	r1, #0
+ 376 0012 2046     		mov	r0, r4
+ 377 0014 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 378              	.LVL45:
+ 209:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,SPEED_INDEX,speed);
+ 379              		.loc 1 209 0
+ 380 0018 2A7C     		ldrb	r2, [r5, #16]	@ zero_extendqisi2
+ 381 001a 0121     		movs	r1, #1
+ 382 001c 2046     		mov	r0, r4
+ 383 001e FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 384              	.LVL46:
+ 210:main.c        ****     loadToSpecificTxBufferIndex(txBuffer,DISTANCE_INDEX,dist);
+ 385              		.loc 1 210 0
+ 386 0022 2A78     		ldrb	r2, [r5]	@ zero_extendqisi2
+ 387 0024 0221     		movs	r1, #2
+ 388 0026 2046     		mov	r0, r4
+ 389 0028 FFF7FEFF 		bl	loadToSpecificTxBufferIndex
+ 390              	.LVL47:
+ 211:main.c        ****     createParityBits(txBuffer,4);
+ 391              		.loc 1 211 0
+ 392 002c 0421     		movs	r1, #4
+ 393 002e 2046     		mov	r0, r4
+ 394 0030 FFF7FEFF 		bl	createParityBits
+ 395              	.LVL48:
+ 212:main.c        ****     transferIsReady(txBuffer);
+ 396              		.loc 1 212 0
+ 397 0034 2046     		mov	r0, r4
+ 398 0036 FFF7FEFF 		bl	transferIsReady
+ 399              	.LVL49:
+ 213:main.c        **** 
+ 214:main.c        ****     
+ 215:main.c        ****     //debug
+ 216:main.c        ****     
+ 217:main.c        ****     //UART_1_PutString("\n\rBike is Stopping\n");
+ 218:main.c        ****     /*
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 12
+
+
+ 219:main.c        ****         UART_1_PutString("printing tx buffer before send\n\r");
+ 220:main.c        ****             for (uint32_t i = 0; i < maxMessageLength; i++)
+ 221:main.c        ****             {
+ 222:main.c        ****        
+ 223:main.c        ****                 sprintf(UART_buffer,"tx Byte %d: %d \n\r",i,txBuffer[i]);
+ 224:main.c        ****                 UART_1_PutString(UART_buffer);
+ 225:main.c        ****                 
+ 226:main.c        ****             }
+ 227:main.c        ****     
+ 228:main.c        ****     transferIsReady(txBuffer);
+ 229:main.c        ****     
+ 230:main.c        ****     UART_1_PutString("printing tx clone buffer before after transferisready\n\r");
+ 231:main.c        ****             for (uint32_t i = 0; i < maxMessageLength; i++)
+ 232:main.c        ****             {
+ 233:main.c        ****        
+ 234:main.c        ****                 sprintf(UART_buffer,"tx Byte %d: %d \n\r",i,txCloneBuffer[i]);
+ 235:main.c        ****                 UART_1_PutString(UART_buffer);
+ 236:main.c        ****                 
+ 237:main.c        ****             }
+ 238:main.c        ****     //    sprintf(UART_buffer,"\n\rSpeed calc read: %d\n",speed);
+ 239:main.c        ****     //    UART_1_PutString(UART_buffer);
+ 240:main.c        ****     
+ 241:main.c        ****     UART_1_PutString("printing tx buffer in bikeisstoppinghandler\n\r");
+ 242:main.c        ****     for (uint32_t i = 0; i < maxMessageLength; i++)
+ 243:main.c        ****     {
+ 244:main.c        ****        
+ 245:main.c        ****         sprintf(UART_buffer,"tx Byte %d: %d \n\r",i,txBuffer[i]);
+ 246:main.c        ****         UART_1_PutString(UART_buffer);
+ 247:main.c        ****     }
+ 248:main.c        ****     */
+ 249:main.c        ****     
+ 250:main.c        ****     WheelTickTimer_ReadStatusRegister();
+ 400              		.loc 1 250 0
+ 401 003a FFF7FEFF 		bl	WheelTickTimer_ReadStatusRegister
+ 402              	.LVL50:
+ 403 003e 38BD     		pop	{r3, r4, r5, pc}
+ 404              	.L28:
+ 405              		.align	2
+ 406              	.L27:
+ 407 0040 00000000 		.word	.LANCHOR1
+ 408 0044 00000000 		.word	.LANCHOR0
+ 409              		.cfi_endproc
+ 410              	.LFE68:
+ 411              		.size	Timer_Isr_BikeIsStopping_handler, .-Timer_Isr_BikeIsStopping_handler
+ 412              		.section	.text.UART_rx_interrupt_handler,"ax",%progbits
+ 413              		.align	2
+ 414              		.global	UART_rx_interrupt_handler
+ 415              		.thumb
+ 416              		.thumb_func
+ 417              		.type	UART_rx_interrupt_handler, %function
+ 418              	UART_rx_interrupt_handler:
+ 419              	.LFB69:
+ 251:main.c        **** }
+ 252:main.c        **** 
+ 253:main.c        **** /************************definition of UART ISR*************************/
+ 254:main.c        **** 
+ 255:main.c        **** CY_ISR(UART_rx_interrupt_handler)
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 13
+
+
+ 256:main.c        **** {
+ 420              		.loc 1 256 0
+ 421              		.cfi_startproc
+ 422              		@ args = 0, pretend = 0, frame = 0
+ 423              		@ frame_needed = 0, uses_anonymous_args = 0
+ 424 0000 10B5     		push	{r4, lr}
+ 425              		.cfi_def_cfa_offset 8
+ 426              		.cfi_offset 4, -8
+ 427              		.cfi_offset 14, -4
+ 257:main.c        ****    uint8_t bytesToRead = UART_1_GetRxBufferSize();
+ 428              		.loc 1 257 0
+ 429 0002 FFF7FEFF 		bl	UART_1_GetRxBufferSize
+ 430              	.LVL51:
+ 431 0006 0446     		mov	r4, r0
+ 432              	.LVL52:
+ 258:main.c        ****     while (bytesToRead > 0)
+ 433              		.loc 1 258 0
+ 434 0008 05E0     		b	.L30
+ 435              	.L31:
+ 436              	.LBB2:
+ 259:main.c        ****     {
+ 260:main.c        ****         uint8_t byteReceived = UART_1_ReadRxData();
+ 437              		.loc 1 260 0
+ 438 000a FFF7FEFF 		bl	UART_1_ReadRxData
+ 439              	.LVL53:
+ 261:main.c        ****         UART_1_WriteTxData(byteReceived); // echo back
+ 440              		.loc 1 261 0
+ 441 000e FFF7FEFF 		bl	UART_1_WriteTxData
+ 442              	.LVL54:
+ 262:main.c        ****         bytesToRead--;
+ 443              		.loc 1 262 0
+ 444 0012 013C     		subs	r4, r4, #1
+ 445              	.LVL55:
+ 446 0014 E4B2     		uxtb	r4, r4
+ 447              	.LVL56:
+ 448              	.L30:
+ 449              	.LBE2:
+ 258:main.c        ****     {
+ 450              		.loc 1 258 0
+ 451 0016 002C     		cmp	r4, #0
+ 452 0018 F7D1     		bne	.L31
+ 263:main.c        ****     }
+ 264:main.c        **** }
+ 453              		.loc 1 264 0
+ 454 001a 10BD     		pop	{r4, pc}
+ 455              		.cfi_endproc
+ 456              	.LFE69:
+ 457              		.size	UART_rx_interrupt_handler, .-UART_rx_interrupt_handler
+ 458              		.section	.text.bike_is_idle_handler,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	bike_is_idle_handler
+ 461              		.thumb
+ 462              		.thumb_func
+ 463              		.type	bike_is_idle_handler, %function
+ 464              	bike_is_idle_handler:
+ 465              	.LFB70:
+ 265:main.c        **** 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 14
+
+
+ 266:main.c        **** /************************Accelerometer interupt routines *********/
+ 267:main.c        **** 
+ 268:main.c        **** CY_ISR(bike_is_idle_handler)
+ 269:main.c        **** {
+ 466              		.loc 1 269 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470 0000 10B5     		push	{r4, lr}
+ 471              		.cfi_def_cfa_offset 8
+ 472              		.cfi_offset 4, -8
+ 473              		.cfi_offset 14, -4
+ 270:main.c        ****     Pin_2_ac_moving_ClearInterrupt();
+ 474              		.loc 1 270 0
+ 475 0002 FFF7FEFF 		bl	Pin_2_ac_moving_ClearInterrupt
+ 476              	.LVL57:
+ 271:main.c        ****     isr_bike_is_idle_ClearPending();
+ 477              		.loc 1 271 0
+ 478 0006 FFF7FEFF 		bl	isr_bike_is_idle_ClearPending
+ 479              	.LVL58:
+ 480              	.LBB3:
+ 272:main.c        ****       for (uint8_t i = 0; i < 10; i++)           
+ 481              		.loc 1 272 0
+ 482 000a 0024     		movs	r4, #0
+ 483 000c 0DE0     		b	.L34
+ 484              	.LVL59:
+ 485              	.L35:
+ 273:main.c        ****     {
+ 274:main.c        ****         LED_pin_Write(1);
+ 486              		.loc 1 274 0 discriminator 3
+ 487 000e 0120     		movs	r0, #1
+ 488 0010 FFF7FEFF 		bl	LED_pin_Write
+ 489              	.LVL60:
+ 275:main.c        ****         CyDelay(50);
+ 490              		.loc 1 275 0 discriminator 3
+ 491 0014 3220     		movs	r0, #50
+ 492 0016 FFF7FEFF 		bl	CyDelay
+ 493              	.LVL61:
+ 276:main.c        ****         LED_pin_Write(0);              
+ 494              		.loc 1 276 0 discriminator 3
+ 495 001a 0020     		movs	r0, #0
+ 496 001c FFF7FEFF 		bl	LED_pin_Write
+ 497              	.LVL62:
+ 277:main.c        ****         CyDelay(50);
+ 498              		.loc 1 277 0 discriminator 3
+ 499 0020 3220     		movs	r0, #50
+ 500 0022 FFF7FEFF 		bl	CyDelay
+ 501              	.LVL63:
+ 272:main.c        ****     {
+ 502              		.loc 1 272 0 discriminator 3
+ 503 0026 0134     		adds	r4, r4, #1
+ 504              	.LVL64:
+ 505 0028 E4B2     		uxtb	r4, r4
+ 506              	.LVL65:
+ 507              	.L34:
+ 272:main.c        ****     {
+ 508              		.loc 1 272 0 is_stmt 0 discriminator 1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 15
+
+
+ 509 002a 092C     		cmp	r4, #9
+ 510 002c EFD9     		bls	.L35
+ 511              	.LBE3:
+ 278:main.c        ****     }
+ 279:main.c        ****     //UART_1_PutString("\r\n idle handler\n");
+ 280:main.c        ****     
+ 281:main.c        ****     startAccelerometerTimer();
+ 512              		.loc 1 281 0 is_stmt 1
+ 513 002e FFF7FEFF 		bl	startAccelerometerTimer
+ 514              	.LVL66:
+ 282:main.c        ****     resetAccelerometerTimer();
+ 515              		.loc 1 282 0
+ 516 0032 FFF7FEFF 		bl	resetAccelerometerTimer
+ 517              	.LVL67:
+ 283:main.c        ****     Pin_1_ac_idle_ClearInterrupt();
+ 518              		.loc 1 283 0
+ 519 0036 FFF7FEFF 		bl	Pin_1_ac_idle_ClearInterrupt
+ 520              	.LVL68:
+ 521 003a 10BD     		pop	{r4, pc}
+ 522              		.cfi_endproc
+ 523              	.LFE70:
+ 524              		.size	bike_is_idle_handler, .-bike_is_idle_handler
+ 525              		.section	.text.bike_is_moving_handler,"ax",%progbits
+ 526              		.align	2
+ 527              		.global	bike_is_moving_handler
+ 528              		.thumb
+ 529              		.thumb_func
+ 530              		.type	bike_is_moving_handler, %function
+ 531              	bike_is_moving_handler:
+ 532              	.LFB71:
+ 284:main.c        ****     
+ 285:main.c        **** }
+ 286:main.c        **** 
+ 287:main.c        **** CY_ISR(bike_is_moving_handler)
+ 288:main.c        **** {
+ 533              		.loc 1 288 0
+ 534              		.cfi_startproc
+ 535              		@ args = 0, pretend = 0, frame = 0
+ 536              		@ frame_needed = 0, uses_anonymous_args = 0
+ 537 0000 08B5     		push	{r3, lr}
+ 538              		.cfi_def_cfa_offset 8
+ 539              		.cfi_offset 3, -8
+ 540              		.cfi_offset 14, -4
+ 289:main.c        ****     LED_pin_Write(1);
+ 541              		.loc 1 289 0
+ 542 0002 0120     		movs	r0, #1
+ 543 0004 FFF7FEFF 		bl	LED_pin_Write
+ 544              	.LVL69:
+ 290:main.c        ****     CyDelay(200);
+ 545              		.loc 1 290 0
+ 546 0008 C820     		movs	r0, #200
+ 547 000a FFF7FEFF 		bl	CyDelay
+ 548              	.LVL70:
+ 291:main.c        ****     LED_pin_Write(0);   
+ 549              		.loc 1 291 0
+ 550 000e 0020     		movs	r0, #0
+ 551 0010 FFF7FEFF 		bl	LED_pin_Write
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 16
+
+
+ 552              	.LVL71:
+ 292:main.c        ****     
+ 293:main.c        ****     //UART_1_PutString("\r\n moving handler\n");
+ 294:main.c        ****     stopAccelerometerTimer();
+ 553              		.loc 1 294 0
+ 554 0014 FFF7FEFF 		bl	stopAccelerometerTimer
+ 555              	.LVL72:
+ 295:main.c        ****     Pin_2_ac_moving_ClearInterrupt();
+ 556              		.loc 1 295 0
+ 557 0018 FFF7FEFF 		bl	Pin_2_ac_moving_ClearInterrupt
+ 558              	.LVL73:
+ 559 001c 08BD     		pop	{r3, pc}
+ 560              		.cfi_endproc
+ 561              	.LFE71:
+ 562              		.size	bike_is_moving_handler, .-bike_is_moving_handler
+ 563 001e 00BF     		.section	.text.bike_stopped_handler,"ax",%progbits
+ 564              		.align	2
+ 565              		.global	bike_stopped_handler
+ 566              		.thumb
+ 567              		.thumb_func
+ 568              		.type	bike_stopped_handler, %function
+ 569              	bike_stopped_handler:
+ 570              	.LFB72:
+ 296:main.c        **** }
+ 297:main.c        **** 
+ 298:main.c        **** CY_ISR(bike_stopped_handler)
+ 299:main.c        **** {
+ 571              		.loc 1 299 0
+ 572              		.cfi_startproc
+ 573              		@ args = 0, pretend = 0, frame = 0
+ 574              		@ frame_needed = 0, uses_anonymous_args = 0
+ 575 0000 10B5     		push	{r4, lr}
+ 576              		.cfi_def_cfa_offset 8
+ 577              		.cfi_offset 4, -8
+ 578              		.cfi_offset 14, -4
+ 579              	.LVL74:
+ 580              	.LBB4:
+ 300:main.c        ****     
+ 301:main.c        ****       for (uint8_t i = 0; i < 10; i++)           
+ 581              		.loc 1 301 0
+ 582 0002 0024     		movs	r4, #0
+ 583 0004 0DE0     		b	.L40
+ 584              	.LVL75:
+ 585              	.L41:
+ 302:main.c        ****     {
+ 303:main.c        ****         LED_pin_Write(1);
+ 586              		.loc 1 303 0 discriminator 3
+ 587 0006 0120     		movs	r0, #1
+ 588 0008 FFF7FEFF 		bl	LED_pin_Write
+ 589              	.LVL76:
+ 304:main.c        ****         CyDelay(200);
+ 590              		.loc 1 304 0 discriminator 3
+ 591 000c C820     		movs	r0, #200
+ 592 000e FFF7FEFF 		bl	CyDelay
+ 593              	.LVL77:
+ 305:main.c        ****         LED_pin_Write(0);              
+ 594              		.loc 1 305 0 discriminator 3
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 17
+
+
+ 595 0012 0020     		movs	r0, #0
+ 596 0014 FFF7FEFF 		bl	LED_pin_Write
+ 597              	.LVL78:
+ 306:main.c        ****         CyDelay(200);
+ 598              		.loc 1 306 0 discriminator 3
+ 599 0018 C820     		movs	r0, #200
+ 600 001a FFF7FEFF 		bl	CyDelay
+ 601              	.LVL79:
+ 301:main.c        ****     {
+ 602              		.loc 1 301 0 discriminator 3
+ 603 001e 0134     		adds	r4, r4, #1
+ 604              	.LVL80:
+ 605 0020 E4B2     		uxtb	r4, r4
+ 606              	.LVL81:
+ 607              	.L40:
+ 301:main.c        ****     {
+ 608              		.loc 1 301 0 is_stmt 0 discriminator 1
+ 609 0022 092C     		cmp	r4, #9
+ 610 0024 EFD9     		bls	.L41
+ 611              	.LBE4:
+ 307:main.c        ****     }
+ 308:main.c        ****     //UART_1_PutString("\r\nMotor Laases\n");
+ 309:main.c        ****     //lockBike();
+ 310:main.c        ****    
+ 311:main.c        ****     STATE=LOCKING;
+ 612              		.loc 1 311 0 is_stmt 1
+ 613 0026 6C20     		movs	r0, #108
+ 614 0028 034B     		ldr	r3, .L43
+ 615 002a 1871     		strb	r0, [r3, #4]
+ 312:main.c        ****     centralDispatcher(STATE);
+ 616              		.loc 1 312 0
+ 617 002c FFF7FEFF 		bl	centralDispatcher
+ 618              	.LVL82:
+ 313:main.c        ****     AccelerometerTimer_ReadStatusRegister();
+ 619              		.loc 1 313 0
+ 620 0030 FFF7FEFF 		bl	AccelerometerTimer_ReadStatusRegister
+ 621              	.LVL83:
+ 622 0034 10BD     		pop	{r4, pc}
+ 623              	.LVL84:
+ 624              	.L44:
+ 625 0036 00BF     		.align	2
+ 626              	.L43:
+ 627 0038 00000000 		.word	.LANCHOR0
+ 628              		.cfi_endproc
+ 629              	.LFE72:
+ 630              		.size	bike_stopped_handler, .-bike_stopped_handler
+ 631              		.section	.text.isr_bikelock,"ax",%progbits
+ 632              		.align	2
+ 633              		.global	isr_bikelock
+ 634              		.thumb
+ 635              		.thumb_func
+ 636              		.type	isr_bikelock, %function
+ 637              	isr_bikelock:
+ 638              	.LFB73:
+ 314:main.c        **** }
+ 315:main.c        **** 
+ 316:main.c        **** /********************interrupt routine for stopping motorized lock*********************/
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 18
+
+
+ 317:main.c        **** 
+ 318:main.c        **** CY_ISR(isr_bikelock)
+ 319:main.c        **** {
+ 639              		.loc 1 319 0
+ 640              		.cfi_startproc
+ 641              		@ args = 0, pretend = 0, frame = 0
+ 642              		@ frame_needed = 0, uses_anonymous_args = 0
+ 643 0000 08B5     		push	{r3, lr}
+ 644              		.cfi_def_cfa_offset 8
+ 645              		.cfi_offset 3, -8
+ 646              		.cfi_offset 14, -4
+ 320:main.c        ****     stopLockTimer();
+ 647              		.loc 1 320 0
+ 648 0002 FFF7FEFF 		bl	stopLockTimer
+ 649              	.LVL85:
+ 321:main.c        ****     In_1_Write(0);
+ 650              		.loc 1 321 0
+ 651 0006 0020     		movs	r0, #0
+ 652 0008 FFF7FEFF 		bl	In_1_Write
+ 653              	.LVL86:
+ 322:main.c        ****     In_2_Write(0);
+ 654              		.loc 1 322 0
+ 655 000c 0020     		movs	r0, #0
+ 656 000e FFF7FEFF 		bl	In_2_Write
+ 657              	.LVL87:
+ 323:main.c        ****     EA_Write(0);
+ 658              		.loc 1 323 0
+ 659 0012 0020     		movs	r0, #0
+ 660 0014 FFF7FEFF 		bl	EA_Write
+ 661              	.LVL88:
+ 324:main.c        ****     MotorLockTimer_ReadStatusRegister();
+ 662              		.loc 1 324 0
+ 663 0018 FFF7FEFF 		bl	MotorLockTimer_ReadStatusRegister
+ 664              	.LVL89:
+ 665 001c 08BD     		pop	{r3, pc}
+ 666              		.cfi_endproc
+ 667              	.LFE73:
+ 668              		.size	isr_bikelock, .-isr_bikelock
+ 669 001e 00BF     		.section	.text.main,"ax",%progbits
+ 670              		.align	2
+ 671              		.global	main
+ 672              		.thumb
+ 673              		.thumb_func
+ 674              		.type	main, %function
+ 675              	main:
+ 676              	.LFB74:
+ 325:main.c        **** }
+ 326:main.c        **** 
+ 327:main.c        **** 
+ 328:main.c        **** /************************main*************************/
+ 329:main.c        **** int main(void)
+ 330:main.c        **** {
+ 677              		.loc 1 330 0
+ 678              		.cfi_startproc
+ 679              		@ args = 0, pretend = 0, frame = 0
+ 680              		@ frame_needed = 0, uses_anonymous_args = 0
+ 681 0000 10B5     		push	{r4, lr}
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 19
+
+
+ 682              		.cfi_def_cfa_offset 8
+ 683              		.cfi_offset 4, -8
+ 684              		.cfi_offset 14, -4
+ 685              	.LVL90:
+ 686              	.LBB5:
+ 331:main.c        ****     //indicating start of test program.
+ 332:main.c        ****     for (uint8_t i = 0; i < 10; i++)           
+ 687              		.loc 1 332 0
+ 688 0002 0024     		movs	r4, #0
+ 689 0004 0DE0     		b	.L48
+ 690              	.LVL91:
+ 691              	.L49:
+ 333:main.c        ****     {
+ 334:main.c        ****         LED_pin_Write(1);
+ 692              		.loc 1 334 0 discriminator 3
+ 693 0006 0120     		movs	r0, #1
+ 694 0008 FFF7FEFF 		bl	LED_pin_Write
+ 695              	.LVL92:
+ 335:main.c        ****         CyDelay(50);
+ 696              		.loc 1 335 0 discriminator 3
+ 697 000c 3220     		movs	r0, #50
+ 698 000e FFF7FEFF 		bl	CyDelay
+ 699              	.LVL93:
+ 336:main.c        ****         LED_pin_Write(0);              
+ 700              		.loc 1 336 0 discriminator 3
+ 701 0012 0020     		movs	r0, #0
+ 702 0014 FFF7FEFF 		bl	LED_pin_Write
+ 703              	.LVL94:
+ 337:main.c        ****         CyDelay(50);
+ 704              		.loc 1 337 0 discriminator 3
+ 705 0018 3220     		movs	r0, #50
+ 706 001a FFF7FEFF 		bl	CyDelay
+ 707              	.LVL95:
+ 332:main.c        ****     {
+ 708              		.loc 1 332 0 discriminator 3
+ 709 001e 0134     		adds	r4, r4, #1
+ 710              	.LVL96:
+ 711 0020 E4B2     		uxtb	r4, r4
+ 712              	.LVL97:
+ 713              	.L48:
+ 332:main.c        ****     {
+ 714              		.loc 1 332 0 is_stmt 0 discriminator 1
+ 715 0022 092C     		cmp	r4, #9
+ 716 0024 EFD9     		bls	.L49
+ 717              	.LBE5:
+ 338:main.c        ****     }
+ 339:main.c        ****     
+ 340:main.c        ****     CyGlobalIntEnable; /* Enable global interrupts. */
+ 718              		.loc 1 340 0 is_stmt 1
+ 719              		.syntax unified
+ 720              	@ 340 "main.c" 1
+ 721 0026 62B6     		CPSIE   i
+ 722              	@ 0 "" 2
+ 341:main.c        ****     
+ 342:main.c        ****     initUART();
+ 723              		.loc 1 342 0
+ 724              		.thumb
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 20
+
+
+ 725              		.syntax unified
+ 726 0028 FFF7FEFF 		bl	initUART
+ 727              	.LVL98:
+ 343:main.c        ****     initSPI();
+ 728              		.loc 1 343 0
+ 729 002c FFF7FEFF 		bl	initSPI
+ 730              	.LVL99:
+ 344:main.c        ****     initWheelSensor();
+ 731              		.loc 1 344 0
+ 732 0030 FFF7FEFF 		bl	initWheelSensor
+ 733              	.LVL100:
+ 345:main.c        ****     init_accelerometer();
+ 734              		.loc 1 345 0
+ 735 0034 FFF7FEFF 		bl	init_accelerometer
+ 736              	.LVL101:
+ 346:main.c        ****     initLockUnit();
+ 737              		.loc 1 346 0
+ 738 0038 FFF7FEFF 		bl	initLockUnit
+ 739              	.LVL102:
+ 740              	.L50:
+ 741 003c FEE7     		b	.L50
+ 742              		.cfi_endproc
+ 743              	.LFE74:
+ 744              		.size	main, .-main
+ 745              		.global	wheelCirc
+ 746              		.global	wheelRadius
+ 747              		.global	time_temp
+ 748              		.global	dist
+ 749              		.global	speed
+ 750              		.global	wheel_revolutions
+ 751              		.comm	UART_buffer,16,4
+ 752              		.comm	txCloneBuffer,24,4
+ 753              		.global	txBuffer
+ 754              		.global	rxBuffer
+ 755              		.global	STATE
+ 756 003e 00BF     		.data
+ 757              		.align	3
+ 758              		.set	.LANCHOR0,. + 0
+ 759              		.type	txBuffer, %object
+ 760              		.size	txBuffer, 4
+ 761              	txBuffer:
+ 762 0000 23       		.byte	35
+ 763 0001 23       		.byte	35
+ 764 0002 23       		.byte	35
+ 765 0003 23       		.byte	35
+ 766              		.type	STATE, %object
+ 767              		.size	STATE, 1
+ 768              	STATE:
+ 769 0004 6F       		.byte	111
+ 770 0005 000000   		.space	3
+ 771              		.type	wheelCirc, %object
+ 772              		.size	wheelCirc, 8
+ 773              	wheelCirc:
+ 774 0008 B7EEE6A9 		.word	-1444483401
+ 775 000c 0EB9693F 		.word	1063893262
+ 776              		.type	rxBuffer, %object
+ 777              		.size	rxBuffer, 4
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 21
+
+
+ 778              	rxBuffer:
+ 779 0010 23       		.byte	35
+ 780 0011 23       		.byte	35
+ 781 0012 23       		.byte	35
+ 782 0013 23       		.byte	35
+ 783 0014 00000000 		.space	4
+ 784              		.type	wheelRadius, %object
+ 785              		.size	wheelRadius, 8
+ 786              	wheelRadius:
+ 787 0018 00000000 		.word	0
+ 788 001c 00003940 		.word	1077477376
+ 789              		.bss
+ 790              		.align	3
+ 791              		.set	.LANCHOR1,. + 0
+ 792              		.type	dist, %object
+ 793              		.size	dist, 1
+ 794              	dist:
+ 795 0000 00       		.space	1
+ 796 0001 000000   		.space	3
+ 797              		.type	wheel_revolutions, %object
+ 798              		.size	wheel_revolutions, 4
+ 799              	wheel_revolutions:
+ 800 0004 00000000 		.space	4
+ 801              		.type	time_temp, %object
+ 802              		.size	time_temp, 8
+ 803              	time_temp:
+ 804 0008 00000000 		.space	8
+ 804      00000000 
+ 805              		.type	speed, %object
+ 806              		.size	speed, 1
+ 807              	speed:
+ 808 0010 00       		.space	1
+ 809              		.text
+ 810              	.Letext0:
+ 811              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 812              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 813              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 814              		.file 5 "EDBikeProtocol.h"
+ 815              		.file 6 "SPIprotocol.h"
+ 816              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
+ 817              		.file 8 "lockUnit.h"
+ 818              		.file 9 "Generated_Source\\PSoC5/LED_pin.h"
+ 819              		.file 10 "SPI.h"
+ 820              		.file 11 "Generated_Source\\PSoC5/isr_bike_is_idle.h"
+ 821              		.file 12 "Accelerometer.h"
+ 822              		.file 13 "wheelSensor.h"
+ 823              		.file 14 "Generated_Source\\PSoC5/WheelTickTimer.h"
+ 824              		.file 15 "Generated_Source\\PSoC5/WheelTickPin.h"
+ 825              		.file 16 "Generated_Source\\PSoC5/UART_1.h"
+ 826              		.file 17 "Generated_Source\\PSoC5/CyLib.h"
+ 827              		.file 18 "Generated_Source\\PSoC5/Pin_2_ac_moving.h"
+ 828              		.file 19 "Generated_Source\\PSoC5/Pin_1_ac_idle.h"
+ 829              		.file 20 "Generated_Source\\PSoC5/AccelerometerTimer.h"
+ 830              		.file 21 "Generated_Source\\PSoC5/In_1.h"
+ 831              		.file 22 "Generated_Source\\PSoC5/In_2.h"
+ 832              		.file 23 "Generated_Source\\PSoC5/EA.h"
+ 833              		.file 24 "Generated_Source\\PSoC5/MotorLockTimer.h"
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 22
+
+
+ 834              		.file 25 "UART.h"
+ 835              		.section	.debug_info,"",%progbits
+ 836              	.Ldebug_info0:
+ 837 0000 2C0B0000 		.4byte	0xb2c
+ 838 0004 0400     		.2byte	0x4
+ 839 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 840 000a 04       		.byte	0x4
+ 841 000b 01       		.uleb128 0x1
+ 842 000c 12020000 		.4byte	.LASF118
+ 843 0010 0C       		.byte	0xc
+ 844 0011 62060000 		.4byte	.LASF119
+ 845 0015 57040000 		.4byte	.LASF120
+ 846 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 847 001d 00000000 		.4byte	0
+ 848 0021 00000000 		.4byte	.Ldebug_line0
+ 849 0025 02       		.uleb128 0x2
+ 850 0026 01       		.byte	0x1
+ 851 0027 06       		.byte	0x6
+ 852 0028 D8030000 		.4byte	.LASF0
+ 853 002c 03       		.uleb128 0x3
+ 854 002d 47040000 		.4byte	.LASF4
+ 855 0031 02       		.byte	0x2
+ 856 0032 1D       		.byte	0x1d
+ 857 0033 37000000 		.4byte	0x37
+ 858 0037 02       		.uleb128 0x2
+ 859 0038 01       		.byte	0x1
+ 860 0039 08       		.byte	0x8
+ 861 003a 7B030000 		.4byte	.LASF1
+ 862 003e 02       		.uleb128 0x2
+ 863 003f 02       		.byte	0x2
+ 864 0040 05       		.byte	0x5
+ 865 0041 6C000000 		.4byte	.LASF2
+ 866 0045 02       		.uleb128 0x2
+ 867 0046 02       		.byte	0x2
+ 868 0047 07       		.byte	0x7
+ 869 0048 76050000 		.4byte	.LASF3
+ 870 004c 03       		.uleb128 0x3
+ 871 004d 31070000 		.4byte	.LASF5
+ 872 0051 02       		.byte	0x2
+ 873 0052 3F       		.byte	0x3f
+ 874 0053 57000000 		.4byte	0x57
+ 875 0057 02       		.uleb128 0x2
+ 876 0058 04       		.byte	0x4
+ 877 0059 05       		.byte	0x5
+ 878 005a F2010000 		.4byte	.LASF6
+ 879 005e 02       		.uleb128 0x2
+ 880 005f 04       		.byte	0x4
+ 881 0060 07       		.byte	0x7
+ 882 0061 69060000 		.4byte	.LASF7
+ 883 0065 02       		.uleb128 0x2
+ 884 0066 08       		.byte	0x8
+ 885 0067 05       		.byte	0x5
+ 886 0068 A4010000 		.4byte	.LASF8
+ 887 006c 02       		.uleb128 0x2
+ 888 006d 08       		.byte	0x8
+ 889 006e 07       		.byte	0x7
+ 890 006f E4030000 		.4byte	.LASF9
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 23
+
+
+ 891 0073 04       		.uleb128 0x4
+ 892 0074 04       		.byte	0x4
+ 893 0075 05       		.byte	0x5
+ 894 0076 696E7400 		.ascii	"int\000"
+ 895 007a 02       		.uleb128 0x2
+ 896 007b 04       		.byte	0x4
+ 897 007c 07       		.byte	0x7
+ 898 007d 0D040000 		.4byte	.LASF10
+ 899 0081 02       		.uleb128 0x2
+ 900 0082 08       		.byte	0x8
+ 901 0083 04       		.byte	0x4
+ 902 0084 6F030000 		.4byte	.LASF11
+ 903 0088 02       		.uleb128 0x2
+ 904 0089 04       		.byte	0x4
+ 905 008a 07       		.byte	0x7
+ 906 008b 76000000 		.4byte	.LASF12
+ 907 008f 02       		.uleb128 0x2
+ 908 0090 01       		.byte	0x1
+ 909 0091 08       		.byte	0x8
+ 910 0092 CE010000 		.4byte	.LASF13
+ 911 0096 03       		.uleb128 0x3
+ 912 0097 2A010000 		.4byte	.LASF14
+ 913 009b 03       		.byte	0x3
+ 914 009c 18       		.byte	0x18
+ 915 009d 2C000000 		.4byte	0x2c
+ 916 00a1 03       		.uleb128 0x3
+ 917 00a2 6E050000 		.4byte	.LASF15
+ 918 00a6 03       		.byte	0x3
+ 919 00a7 2C       		.byte	0x2c
+ 920 00a8 4C000000 		.4byte	0x4c
+ 921 00ac 05       		.uleb128 0x5
+ 922 00ad A5050000 		.4byte	.LASF16
+ 923 00b1 04       		.byte	0x4
+ 924 00b2 E401     		.2byte	0x1e4
+ 925 00b4 37000000 		.4byte	0x37
+ 926 00b8 05       		.uleb128 0x5
+ 927 00b9 FF000000 		.4byte	.LASF17
+ 928 00bd 04       		.byte	0x4
+ 929 00be E501     		.2byte	0x1e5
+ 930 00c0 45000000 		.4byte	0x45
+ 931 00c4 02       		.uleb128 0x2
+ 932 00c5 04       		.byte	0x4
+ 933 00c6 04       		.byte	0x4
+ 934 00c7 9E010000 		.4byte	.LASF18
+ 935 00cb 02       		.uleb128 0x2
+ 936 00cc 08       		.byte	0x8
+ 937 00cd 04       		.byte	0x4
+ 938 00ce AB060000 		.4byte	.LASF19
+ 939 00d2 05       		.uleb128 0x5
+ 940 00d3 7F000000 		.4byte	.LASF20
+ 941 00d7 04       		.byte	0x4
+ 942 00d8 F501     		.2byte	0x1f5
+ 943 00da 8F000000 		.4byte	0x8f
+ 944 00de 06       		.uleb128 0x6
+ 945 00df A7020000 		.4byte	.LASF42
+ 946 00e3 01       		.byte	0x1
+ 947 00e4 37000000 		.4byte	0x37
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 24
+
+
+ 948 00e8 05       		.byte	0x5
+ 949 00e9 14       		.byte	0x14
+ 950 00ea 6D010000 		.4byte	0x16d
+ 951 00ee 07       		.uleb128 0x7
+ 952 00ef 5A010000 		.4byte	.LASF21
+ 953 00f3 75       		.byte	0x75
+ 954 00f4 07       		.uleb128 0x7
+ 955 00f5 FE070000 		.4byte	.LASF22
+ 956 00f9 61       		.byte	0x61
+ 957 00fa 07       		.uleb128 0x7
+ 958 00fb CB070000 		.4byte	.LASF23
+ 959 00ff 69       		.byte	0x69
+ 960 0100 07       		.uleb128 0x7
+ 961 0101 B8030000 		.4byte	.LASF24
+ 962 0105 72       		.byte	0x72
+ 963 0106 07       		.uleb128 0x7
+ 964 0107 CF080000 		.4byte	.LASF25
+ 965 010b 6C       		.byte	0x6c
+ 966 010c 07       		.uleb128 0x7
+ 967 010d A0020000 		.4byte	.LASF26
+ 968 0111 6F       		.byte	0x6f
+ 969 0112 07       		.uleb128 0x7
+ 970 0113 ED040000 		.4byte	.LASF27
+ 971 0117 4C       		.byte	0x4c
+ 972 0118 07       		.uleb128 0x7
+ 973 0119 21070000 		.4byte	.LASF28
+ 974 011d 54       		.byte	0x54
+ 975 011e 07       		.uleb128 0x7
+ 976 011f 06010000 		.4byte	.LASF29
+ 977 0123 52       		.byte	0x52
+ 978 0124 07       		.uleb128 0x7
+ 979 0125 00050000 		.4byte	.LASF30
+ 980 0129 57       		.byte	0x57
+ 981 012a 07       		.uleb128 0x7
+ 982 012b 2F080000 		.4byte	.LASF31
+ 983 012f 58       		.byte	0x58
+ 984 0130 07       		.uleb128 0x7
+ 985 0131 1B000000 		.4byte	.LASF32
+ 986 0135 53       		.byte	0x53
+ 987 0136 07       		.uleb128 0x7
+ 988 0137 5D030000 		.4byte	.LASF33
+ 989 013b 43       		.byte	0x43
+ 990 013c 07       		.uleb128 0x7
+ 991 013d AB050000 		.4byte	.LASF34
+ 992 0141 4D       		.byte	0x4d
+ 993 0142 07       		.uleb128 0x7
+ 994 0143 90000000 		.4byte	.LASF35
+ 995 0147 4E       		.byte	0x4e
+ 996 0148 07       		.uleb128 0x7
+ 997 0149 9B080000 		.4byte	.LASF36
+ 998 014d 56       		.byte	0x56
+ 999 014e 07       		.uleb128 0x7
+ 1000 014f 89030000 		.4byte	.LASF37
+ 1001 0153 55       		.byte	0x55
+ 1002 0154 07       		.uleb128 0x7
+ 1003 0155 89050000 		.4byte	.LASF38
+ 1004 0159 44       		.byte	0x44
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 25
+
+
+ 1005 015a 07       		.uleb128 0x7
+ 1006 015b C9020000 		.4byte	.LASF39
+ 1007 015f 50       		.byte	0x50
+ 1008 0160 07       		.uleb128 0x7
+ 1009 0161 42060000 		.4byte	.LASF40
+ 1010 0165 51       		.byte	0x51
+ 1011 0166 07       		.uleb128 0x7
+ 1012 0167 21060000 		.4byte	.LASF41
+ 1013 016b 59       		.byte	0x59
+ 1014 016c 00       		.byte	0
+ 1015 016d 06       		.uleb128 0x6
+ 1016 016e FA050000 		.4byte	.LASF43
+ 1017 0172 01       		.byte	0x1
+ 1018 0173 37000000 		.4byte	0x37
+ 1019 0177 06       		.byte	0x6
+ 1020 0178 18       		.byte	0x18
+ 1021 0179 96010000 		.4byte	0x196
+ 1022 017d 07       		.uleb128 0x7
+ 1023 017e D7040000 		.4byte	.LASF44
+ 1024 0182 00       		.byte	0
+ 1025 0183 07       		.uleb128 0x7
+ 1026 0184 F9020000 		.4byte	.LASF45
+ 1027 0188 01       		.byte	0x1
+ 1028 0189 07       		.uleb128 0x7
+ 1029 018a 50070000 		.4byte	.LASF46
+ 1030 018e 02       		.byte	0x2
+ 1031 018f 07       		.uleb128 0x7
+ 1032 0190 FB030000 		.4byte	.LASF47
+ 1033 0194 03       		.byte	0x3
+ 1034 0195 00       		.byte	0
+ 1035 0196 06       		.uleb128 0x6
+ 1036 0197 DE020000 		.4byte	.LASF48
+ 1037 019b 01       		.byte	0x1
+ 1038 019c 37000000 		.4byte	0x37
+ 1039 01a0 06       		.byte	0x6
+ 1040 01a1 20       		.byte	0x20
+ 1041 01a2 B3010000 		.4byte	0x1b3
+ 1042 01a6 07       		.uleb128 0x7
+ 1043 01a7 35040000 		.4byte	.LASF49
+ 1044 01ab 01       		.byte	0x1
+ 1045 01ac 07       		.uleb128 0x7
+ 1046 01ad D7000000 		.4byte	.LASF50
+ 1047 01b1 02       		.byte	0x2
+ 1048 01b2 00       		.byte	0
+ 1049 01b3 06       		.uleb128 0x6
+ 1050 01b4 1A040000 		.4byte	.LASF51
+ 1051 01b8 01       		.byte	0x1
+ 1052 01b9 37000000 		.4byte	0x37
+ 1053 01bd 06       		.byte	0x6
+ 1054 01be 28       		.byte	0x28
+ 1055 01bf D6010000 		.4byte	0x1d6
+ 1056 01c3 07       		.uleb128 0x7
+ 1057 01c4 FB010000 		.4byte	.LASF52
+ 1058 01c8 64       		.byte	0x64
+ 1059 01c9 07       		.uleb128 0x7
+ 1060 01ca DD050000 		.4byte	.LASF53
+ 1061 01ce 65       		.byte	0x65
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 26
+
+
+ 1062 01cf 07       		.uleb128 0x7
+ 1063 01d0 D7080000 		.4byte	.LASF54
+ 1064 01d4 45       		.byte	0x45
+ 1065 01d5 00       		.byte	0
+ 1066 01d6 08       		.uleb128 0x8
+ 1067 01d7 BD080000 		.4byte	.LASF55
+ 1068 01db 01       		.byte	0x1
+ 1069 01dc 55       		.byte	0x55
+ 1070 01dd 00000000 		.4byte	.LFB65
+ 1071 01e1 A0000000 		.4byte	.LFE65-.LFB65
+ 1072 01e5 01       		.uleb128 0x1
+ 1073 01e6 9C       		.byte	0x9c
+ 1074 01e7 54030000 		.4byte	0x354
+ 1075 01eb 09       		.uleb128 0x9
+ 1076 01ec 66000000 		.4byte	.LASF57
+ 1077 01f0 01       		.byte	0x1
+ 1078 01f1 55       		.byte	0x55
+ 1079 01f2 B8000000 		.4byte	0xb8
+ 1080 01f6 00000000 		.4byte	.LLST0
+ 1081 01fa 0A       		.uleb128 0xa
+ 1082 01fb 14000000 		.4byte	.LVL1
+ 1083 01ff 82090000 		.4byte	0x982
+ 1084 0203 0B       		.uleb128 0xb
+ 1085 0204 1A000000 		.4byte	.LVL2
+ 1086 0208 8D090000 		.4byte	0x98d
+ 1087 020c 16020000 		.4byte	0x216
+ 1088 0210 0C       		.uleb128 0xc
+ 1089 0211 01       		.uleb128 0x1
+ 1090 0212 50       		.byte	0x50
+ 1091 0213 01       		.uleb128 0x1
+ 1092 0214 31       		.byte	0x31
+ 1093 0215 00       		.byte	0
+ 1094 0216 0B       		.uleb128 0xb
+ 1095 0217 26000000 		.4byte	.LVL3
+ 1096 021b 98090000 		.4byte	0x998
+ 1097 021f 35020000 		.4byte	0x235
+ 1098 0223 0C       		.uleb128 0xc
+ 1099 0224 01       		.uleb128 0x1
+ 1100 0225 50       		.byte	0x50
+ 1101 0226 02       		.uleb128 0x2
+ 1102 0227 74       		.byte	0x74
+ 1103 0228 00       		.sleb128 0
+ 1104 0229 0C       		.uleb128 0xc
+ 1105 022a 01       		.uleb128 0x1
+ 1106 022b 51       		.byte	0x51
+ 1107 022c 01       		.uleb128 0x1
+ 1108 022d 30       		.byte	0x30
+ 1109 022e 0C       		.uleb128 0xc
+ 1110 022f 01       		.uleb128 0x1
+ 1111 0230 52       		.byte	0x52
+ 1112 0231 02       		.uleb128 0x2
+ 1113 0232 08       		.byte	0x8
+ 1114 0233 65       		.byte	0x65
+ 1115 0234 00       		.byte	0
+ 1116 0235 0B       		.uleb128 0xb
+ 1117 0236 30000000 		.4byte	.LVL4
+ 1118 023a 98090000 		.4byte	0x998
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 27
+
+
+ 1119 023e 54020000 		.4byte	0x254
+ 1120 0242 0C       		.uleb128 0xc
+ 1121 0243 01       		.uleb128 0x1
+ 1122 0244 50       		.byte	0x50
+ 1123 0245 02       		.uleb128 0x2
+ 1124 0246 74       		.byte	0x74
+ 1125 0247 00       		.sleb128 0
+ 1126 0248 0C       		.uleb128 0xc
+ 1127 0249 01       		.uleb128 0x1
+ 1128 024a 51       		.byte	0x51
+ 1129 024b 01       		.uleb128 0x1
+ 1130 024c 31       		.byte	0x31
+ 1131 024d 0C       		.uleb128 0xc
+ 1132 024e 01       		.uleb128 0x1
+ 1133 024f 52       		.byte	0x52
+ 1134 0250 02       		.uleb128 0x2
+ 1135 0251 08       		.byte	0x8
+ 1136 0252 75       		.byte	0x75
+ 1137 0253 00       		.byte	0
+ 1138 0254 0B       		.uleb128 0xb
+ 1139 0255 36000000 		.4byte	.LVL5
+ 1140 0259 A3090000 		.4byte	0x9a3
+ 1141 025d 68020000 		.4byte	0x268
+ 1142 0261 0C       		.uleb128 0xc
+ 1143 0262 01       		.uleb128 0x1
+ 1144 0263 50       		.byte	0x50
+ 1145 0264 02       		.uleb128 0x2
+ 1146 0265 74       		.byte	0x74
+ 1147 0266 00       		.sleb128 0
+ 1148 0267 00       		.byte	0
+ 1149 0268 0A       		.uleb128 0xa
+ 1150 0269 3A000000 		.4byte	.LVL6
+ 1151 026d AE090000 		.4byte	0x9ae
+ 1152 0271 0A       		.uleb128 0xa
+ 1153 0272 40000000 		.4byte	.LVL8
+ 1154 0276 B9090000 		.4byte	0x9b9
+ 1155 027a 0B       		.uleb128 0xb
+ 1156 027b 46000000 		.4byte	.LVL9
+ 1157 027f 8D090000 		.4byte	0x98d
+ 1158 0283 8D020000 		.4byte	0x28d
+ 1159 0287 0C       		.uleb128 0xc
+ 1160 0288 01       		.uleb128 0x1
+ 1161 0289 50       		.byte	0x50
+ 1162 028a 01       		.uleb128 0x1
+ 1163 028b 30       		.byte	0x30
+ 1164 028c 00       		.byte	0
+ 1165 028d 0B       		.uleb128 0xb
+ 1166 028e 52000000 		.4byte	.LVL10
+ 1167 0292 98090000 		.4byte	0x998
+ 1168 0296 AC020000 		.4byte	0x2ac
+ 1169 029a 0C       		.uleb128 0xc
+ 1170 029b 01       		.uleb128 0x1
+ 1171 029c 50       		.byte	0x50
+ 1172 029d 02       		.uleb128 0x2
+ 1173 029e 74       		.byte	0x74
+ 1174 029f 00       		.sleb128 0
+ 1175 02a0 0C       		.uleb128 0xc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 28
+
+
+ 1176 02a1 01       		.uleb128 0x1
+ 1177 02a2 51       		.byte	0x51
+ 1178 02a3 01       		.uleb128 0x1
+ 1179 02a4 30       		.byte	0x30
+ 1180 02a5 0C       		.uleb128 0xc
+ 1181 02a6 01       		.uleb128 0x1
+ 1182 02a7 52       		.byte	0x52
+ 1183 02a8 02       		.uleb128 0x2
+ 1184 02a9 08       		.byte	0x8
+ 1185 02aa 65       		.byte	0x65
+ 1186 02ab 00       		.byte	0
+ 1187 02ac 0B       		.uleb128 0xb
+ 1188 02ad 5C000000 		.4byte	.LVL11
+ 1189 02b1 98090000 		.4byte	0x998
+ 1190 02b5 CB020000 		.4byte	0x2cb
+ 1191 02b9 0C       		.uleb128 0xc
+ 1192 02ba 01       		.uleb128 0x1
+ 1193 02bb 50       		.byte	0x50
+ 1194 02bc 02       		.uleb128 0x2
+ 1195 02bd 74       		.byte	0x74
+ 1196 02be 00       		.sleb128 0
+ 1197 02bf 0C       		.uleb128 0xc
+ 1198 02c0 01       		.uleb128 0x1
+ 1199 02c1 51       		.byte	0x51
+ 1200 02c2 01       		.uleb128 0x1
+ 1201 02c3 31       		.byte	0x31
+ 1202 02c4 0C       		.uleb128 0xc
+ 1203 02c5 01       		.uleb128 0x1
+ 1204 02c6 52       		.byte	0x52
+ 1205 02c7 02       		.uleb128 0x2
+ 1206 02c8 08       		.byte	0x8
+ 1207 02c9 6C       		.byte	0x6c
+ 1208 02ca 00       		.byte	0
+ 1209 02cb 0B       		.uleb128 0xb
+ 1210 02cc 62000000 		.4byte	.LVL12
+ 1211 02d0 A3090000 		.4byte	0x9a3
+ 1212 02d4 DF020000 		.4byte	0x2df
+ 1213 02d8 0C       		.uleb128 0xc
+ 1214 02d9 01       		.uleb128 0x1
+ 1215 02da 50       		.byte	0x50
+ 1216 02db 02       		.uleb128 0x2
+ 1217 02dc 74       		.byte	0x74
+ 1218 02dd 00       		.sleb128 0
+ 1219 02de 00       		.byte	0
+ 1220 02df 0A       		.uleb128 0xa
+ 1221 02e0 66000000 		.4byte	.LVL13
+ 1222 02e4 C4090000 		.4byte	0x9c4
+ 1223 02e8 0A       		.uleb128 0xa
+ 1224 02e9 6A000000 		.4byte	.LVL14
+ 1225 02ed CF090000 		.4byte	0x9cf
+ 1226 02f1 0B       		.uleb128 0xb
+ 1227 02f2 78000000 		.4byte	.LVL16
+ 1228 02f6 D6010000 		.4byte	0x1d6
+ 1229 02fa 05030000 		.4byte	0x305
+ 1230 02fe 0C       		.uleb128 0xc
+ 1231 02ff 01       		.uleb128 0x1
+ 1232 0300 50       		.byte	0x50
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 29
+
+
+ 1233 0301 02       		.uleb128 0x2
+ 1234 0302 08       		.byte	0x8
+ 1235 0303 6F       		.byte	0x6f
+ 1236 0304 00       		.byte	0
+ 1237 0305 0B       		.uleb128 0xb
+ 1238 0306 86000000 		.4byte	.LVL19
+ 1239 030a 98090000 		.4byte	0x998
+ 1240 030e 24030000 		.4byte	0x324
+ 1241 0312 0C       		.uleb128 0xc
+ 1242 0313 01       		.uleb128 0x1
+ 1243 0314 50       		.byte	0x50
+ 1244 0315 02       		.uleb128 0x2
+ 1245 0316 74       		.byte	0x74
+ 1246 0317 00       		.sleb128 0
+ 1247 0318 0C       		.uleb128 0xc
+ 1248 0319 01       		.uleb128 0x1
+ 1249 031a 51       		.byte	0x51
+ 1250 031b 01       		.uleb128 0x1
+ 1251 031c 30       		.byte	0x30
+ 1252 031d 0C       		.uleb128 0xc
+ 1253 031e 01       		.uleb128 0x1
+ 1254 031f 52       		.byte	0x52
+ 1255 0320 02       		.uleb128 0x2
+ 1256 0321 08       		.byte	0x8
+ 1257 0322 65       		.byte	0x65
+ 1258 0323 00       		.byte	0
+ 1259 0324 0B       		.uleb128 0xb
+ 1260 0325 90000000 		.4byte	.LVL20
+ 1261 0329 98090000 		.4byte	0x998
+ 1262 032d 43030000 		.4byte	0x343
+ 1263 0331 0C       		.uleb128 0xc
+ 1264 0332 01       		.uleb128 0x1
+ 1265 0333 50       		.byte	0x50
+ 1266 0334 02       		.uleb128 0x2
+ 1267 0335 74       		.byte	0x74
+ 1268 0336 00       		.sleb128 0
+ 1269 0337 0C       		.uleb128 0xc
+ 1270 0338 01       		.uleb128 0x1
+ 1271 0339 51       		.byte	0x51
+ 1272 033a 01       		.uleb128 0x1
+ 1273 033b 31       		.byte	0x31
+ 1274 033c 0C       		.uleb128 0xc
+ 1275 033d 01       		.uleb128 0x1
+ 1276 033e 52       		.byte	0x52
+ 1277 033f 02       		.uleb128 0x2
+ 1278 0340 08       		.byte	0x8
+ 1279 0341 6F       		.byte	0x6f
+ 1280 0342 00       		.byte	0
+ 1281 0343 0D       		.uleb128 0xd
+ 1282 0344 96000000 		.4byte	.LVL21
+ 1283 0348 A3090000 		.4byte	0x9a3
+ 1284 034c 0C       		.uleb128 0xc
+ 1285 034d 01       		.uleb128 0x1
+ 1286 034e 50       		.byte	0x50
+ 1287 034f 02       		.uleb128 0x2
+ 1288 0350 74       		.byte	0x74
+ 1289 0351 00       		.sleb128 0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 30
+
+
+ 1290 0352 00       		.byte	0
+ 1291 0353 00       		.byte	0
+ 1292 0354 08       		.uleb128 0x8
+ 1293 0355 58050000 		.4byte	.LASF56
+ 1294 0359 01       		.byte	0x1
+ 1295 035a 2D       		.byte	0x2d
+ 1296 035b 00000000 		.4byte	.LFB64
+ 1297 035f 3C000000 		.4byte	.LFE64-.LFB64
+ 1298 0363 01       		.uleb128 0x1
+ 1299 0364 9C       		.byte	0x9c
+ 1300 0365 B3030000 		.4byte	0x3b3
+ 1301 0369 09       		.uleb128 0x9
+ 1302 036a 5D000000 		.4byte	.LASF58
+ 1303 036e 01       		.byte	0x1
+ 1304 036f 2D       		.byte	0x2d
+ 1305 0370 B3030000 		.4byte	0x3b3
+ 1306 0374 60000000 		.4byte	.LLST1
+ 1307 0378 0B       		.uleb128 0xb
+ 1308 0379 1A000000 		.4byte	.LVL24
+ 1309 037d D6010000 		.4byte	0x1d6
+ 1310 0381 8C030000 		.4byte	0x38c
+ 1311 0385 0C       		.uleb128 0xc
+ 1312 0386 01       		.uleb128 0x1
+ 1313 0387 50       		.byte	0x50
+ 1314 0388 02       		.uleb128 0x2
+ 1315 0389 08       		.byte	0x8
+ 1316 038a 6C       		.byte	0x6c
+ 1317 038b 00       		.byte	0
+ 1318 038c 0B       		.uleb128 0xb
+ 1319 038d 26000000 		.4byte	.LVL25
+ 1320 0391 D6010000 		.4byte	0x1d6
+ 1321 0395 A0030000 		.4byte	0x3a0
+ 1322 0399 0C       		.uleb128 0xc
+ 1323 039a 01       		.uleb128 0x1
+ 1324 039b 50       		.byte	0x50
+ 1325 039c 02       		.uleb128 0x2
+ 1326 039d 08       		.byte	0x8
+ 1327 039e 75       		.byte	0x75
+ 1328 039f 00       		.byte	0
+ 1329 03a0 0A       		.uleb128 0xa
+ 1330 03a1 2C000000 		.4byte	.LVL26
+ 1331 03a5 DA090000 		.4byte	0x9da
+ 1332 03a9 0A       		.uleb128 0xa
+ 1333 03aa 30000000 		.4byte	.LVL27
+ 1334 03ae E5090000 		.4byte	0x9e5
+ 1335 03b2 00       		.byte	0
+ 1336 03b3 0E       		.uleb128 0xe
+ 1337 03b4 04       		.byte	0x4
+ 1338 03b5 AC000000 		.4byte	0xac
+ 1339 03b9 08       		.uleb128 0x8
+ 1340 03ba 00000000 		.4byte	.LASF59
+ 1341 03be 01       		.byte	0x1
+ 1342 03bf 8F       		.byte	0x8f
+ 1343 03c0 00000000 		.4byte	.LFB66
+ 1344 03c4 18000000 		.4byte	.LFE66-.LFB66
+ 1345 03c8 01       		.uleb128 0x1
+ 1346 03c9 9C       		.byte	0x9c
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 31
+
+
+ 1347 03ca F3030000 		.4byte	0x3f3
+ 1348 03ce 0B       		.uleb128 0xb
+ 1349 03cf 0A000000 		.4byte	.LVL28
+ 1350 03d3 F0090000 		.4byte	0x9f0
+ 1351 03d7 E2030000 		.4byte	0x3e2
+ 1352 03db 0C       		.uleb128 0xc
+ 1353 03dc 01       		.uleb128 0x1
+ 1354 03dd 50       		.byte	0x50
+ 1355 03de 02       		.uleb128 0x2
+ 1356 03df 74       		.byte	0x74
+ 1357 03e0 00       		.sleb128 0
+ 1358 03e1 00       		.byte	0
+ 1359 03e2 0D       		.uleb128 0xd
+ 1360 03e3 10000000 		.4byte	.LVL29
+ 1361 03e7 54030000 		.4byte	0x354
+ 1362 03eb 0C       		.uleb128 0xc
+ 1363 03ec 01       		.uleb128 0x1
+ 1364 03ed 50       		.byte	0x50
+ 1365 03ee 02       		.uleb128 0x2
+ 1366 03ef 74       		.byte	0x74
+ 1367 03f0 00       		.sleb128 0
+ 1368 03f1 00       		.byte	0
+ 1369 03f2 00       		.byte	0
+ 1370 03f3 0F       		.uleb128 0xf
+ 1371 03f4 43010000 		.4byte	.LASF60
+ 1372 03f8 01       		.byte	0x1
+ 1373 03f9 A0       		.byte	0xa0
+ 1374 03fa 00000000 		.4byte	.LFB67
+ 1375 03fe A0000000 		.4byte	.LFE67-.LFB67
+ 1376 0402 01       		.uleb128 0x1
+ 1377 0403 9C       		.byte	0x9c
+ 1378 0404 BF040000 		.4byte	0x4bf
+ 1379 0408 0A       		.uleb128 0xa
+ 1380 0409 06000000 		.4byte	.LVL30
+ 1381 040d FB090000 		.4byte	0x9fb
+ 1382 0411 0A       		.uleb128 0xa
+ 1383 0412 14000000 		.4byte	.LVL32
+ 1384 0416 060A0000 		.4byte	0xa06
+ 1385 041a 0B       		.uleb128 0xb
+ 1386 041b 38000000 		.4byte	.LVL34
+ 1387 041f 110A0000 		.4byte	0xa11
+ 1388 0423 2E040000 		.4byte	0x42e
+ 1389 0427 0C       		.uleb128 0xc
+ 1390 0428 01       		.uleb128 0x1
+ 1391 0429 50       		.byte	0x50
+ 1392 042a 02       		.uleb128 0x2
+ 1393 042b 76       		.byte	0x76
+ 1394 042c 00       		.sleb128 0
+ 1395 042d 00       		.byte	0
+ 1396 042e 0A       		.uleb128 0xa
+ 1397 042f 4A000000 		.4byte	.LVL36
+ 1398 0433 1C0A0000 		.4byte	0xa1c
+ 1399 0437 0B       		.uleb128 0xb
+ 1400 0438 62000000 		.4byte	.LVL38
+ 1401 043c 98090000 		.4byte	0x998
+ 1402 0440 56040000 		.4byte	0x456
+ 1403 0444 0C       		.uleb128 0xc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 32
+
+
+ 1404 0445 01       		.uleb128 0x1
+ 1405 0446 50       		.byte	0x50
+ 1406 0447 02       		.uleb128 0x2
+ 1407 0448 75       		.byte	0x75
+ 1408 0449 00       		.sleb128 0
+ 1409 044a 0C       		.uleb128 0xc
+ 1410 044b 01       		.uleb128 0x1
+ 1411 044c 51       		.byte	0x51
+ 1412 044d 01       		.uleb128 0x1
+ 1413 044e 30       		.byte	0x30
+ 1414 044f 0C       		.uleb128 0xc
+ 1415 0450 01       		.uleb128 0x1
+ 1416 0451 52       		.byte	0x52
+ 1417 0452 02       		.uleb128 0x2
+ 1418 0453 08       		.byte	0x8
+ 1419 0454 64       		.byte	0x64
+ 1420 0455 00       		.byte	0
+ 1421 0456 0B       		.uleb128 0xb
+ 1422 0457 6C000000 		.4byte	.LVL39
+ 1423 045b 98090000 		.4byte	0x998
+ 1424 045f 6F040000 		.4byte	0x46f
+ 1425 0463 0C       		.uleb128 0xc
+ 1426 0464 01       		.uleb128 0x1
+ 1427 0465 50       		.byte	0x50
+ 1428 0466 02       		.uleb128 0x2
+ 1429 0467 75       		.byte	0x75
+ 1430 0468 00       		.sleb128 0
+ 1431 0469 0C       		.uleb128 0xc
+ 1432 046a 01       		.uleb128 0x1
+ 1433 046b 51       		.byte	0x51
+ 1434 046c 01       		.uleb128 0x1
+ 1435 046d 31       		.byte	0x31
+ 1436 046e 00       		.byte	0
+ 1437 046f 0B       		.uleb128 0xb
+ 1438 0470 76000000 		.4byte	.LVL40
+ 1439 0474 98090000 		.4byte	0x998
+ 1440 0478 88040000 		.4byte	0x488
+ 1441 047c 0C       		.uleb128 0xc
+ 1442 047d 01       		.uleb128 0x1
+ 1443 047e 50       		.byte	0x50
+ 1444 047f 02       		.uleb128 0x2
+ 1445 0480 75       		.byte	0x75
+ 1446 0481 00       		.sleb128 0
+ 1447 0482 0C       		.uleb128 0xc
+ 1448 0483 01       		.uleb128 0x1
+ 1449 0484 51       		.byte	0x51
+ 1450 0485 01       		.uleb128 0x1
+ 1451 0486 32       		.byte	0x32
+ 1452 0487 00       		.byte	0
+ 1453 0488 0B       		.uleb128 0xb
+ 1454 0489 7E000000 		.4byte	.LVL41
+ 1455 048d 270A0000 		.4byte	0xa27
+ 1456 0491 A1040000 		.4byte	0x4a1
+ 1457 0495 0C       		.uleb128 0xc
+ 1458 0496 01       		.uleb128 0x1
+ 1459 0497 50       		.byte	0x50
+ 1460 0498 02       		.uleb128 0x2
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 33
+
+
+ 1461 0499 75       		.byte	0x75
+ 1462 049a 00       		.sleb128 0
+ 1463 049b 0C       		.uleb128 0xc
+ 1464 049c 01       		.uleb128 0x1
+ 1465 049d 51       		.byte	0x51
+ 1466 049e 01       		.uleb128 0x1
+ 1467 049f 34       		.byte	0x34
+ 1468 04a0 00       		.byte	0
+ 1469 04a1 0B       		.uleb128 0xb
+ 1470 04a2 84000000 		.4byte	.LVL42
+ 1471 04a6 A3090000 		.4byte	0x9a3
+ 1472 04aa B5040000 		.4byte	0x4b5
+ 1473 04ae 0C       		.uleb128 0xc
+ 1474 04af 01       		.uleb128 0x1
+ 1475 04b0 50       		.byte	0x50
+ 1476 04b1 02       		.uleb128 0x2
+ 1477 04b2 75       		.byte	0x75
+ 1478 04b3 00       		.sleb128 0
+ 1479 04b4 00       		.byte	0
+ 1480 04b5 0A       		.uleb128 0xa
+ 1481 04b6 88000000 		.4byte	.LVL43
+ 1482 04ba 320A0000 		.4byte	0xa32
+ 1483 04be 00       		.byte	0
+ 1484 04bf 08       		.uleb128 0x8
+ 1485 04c0 DD070000 		.4byte	.LASF61
+ 1486 04c4 01       		.byte	0x1
+ 1487 04c5 CC       		.byte	0xcc
+ 1488 04c6 00000000 		.4byte	.LFB68
+ 1489 04ca 48000000 		.4byte	.LFE68-.LFB68
+ 1490 04ce 01       		.uleb128 0x1
+ 1491 04cf 9C       		.byte	0x9c
+ 1492 04d0 70050000 		.4byte	0x570
+ 1493 04d4 0B       		.uleb128 0xb
+ 1494 04d5 0C000000 		.4byte	.LVL44
+ 1495 04d9 3D0A0000 		.4byte	0xa3d
+ 1496 04dd E8040000 		.4byte	0x4e8
+ 1497 04e1 0C       		.uleb128 0xc
+ 1498 04e2 01       		.uleb128 0x1
+ 1499 04e3 50       		.byte	0x50
+ 1500 04e4 02       		.uleb128 0x2
+ 1501 04e5 75       		.byte	0x75
+ 1502 04e6 10       		.sleb128 16
+ 1503 04e7 00       		.byte	0
+ 1504 04e8 0B       		.uleb128 0xb
+ 1505 04e9 18000000 		.4byte	.LVL45
+ 1506 04ed 98090000 		.4byte	0x998
+ 1507 04f1 07050000 		.4byte	0x507
+ 1508 04f5 0C       		.uleb128 0xc
+ 1509 04f6 01       		.uleb128 0x1
+ 1510 04f7 50       		.byte	0x50
+ 1511 04f8 02       		.uleb128 0x2
+ 1512 04f9 74       		.byte	0x74
+ 1513 04fa 00       		.sleb128 0
+ 1514 04fb 0C       		.uleb128 0xc
+ 1515 04fc 01       		.uleb128 0x1
+ 1516 04fd 51       		.byte	0x51
+ 1517 04fe 01       		.uleb128 0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 34
+
+
+ 1518 04ff 30       		.byte	0x30
+ 1519 0500 0C       		.uleb128 0xc
+ 1520 0501 01       		.uleb128 0x1
+ 1521 0502 52       		.byte	0x52
+ 1522 0503 02       		.uleb128 0x2
+ 1523 0504 08       		.byte	0x8
+ 1524 0505 64       		.byte	0x64
+ 1525 0506 00       		.byte	0
+ 1526 0507 0B       		.uleb128 0xb
+ 1527 0508 22000000 		.4byte	.LVL46
+ 1528 050c 98090000 		.4byte	0x998
+ 1529 0510 20050000 		.4byte	0x520
+ 1530 0514 0C       		.uleb128 0xc
+ 1531 0515 01       		.uleb128 0x1
+ 1532 0516 50       		.byte	0x50
+ 1533 0517 02       		.uleb128 0x2
+ 1534 0518 74       		.byte	0x74
+ 1535 0519 00       		.sleb128 0
+ 1536 051a 0C       		.uleb128 0xc
+ 1537 051b 01       		.uleb128 0x1
+ 1538 051c 51       		.byte	0x51
+ 1539 051d 01       		.uleb128 0x1
+ 1540 051e 31       		.byte	0x31
+ 1541 051f 00       		.byte	0
+ 1542 0520 0B       		.uleb128 0xb
+ 1543 0521 2C000000 		.4byte	.LVL47
+ 1544 0525 98090000 		.4byte	0x998
+ 1545 0529 39050000 		.4byte	0x539
+ 1546 052d 0C       		.uleb128 0xc
+ 1547 052e 01       		.uleb128 0x1
+ 1548 052f 50       		.byte	0x50
+ 1549 0530 02       		.uleb128 0x2
+ 1550 0531 74       		.byte	0x74
+ 1551 0532 00       		.sleb128 0
+ 1552 0533 0C       		.uleb128 0xc
+ 1553 0534 01       		.uleb128 0x1
+ 1554 0535 51       		.byte	0x51
+ 1555 0536 01       		.uleb128 0x1
+ 1556 0537 32       		.byte	0x32
+ 1557 0538 00       		.byte	0
+ 1558 0539 0B       		.uleb128 0xb
+ 1559 053a 34000000 		.4byte	.LVL48
+ 1560 053e 270A0000 		.4byte	0xa27
+ 1561 0542 52050000 		.4byte	0x552
+ 1562 0546 0C       		.uleb128 0xc
+ 1563 0547 01       		.uleb128 0x1
+ 1564 0548 50       		.byte	0x50
+ 1565 0549 02       		.uleb128 0x2
+ 1566 054a 74       		.byte	0x74
+ 1567 054b 00       		.sleb128 0
+ 1568 054c 0C       		.uleb128 0xc
+ 1569 054d 01       		.uleb128 0x1
+ 1570 054e 51       		.byte	0x51
+ 1571 054f 01       		.uleb128 0x1
+ 1572 0550 34       		.byte	0x34
+ 1573 0551 00       		.byte	0
+ 1574 0552 0B       		.uleb128 0xb
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 35
+
+
+ 1575 0553 3A000000 		.4byte	.LVL49
+ 1576 0557 A3090000 		.4byte	0x9a3
+ 1577 055b 66050000 		.4byte	0x566
+ 1578 055f 0C       		.uleb128 0xc
+ 1579 0560 01       		.uleb128 0x1
+ 1580 0561 50       		.byte	0x50
+ 1581 0562 02       		.uleb128 0x2
+ 1582 0563 74       		.byte	0x74
+ 1583 0564 00       		.sleb128 0
+ 1584 0565 00       		.byte	0
+ 1585 0566 0A       		.uleb128 0xa
+ 1586 0567 3E000000 		.4byte	.LVL50
+ 1587 056b 480A0000 		.4byte	0xa48
+ 1588 056f 00       		.byte	0
+ 1589 0570 08       		.uleb128 0x8
+ 1590 0571 4B080000 		.4byte	.LASF62
+ 1591 0575 01       		.byte	0x1
+ 1592 0576 FF       		.byte	0xff
+ 1593 0577 00000000 		.4byte	.LFB69
+ 1594 057b 1C000000 		.4byte	.LFE69-.LFB69
+ 1595 057f 01       		.uleb128 0x1
+ 1596 0580 9C       		.byte	0x9c
+ 1597 0581 CF050000 		.4byte	0x5cf
+ 1598 0585 10       		.uleb128 0x10
+ 1599 0586 AE000000 		.4byte	.LASF63
+ 1600 058a 01       		.byte	0x1
+ 1601 058b 0101     		.2byte	0x101
+ 1602 058d 96000000 		.4byte	0x96
+ 1603 0591 81000000 		.4byte	.LLST2
+ 1604 0595 11       		.uleb128 0x11
+ 1605 0596 0A000000 		.4byte	.LBB2
+ 1606 059a 0C000000 		.4byte	.LBE2-.LBB2
+ 1607 059e C5050000 		.4byte	0x5c5
+ 1608 05a2 10       		.uleb128 0x10
+ 1609 05a3 91010000 		.4byte	.LASF64
+ 1610 05a7 01       		.byte	0x1
+ 1611 05a8 0401     		.2byte	0x104
+ 1612 05aa 96000000 		.4byte	0x96
+ 1613 05ae 9F000000 		.4byte	.LLST3
+ 1614 05b2 0A       		.uleb128 0xa
+ 1615 05b3 0E000000 		.4byte	.LVL53
+ 1616 05b7 530A0000 		.4byte	0xa53
+ 1617 05bb 0A       		.uleb128 0xa
+ 1618 05bc 12000000 		.4byte	.LVL54
+ 1619 05c0 5E0A0000 		.4byte	0xa5e
+ 1620 05c4 00       		.byte	0
+ 1621 05c5 0A       		.uleb128 0xa
+ 1622 05c6 06000000 		.4byte	.LVL51
+ 1623 05ca 690A0000 		.4byte	0xa69
+ 1624 05ce 00       		.byte	0
+ 1625 05cf 12       		.uleb128 0x12
+ 1626 05d0 3B070000 		.4byte	.LASF65
+ 1627 05d4 01       		.byte	0x1
+ 1628 05d5 0C01     		.2byte	0x10c
+ 1629 05d7 00000000 		.4byte	.LFB70
+ 1630 05db 3C000000 		.4byte	.LFE70-.LFB70
+ 1631 05df 01       		.uleb128 0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 36
+
+
+ 1632 05e0 9C       		.byte	0x9c
+ 1633 05e1 79060000 		.4byte	0x679
+ 1634 05e5 11       		.uleb128 0x11
+ 1635 05e6 0A000000 		.4byte	.LBB3
+ 1636 05ea 24000000 		.4byte	.LBE3-.LBB3
+ 1637 05ee 4B060000 		.4byte	0x64b
+ 1638 05f2 13       		.uleb128 0x13
+ 1639 05f3 6900     		.ascii	"i\000"
+ 1640 05f5 01       		.byte	0x1
+ 1641 05f6 1001     		.2byte	0x110
+ 1642 05f8 96000000 		.4byte	0x96
+ 1643 05fc B2000000 		.4byte	.LLST4
+ 1644 0600 0B       		.uleb128 0xb
+ 1645 0601 14000000 		.4byte	.LVL60
+ 1646 0605 8D090000 		.4byte	0x98d
+ 1647 0609 13060000 		.4byte	0x613
+ 1648 060d 0C       		.uleb128 0xc
+ 1649 060e 01       		.uleb128 0x1
+ 1650 060f 50       		.byte	0x50
+ 1651 0610 01       		.uleb128 0x1
+ 1652 0611 31       		.byte	0x31
+ 1653 0612 00       		.byte	0
+ 1654 0613 0B       		.uleb128 0xb
+ 1655 0614 1A000000 		.4byte	.LVL61
+ 1656 0618 740A0000 		.4byte	0xa74
+ 1657 061c 27060000 		.4byte	0x627
+ 1658 0620 0C       		.uleb128 0xc
+ 1659 0621 01       		.uleb128 0x1
+ 1660 0622 50       		.byte	0x50
+ 1661 0623 02       		.uleb128 0x2
+ 1662 0624 08       		.byte	0x8
+ 1663 0625 32       		.byte	0x32
+ 1664 0626 00       		.byte	0
+ 1665 0627 0B       		.uleb128 0xb
+ 1666 0628 20000000 		.4byte	.LVL62
+ 1667 062c 8D090000 		.4byte	0x98d
+ 1668 0630 3A060000 		.4byte	0x63a
+ 1669 0634 0C       		.uleb128 0xc
+ 1670 0635 01       		.uleb128 0x1
+ 1671 0636 50       		.byte	0x50
+ 1672 0637 01       		.uleb128 0x1
+ 1673 0638 30       		.byte	0x30
+ 1674 0639 00       		.byte	0
+ 1675 063a 0D       		.uleb128 0xd
+ 1676 063b 26000000 		.4byte	.LVL63
+ 1677 063f 740A0000 		.4byte	0xa74
+ 1678 0643 0C       		.uleb128 0xc
+ 1679 0644 01       		.uleb128 0x1
+ 1680 0645 50       		.byte	0x50
+ 1681 0646 02       		.uleb128 0x2
+ 1682 0647 08       		.byte	0x8
+ 1683 0648 32       		.byte	0x32
+ 1684 0649 00       		.byte	0
+ 1685 064a 00       		.byte	0
+ 1686 064b 0A       		.uleb128 0xa
+ 1687 064c 06000000 		.4byte	.LVL57
+ 1688 0650 7F0A0000 		.4byte	0xa7f
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 37
+
+
+ 1689 0654 0A       		.uleb128 0xa
+ 1690 0655 0A000000 		.4byte	.LVL58
+ 1691 0659 8A0A0000 		.4byte	0xa8a
+ 1692 065d 0A       		.uleb128 0xa
+ 1693 065e 32000000 		.4byte	.LVL66
+ 1694 0662 950A0000 		.4byte	0xa95
+ 1695 0666 0A       		.uleb128 0xa
+ 1696 0667 36000000 		.4byte	.LVL67
+ 1697 066b A00A0000 		.4byte	0xaa0
+ 1698 066f 0A       		.uleb128 0xa
+ 1699 0670 3A000000 		.4byte	.LVL68
+ 1700 0674 AB0A0000 		.4byte	0xaab
+ 1701 0678 00       		.byte	0
+ 1702 0679 12       		.uleb128 0x12
+ 1703 067a 34030000 		.4byte	.LASF66
+ 1704 067e 01       		.byte	0x1
+ 1705 067f 1F01     		.2byte	0x11f
+ 1706 0681 00000000 		.4byte	.LFB71
+ 1707 0685 1E000000 		.4byte	.LFE71-.LFB71
+ 1708 0689 01       		.uleb128 0x1
+ 1709 068a 9C       		.byte	0x9c
+ 1710 068b DC060000 		.4byte	0x6dc
+ 1711 068f 0B       		.uleb128 0xb
+ 1712 0690 08000000 		.4byte	.LVL69
+ 1713 0694 8D090000 		.4byte	0x98d
+ 1714 0698 A2060000 		.4byte	0x6a2
+ 1715 069c 0C       		.uleb128 0xc
+ 1716 069d 01       		.uleb128 0x1
+ 1717 069e 50       		.byte	0x50
+ 1718 069f 01       		.uleb128 0x1
+ 1719 06a0 31       		.byte	0x31
+ 1720 06a1 00       		.byte	0
+ 1721 06a2 0B       		.uleb128 0xb
+ 1722 06a3 0E000000 		.4byte	.LVL70
+ 1723 06a7 740A0000 		.4byte	0xa74
+ 1724 06ab B6060000 		.4byte	0x6b6
+ 1725 06af 0C       		.uleb128 0xc
+ 1726 06b0 01       		.uleb128 0x1
+ 1727 06b1 50       		.byte	0x50
+ 1728 06b2 02       		.uleb128 0x2
+ 1729 06b3 08       		.byte	0x8
+ 1730 06b4 C8       		.byte	0xc8
+ 1731 06b5 00       		.byte	0
+ 1732 06b6 0B       		.uleb128 0xb
+ 1733 06b7 14000000 		.4byte	.LVL71
+ 1734 06bb 8D090000 		.4byte	0x98d
+ 1735 06bf C9060000 		.4byte	0x6c9
+ 1736 06c3 0C       		.uleb128 0xc
+ 1737 06c4 01       		.uleb128 0x1
+ 1738 06c5 50       		.byte	0x50
+ 1739 06c6 01       		.uleb128 0x1
+ 1740 06c7 30       		.byte	0x30
+ 1741 06c8 00       		.byte	0
+ 1742 06c9 0A       		.uleb128 0xa
+ 1743 06ca 18000000 		.4byte	.LVL72
+ 1744 06ce CF090000 		.4byte	0x9cf
+ 1745 06d2 0A       		.uleb128 0xa
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 38
+
+
+ 1746 06d3 1C000000 		.4byte	.LVL73
+ 1747 06d7 7F0A0000 		.4byte	0xa7f
+ 1748 06db 00       		.byte	0
+ 1749 06dc 12       		.uleb128 0x12
+ 1750 06dd EA000000 		.4byte	.LASF67
+ 1751 06e1 01       		.byte	0x1
+ 1752 06e2 2A01     		.2byte	0x12a
+ 1753 06e4 00000000 		.4byte	.LFB72
+ 1754 06e8 3C000000 		.4byte	.LFE72-.LFB72
+ 1755 06ec 01       		.uleb128 0x1
+ 1756 06ed 9C       		.byte	0x9c
+ 1757 06ee 76070000 		.4byte	0x776
+ 1758 06f2 11       		.uleb128 0x11
+ 1759 06f3 02000000 		.4byte	.LBB4
+ 1760 06f7 24000000 		.4byte	.LBE4-.LBB4
+ 1761 06fb 58070000 		.4byte	0x758
+ 1762 06ff 13       		.uleb128 0x13
+ 1763 0700 6900     		.ascii	"i\000"
+ 1764 0702 01       		.byte	0x1
+ 1765 0703 2D01     		.2byte	0x12d
+ 1766 0705 96000000 		.4byte	0x96
+ 1767 0709 DC000000 		.4byte	.LLST5
+ 1768 070d 0B       		.uleb128 0xb
+ 1769 070e 0C000000 		.4byte	.LVL76
+ 1770 0712 8D090000 		.4byte	0x98d
+ 1771 0716 20070000 		.4byte	0x720
+ 1772 071a 0C       		.uleb128 0xc
+ 1773 071b 01       		.uleb128 0x1
+ 1774 071c 50       		.byte	0x50
+ 1775 071d 01       		.uleb128 0x1
+ 1776 071e 31       		.byte	0x31
+ 1777 071f 00       		.byte	0
+ 1778 0720 0B       		.uleb128 0xb
+ 1779 0721 12000000 		.4byte	.LVL77
+ 1780 0725 740A0000 		.4byte	0xa74
+ 1781 0729 34070000 		.4byte	0x734
+ 1782 072d 0C       		.uleb128 0xc
+ 1783 072e 01       		.uleb128 0x1
+ 1784 072f 50       		.byte	0x50
+ 1785 0730 02       		.uleb128 0x2
+ 1786 0731 08       		.byte	0x8
+ 1787 0732 C8       		.byte	0xc8
+ 1788 0733 00       		.byte	0
+ 1789 0734 0B       		.uleb128 0xb
+ 1790 0735 18000000 		.4byte	.LVL78
+ 1791 0739 8D090000 		.4byte	0x98d
+ 1792 073d 47070000 		.4byte	0x747
+ 1793 0741 0C       		.uleb128 0xc
+ 1794 0742 01       		.uleb128 0x1
+ 1795 0743 50       		.byte	0x50
+ 1796 0744 01       		.uleb128 0x1
+ 1797 0745 30       		.byte	0x30
+ 1798 0746 00       		.byte	0
+ 1799 0747 0D       		.uleb128 0xd
+ 1800 0748 1E000000 		.4byte	.LVL79
+ 1801 074c 740A0000 		.4byte	0xa74
+ 1802 0750 0C       		.uleb128 0xc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 39
+
+
+ 1803 0751 01       		.uleb128 0x1
+ 1804 0752 50       		.byte	0x50
+ 1805 0753 02       		.uleb128 0x2
+ 1806 0754 08       		.byte	0x8
+ 1807 0755 C8       		.byte	0xc8
+ 1808 0756 00       		.byte	0
+ 1809 0757 00       		.byte	0
+ 1810 0758 0B       		.uleb128 0xb
+ 1811 0759 30000000 		.4byte	.LVL82
+ 1812 075d D6010000 		.4byte	0x1d6
+ 1813 0761 6C070000 		.4byte	0x76c
+ 1814 0765 0C       		.uleb128 0xc
+ 1815 0766 01       		.uleb128 0x1
+ 1816 0767 50       		.byte	0x50
+ 1817 0768 02       		.uleb128 0x2
+ 1818 0769 08       		.byte	0x8
+ 1819 076a 6C       		.byte	0x6c
+ 1820 076b 00       		.byte	0
+ 1821 076c 0A       		.uleb128 0xa
+ 1822 076d 34000000 		.4byte	.LVL83
+ 1823 0771 B60A0000 		.4byte	0xab6
+ 1824 0775 00       		.byte	0
+ 1825 0776 12       		.uleb128 0x12
+ 1826 0777 84010000 		.4byte	.LASF68
+ 1827 077b 01       		.byte	0x1
+ 1828 077c 3E01     		.2byte	0x13e
+ 1829 077e 00000000 		.4byte	.LFB73
+ 1830 0782 1E000000 		.4byte	.LFE73-.LFB73
+ 1831 0786 01       		.uleb128 0x1
+ 1832 0787 9C       		.byte	0x9c
+ 1833 0788 D8070000 		.4byte	0x7d8
+ 1834 078c 0A       		.uleb128 0xa
+ 1835 078d 06000000 		.4byte	.LVL85
+ 1836 0791 C10A0000 		.4byte	0xac1
+ 1837 0795 0B       		.uleb128 0xb
+ 1838 0796 0C000000 		.4byte	.LVL86
+ 1839 079a CC0A0000 		.4byte	0xacc
+ 1840 079e A8070000 		.4byte	0x7a8
+ 1841 07a2 0C       		.uleb128 0xc
+ 1842 07a3 01       		.uleb128 0x1
+ 1843 07a4 50       		.byte	0x50
+ 1844 07a5 01       		.uleb128 0x1
+ 1845 07a6 30       		.byte	0x30
+ 1846 07a7 00       		.byte	0
+ 1847 07a8 0B       		.uleb128 0xb
+ 1848 07a9 12000000 		.4byte	.LVL87
+ 1849 07ad D70A0000 		.4byte	0xad7
+ 1850 07b1 BB070000 		.4byte	0x7bb
+ 1851 07b5 0C       		.uleb128 0xc
+ 1852 07b6 01       		.uleb128 0x1
+ 1853 07b7 50       		.byte	0x50
+ 1854 07b8 01       		.uleb128 0x1
+ 1855 07b9 30       		.byte	0x30
+ 1856 07ba 00       		.byte	0
+ 1857 07bb 0B       		.uleb128 0xb
+ 1858 07bc 18000000 		.4byte	.LVL88
+ 1859 07c0 E20A0000 		.4byte	0xae2
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 40
+
+
+ 1860 07c4 CE070000 		.4byte	0x7ce
+ 1861 07c8 0C       		.uleb128 0xc
+ 1862 07c9 01       		.uleb128 0x1
+ 1863 07ca 50       		.byte	0x50
+ 1864 07cb 01       		.uleb128 0x1
+ 1865 07cc 30       		.byte	0x30
+ 1866 07cd 00       		.byte	0
+ 1867 07ce 0A       		.uleb128 0xa
+ 1868 07cf 1C000000 		.4byte	.LVL89
+ 1869 07d3 ED0A0000 		.4byte	0xaed
+ 1870 07d7 00       		.byte	0
+ 1871 07d8 14       		.uleb128 0x14
+ 1872 07d9 53050000 		.4byte	.LASF121
+ 1873 07dd 01       		.byte	0x1
+ 1874 07de 4901     		.2byte	0x149
+ 1875 07e0 73000000 		.4byte	0x73
+ 1876 07e4 00000000 		.4byte	.LFB74
+ 1877 07e8 3E000000 		.4byte	.LFE74-.LFB74
+ 1878 07ec 01       		.uleb128 0x1
+ 1879 07ed 9C       		.byte	0x9c
+ 1880 07ee 86080000 		.4byte	0x886
+ 1881 07f2 11       		.uleb128 0x11
+ 1882 07f3 02000000 		.4byte	.LBB5
+ 1883 07f7 24000000 		.4byte	.LBE5-.LBB5
+ 1884 07fb 58080000 		.4byte	0x858
+ 1885 07ff 13       		.uleb128 0x13
+ 1886 0800 6900     		.ascii	"i\000"
+ 1887 0802 01       		.byte	0x1
+ 1888 0803 4C01     		.2byte	0x14c
+ 1889 0805 96000000 		.4byte	0x96
+ 1890 0809 06010000 		.4byte	.LLST6
+ 1891 080d 0B       		.uleb128 0xb
+ 1892 080e 0C000000 		.4byte	.LVL92
+ 1893 0812 8D090000 		.4byte	0x98d
+ 1894 0816 20080000 		.4byte	0x820
+ 1895 081a 0C       		.uleb128 0xc
+ 1896 081b 01       		.uleb128 0x1
+ 1897 081c 50       		.byte	0x50
+ 1898 081d 01       		.uleb128 0x1
+ 1899 081e 31       		.byte	0x31
+ 1900 081f 00       		.byte	0
+ 1901 0820 0B       		.uleb128 0xb
+ 1902 0821 12000000 		.4byte	.LVL93
+ 1903 0825 740A0000 		.4byte	0xa74
+ 1904 0829 34080000 		.4byte	0x834
+ 1905 082d 0C       		.uleb128 0xc
+ 1906 082e 01       		.uleb128 0x1
+ 1907 082f 50       		.byte	0x50
+ 1908 0830 02       		.uleb128 0x2
+ 1909 0831 08       		.byte	0x8
+ 1910 0832 32       		.byte	0x32
+ 1911 0833 00       		.byte	0
+ 1912 0834 0B       		.uleb128 0xb
+ 1913 0835 18000000 		.4byte	.LVL94
+ 1914 0839 8D090000 		.4byte	0x98d
+ 1915 083d 47080000 		.4byte	0x847
+ 1916 0841 0C       		.uleb128 0xc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 41
+
+
+ 1917 0842 01       		.uleb128 0x1
+ 1918 0843 50       		.byte	0x50
+ 1919 0844 01       		.uleb128 0x1
+ 1920 0845 30       		.byte	0x30
+ 1921 0846 00       		.byte	0
+ 1922 0847 0D       		.uleb128 0xd
+ 1923 0848 1E000000 		.4byte	.LVL95
+ 1924 084c 740A0000 		.4byte	0xa74
+ 1925 0850 0C       		.uleb128 0xc
+ 1926 0851 01       		.uleb128 0x1
+ 1927 0852 50       		.byte	0x50
+ 1928 0853 02       		.uleb128 0x2
+ 1929 0854 08       		.byte	0x8
+ 1930 0855 32       		.byte	0x32
+ 1931 0856 00       		.byte	0
+ 1932 0857 00       		.byte	0
+ 1933 0858 0A       		.uleb128 0xa
+ 1934 0859 2C000000 		.4byte	.LVL98
+ 1935 085d F80A0000 		.4byte	0xaf8
+ 1936 0861 0A       		.uleb128 0xa
+ 1937 0862 30000000 		.4byte	.LVL99
+ 1938 0866 030B0000 		.4byte	0xb03
+ 1939 086a 0A       		.uleb128 0xa
+ 1940 086b 34000000 		.4byte	.LVL100
+ 1941 086f 0E0B0000 		.4byte	0xb0e
+ 1942 0873 0A       		.uleb128 0xa
+ 1943 0874 38000000 		.4byte	.LVL101
+ 1944 0878 190B0000 		.4byte	0xb19
+ 1945 087c 0A       		.uleb128 0xa
+ 1946 087d 3C000000 		.4byte	.LVL102
+ 1947 0881 240B0000 		.4byte	0xb24
+ 1948 0885 00       		.byte	0
+ 1949 0886 15       		.uleb128 0x15
+ 1950 0887 3E050000 		.4byte	.LASF69
+ 1951 088b 07       		.byte	0x7
+ 1952 088c 1207     		.2byte	0x712
+ 1953 088e 92080000 		.4byte	0x892
+ 1954 0892 16       		.uleb128 0x16
+ 1955 0893 A1000000 		.4byte	0xa1
+ 1956 0897 17       		.uleb128 0x17
+ 1957 0898 66000000 		.4byte	.LASF57
+ 1958 089c 01       		.byte	0x1
+ 1959 089d 15       		.byte	0x15
+ 1960 089e DE000000 		.4byte	0xde
+ 1961 08a2 05       		.uleb128 0x5
+ 1962 08a3 03       		.byte	0x3
+ 1963 08a4 00000000 		.4byte	STATE
+ 1964 08a8 18       		.uleb128 0x18
+ 1965 08a9 AC000000 		.4byte	0xac
+ 1966 08ad B8080000 		.4byte	0x8b8
+ 1967 08b1 19       		.uleb128 0x19
+ 1968 08b2 88000000 		.4byte	0x88
+ 1969 08b6 03       		.byte	0x3
+ 1970 08b7 00       		.byte	0
+ 1971 08b8 17       		.uleb128 0x17
+ 1972 08b9 5D000000 		.4byte	.LASF58
+ 1973 08bd 01       		.byte	0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 42
+
+
+ 1974 08be 18       		.byte	0x18
+ 1975 08bf A8080000 		.4byte	0x8a8
+ 1976 08c3 05       		.uleb128 0x5
+ 1977 08c4 03       		.byte	0x3
+ 1978 08c5 00000000 		.4byte	rxBuffer
+ 1979 08c9 17       		.uleb128 0x17
+ 1980 08ca 64010000 		.4byte	.LASF70
+ 1981 08ce 01       		.byte	0x1
+ 1982 08cf 19       		.byte	0x19
+ 1983 08d0 A8080000 		.4byte	0x8a8
+ 1984 08d4 05       		.uleb128 0x5
+ 1985 08d5 03       		.byte	0x3
+ 1986 08d6 00000000 		.4byte	txBuffer
+ 1987 08da 18       		.uleb128 0x18
+ 1988 08db AC000000 		.4byte	0xac
+ 1989 08df EA080000 		.4byte	0x8ea
+ 1990 08e3 19       		.uleb128 0x19
+ 1991 08e4 88000000 		.4byte	0x88
+ 1992 08e8 17       		.byte	0x17
+ 1993 08e9 00       		.byte	0
+ 1994 08ea 17       		.uleb128 0x17
+ 1995 08eb E9060000 		.4byte	.LASF71
+ 1996 08ef 01       		.byte	0x1
+ 1997 08f0 1A       		.byte	0x1a
+ 1998 08f1 DA080000 		.4byte	0x8da
+ 1999 08f5 05       		.uleb128 0x5
+ 2000 08f6 03       		.byte	0x3
+ 2001 08f7 00000000 		.4byte	txCloneBuffer
+ 2002 08fb 18       		.uleb128 0x18
+ 2003 08fc D2000000 		.4byte	0xd2
+ 2004 0900 0B090000 		.4byte	0x90b
+ 2005 0904 19       		.uleb128 0x19
+ 2006 0905 88000000 		.4byte	0x88
+ 2007 0909 0F       		.byte	0xf
+ 2008 090a 00       		.byte	0
+ 2009 090b 17       		.uleb128 0x17
+ 2010 090c F7060000 		.4byte	.LASF72
+ 2011 0910 01       		.byte	0x1
+ 2012 0911 1E       		.byte	0x1e
+ 2013 0912 FB080000 		.4byte	0x8fb
+ 2014 0916 05       		.uleb128 0x5
+ 2015 0917 03       		.byte	0x3
+ 2016 0918 00000000 		.4byte	UART_buffer
+ 2017 091c 17       		.uleb128 0x17
+ 2018 091d 4B030000 		.4byte	.LASF73
+ 2019 0921 01       		.byte	0x1
+ 2020 0922 21       		.byte	0x21
+ 2021 0923 73000000 		.4byte	0x73
+ 2022 0927 05       		.uleb128 0x5
+ 2023 0928 03       		.byte	0x3
+ 2024 0929 00000000 		.4byte	wheel_revolutions
+ 2025 092d 17       		.uleb128 0x17
+ 2026 092e 51040000 		.4byte	.LASF74
+ 2027 0932 01       		.byte	0x1
+ 2028 0933 22       		.byte	0x22
+ 2029 0934 AC000000 		.4byte	0xac
+ 2030 0938 05       		.uleb128 0x5
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 43
+
+
+ 2031 0939 03       		.byte	0x3
+ 2032 093a 00000000 		.4byte	speed
+ 2033 093e 17       		.uleb128 0x17
+ 2034 093f BC040000 		.4byte	.LASF75
+ 2035 0943 01       		.byte	0x1
+ 2036 0944 23       		.byte	0x23
+ 2037 0945 AC000000 		.4byte	0xac
+ 2038 0949 05       		.uleb128 0x5
+ 2039 094a 03       		.byte	0x3
+ 2040 094b 00000000 		.4byte	dist
+ 2041 094f 17       		.uleb128 0x17
+ 2042 0950 2B000000 		.4byte	.LASF76
+ 2043 0954 01       		.byte	0x1
+ 2044 0955 24       		.byte	0x24
+ 2045 0956 CB000000 		.4byte	0xcb
+ 2046 095a 05       		.uleb128 0x5
+ 2047 095b 03       		.byte	0x3
+ 2048 095c 00000000 		.4byte	time_temp
+ 2049 0960 17       		.uleb128 0x17
+ 2050 0961 C1040000 		.4byte	.LASF77
+ 2051 0965 01       		.byte	0x1
+ 2052 0966 25       		.byte	0x25
+ 2053 0967 CB000000 		.4byte	0xcb
+ 2054 096b 05       		.uleb128 0x5
+ 2055 096c 03       		.byte	0x3
+ 2056 096d 00000000 		.4byte	wheelRadius
+ 2057 0971 17       		.uleb128 0x17
+ 2058 0972 25080000 		.4byte	.LASF78
+ 2059 0976 01       		.byte	0x1
+ 2060 0977 26       		.byte	0x26
+ 2061 0978 CB000000 		.4byte	0xcb
+ 2062 097c 05       		.uleb128 0x5
+ 2063 097d 03       		.byte	0x3
+ 2064 097e 00000000 		.4byte	wheelCirc
+ 2065 0982 1A       		.uleb128 0x1a
+ 2066 0983 CB060000 		.4byte	.LASF79
+ 2067 0987 CB060000 		.4byte	.LASF79
+ 2068 098b 08       		.byte	0x8
+ 2069 098c 15       		.byte	0x15
+ 2070 098d 1A       		.uleb128 0x1a
+ 2071 098e 76010000 		.4byte	.LASF80
+ 2072 0992 76010000 		.4byte	.LASF80
+ 2073 0996 09       		.byte	0x9
+ 2074 0997 26       		.byte	0x26
+ 2075 0998 1A       		.uleb128 0x1a
+ 2076 0999 B2010000 		.4byte	.LASF81
+ 2077 099d B2010000 		.4byte	.LASF81
+ 2078 09a1 0A       		.byte	0xa
+ 2079 09a2 14       		.byte	0x14
+ 2080 09a3 1A       		.uleb128 0x1a
+ 2081 09a4 B2060000 		.4byte	.LASF82
+ 2082 09a8 B2060000 		.4byte	.LASF82
+ 2083 09ac 0A       		.byte	0xa
+ 2084 09ad 15       		.byte	0x15
+ 2085 09ae 1A       		.uleb128 0x1a
+ 2086 09af 5F070000 		.4byte	.LASF83
+ 2087 09b3 5F070000 		.4byte	.LASF83
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 44
+
+
+ 2088 09b7 0B       		.byte	0xb
+ 2089 09b8 23       		.byte	0x23
+ 2090 09b9 1A       		.uleb128 0x1a
+ 2091 09ba 6D010000 		.4byte	.LASF84
+ 2092 09be 6D010000 		.4byte	.LASF84
+ 2093 09c2 08       		.byte	0x8
+ 2094 09c3 16       		.byte	0x16
+ 2095 09c4 1A       		.uleb128 0x1a
+ 2096 09c5 7B060000 		.4byte	.LASF85
+ 2097 09c9 7B060000 		.4byte	.LASF85
+ 2098 09cd 0B       		.byte	0xb
+ 2099 09ce 25       		.byte	0x25
+ 2100 09cf 1A       		.uleb128 0x1a
+ 2101 09d0 92070000 		.4byte	.LASF86
+ 2102 09d4 92070000 		.4byte	.LASF86
+ 2103 09d8 0C       		.byte	0xc
+ 2104 09d9 15       		.byte	0x15
+ 2105 09da 1A       		.uleb128 0x1a
+ 2106 09db B7070000 		.4byte	.LASF87
+ 2107 09df B7070000 		.4byte	.LASF87
+ 2108 09e3 0D       		.byte	0xd
+ 2109 09e4 16       		.byte	0x16
+ 2110 09e5 1A       		.uleb128 0x1a
+ 2111 09e6 BA000000 		.4byte	.LASF88
+ 2112 09ea BA000000 		.4byte	.LASF88
+ 2113 09ee 0D       		.byte	0xd
+ 2114 09ef 18       		.byte	0x18
+ 2115 09f0 1A       		.uleb128 0x1a
+ 2116 09f1 85000000 		.4byte	.LASF89
+ 2117 09f5 85000000 		.4byte	.LASF89
+ 2118 09f9 0A       		.byte	0xa
+ 2119 09fa 13       		.byte	0x13
+ 2120 09fb 1A       		.uleb128 0x1a
+ 2121 09fc 77070000 		.4byte	.LASF90
+ 2122 0a00 77070000 		.4byte	.LASF90
+ 2123 0a04 0E       		.byte	0xe
+ 2124 0a05 69       		.byte	0x69
+ 2125 0a06 1A       		.uleb128 0x1a
+ 2126 0a07 1A010000 		.4byte	.LASF91
+ 2127 0a0b 1A010000 		.4byte	.LASF91
+ 2128 0a0f 0D       		.byte	0xd
+ 2129 0a10 20       		.byte	0x20
+ 2130 0a11 1A       		.uleb128 0x1a
+ 2131 0a12 14060000 		.4byte	.LASF92
+ 2132 0a16 14060000 		.4byte	.LASF92
+ 2133 0a1a 0D       		.byte	0xd
+ 2134 0a1b 1A       		.byte	0x1a
+ 2135 0a1c 1A       		.uleb128 0x1a
+ 2136 0a1d CD040000 		.4byte	.LASF93
+ 2137 0a21 CD040000 		.4byte	.LASF93
+ 2138 0a25 0D       		.byte	0xd
+ 2139 0a26 1C       		.byte	0x1c
+ 2140 0a27 1A       		.uleb128 0x1a
+ 2141 0a28 32010000 		.4byte	.LASF94
+ 2142 0a2c 32010000 		.4byte	.LASF94
+ 2143 0a30 06       		.byte	0x6
+ 2144 0a31 14       		.byte	0x14
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 45
+
+
+ 2145 0a32 1A       		.uleb128 0x1a
+ 2146 0a33 A0040000 		.4byte	.LASF95
+ 2147 0a37 A0040000 		.4byte	.LASF95
+ 2148 0a3b 0F       		.byte	0xf
+ 2149 0a3c 2B       		.byte	0x2b
+ 2150 0a3d 1A       		.uleb128 0x1a
+ 2151 0a3e C8000000 		.4byte	.LASF96
+ 2152 0a42 C8000000 		.4byte	.LASF96
+ 2153 0a46 0D       		.byte	0xd
+ 2154 0a47 1E       		.byte	0x1e
+ 2155 0a48 1A       		.uleb128 0x1a
+ 2156 0a49 1C050000 		.4byte	.LASF97
+ 2157 0a4d 1C050000 		.4byte	.LASF97
+ 2158 0a51 0E       		.byte	0xe
+ 2159 0a52 5E       		.byte	0x5e
+ 2160 0a53 1A       		.uleb128 0x1a
+ 2161 0a54 CB050000 		.4byte	.LASF98
+ 2162 0a58 CB050000 		.4byte	.LASF98
+ 2163 0a5c 10       		.byte	0x10
+ 2164 0a5d 6F       		.byte	0x6f
+ 2165 0a5e 1A       		.uleb128 0x1a
+ 2166 0a5f D6060000 		.4byte	.LASF99
+ 2167 0a63 D6060000 		.4byte	.LASF99
+ 2168 0a67 10       		.byte	0x10
+ 2169 0a68 88       		.byte	0x88
+ 2170 0a69 1A       		.uleb128 0x1a
+ 2171 0a6a 94060000 		.4byte	.LASF100
+ 2172 0a6e 94060000 		.4byte	.LASF100
+ 2173 0a72 10       		.byte	0x10
+ 2174 0a73 73       		.byte	0x73
+ 2175 0a74 1A       		.uleb128 0x1a
+ 2176 0a75 43080000 		.4byte	.LASF101
+ 2177 0a79 43080000 		.4byte	.LASF101
+ 2178 0a7d 11       		.byte	0x11
+ 2179 0a7e 76       		.byte	0x76
+ 2180 0a7f 1A       		.uleb128 0x1a
+ 2181 0a80 D3010000 		.4byte	.LASF102
+ 2182 0a84 D3010000 		.4byte	.LASF102
+ 2183 0a88 12       		.byte	0x12
+ 2184 0a89 2B       		.byte	0x2b
+ 2185 0a8a 1A       		.uleb128 0x1a
+ 2186 0a8b 03070000 		.4byte	.LASF103
+ 2187 0a8f 03070000 		.4byte	.LASF103
+ 2188 0a93 0B       		.byte	0xb
+ 2189 0a94 28       		.byte	0x28
+ 2190 0a95 1A       		.uleb128 0x1a
+ 2191 0a96 B1020000 		.4byte	.LASF104
+ 2192 0a9a B1020000 		.4byte	.LASF104
+ 2193 0a9e 0C       		.byte	0xc
+ 2194 0a9f 17       		.byte	0x17
+ 2195 0aa0 1A       		.uleb128 0x1a
+ 2196 0aa1 A0030000 		.4byte	.LASF105
+ 2197 0aa5 A0030000 		.4byte	.LASF105
+ 2198 0aa9 0C       		.byte	0xc
+ 2199 0aaa 19       		.byte	0x19
+ 2200 0aab 1A       		.uleb128 0x1a
+ 2201 0aac 35000000 		.4byte	.LASF106
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 46
+
+
+ 2202 0ab0 35000000 		.4byte	.LASF106
+ 2203 0ab4 13       		.byte	0x13
+ 2204 0ab5 2B       		.byte	0x2b
+ 2205 0ab6 1A       		.uleb128 0x1a
+ 2206 0ab7 75080000 		.4byte	.LASF107
+ 2207 0abb 75080000 		.4byte	.LASF107
+ 2208 0abf 14       		.byte	0x14
+ 2209 0ac0 5E       		.byte	0x5e
+ 2210 0ac1 1A       		.uleb128 0x1a
+ 2211 0ac2 A9070000 		.4byte	.LASF108
+ 2212 0ac6 A9070000 		.4byte	.LASF108
+ 2213 0aca 08       		.byte	0x8
+ 2214 0acb 17       		.byte	0x17
+ 2215 0acc 1A       		.uleb128 0x1a
+ 2216 0acd 52000000 		.4byte	.LASF109
+ 2217 0ad1 52000000 		.4byte	.LASF109
+ 2218 0ad5 15       		.byte	0x15
+ 2219 0ad6 26       		.byte	0x26
+ 2220 0ad7 1A       		.uleb128 0x1a
+ 2221 0ad8 95030000 		.4byte	.LASF110
+ 2222 0adc 95030000 		.4byte	.LASF110
+ 2223 0ae0 16       		.byte	0x16
+ 2224 0ae1 26       		.byte	0x26
+ 2225 0ae2 1A       		.uleb128 0x1a
+ 2226 0ae3 C2060000 		.4byte	.LASF111
+ 2227 0ae7 C2060000 		.4byte	.LASF111
+ 2228 0aeb 17       		.byte	0x17
+ 2229 0aec 26       		.byte	0x26
+ 2230 0aed 1A       		.uleb128 0x1a
+ 2231 0aee 05030000 		.4byte	.LASF112
+ 2232 0af2 05030000 		.4byte	.LASF112
+ 2233 0af6 18       		.byte	0x18
+ 2234 0af7 5E       		.byte	0x5e
+ 2235 0af8 1A       		.uleb128 0x1a
+ 2236 0af9 F7040000 		.4byte	.LASF113
+ 2237 0afd F7040000 		.4byte	.LASF113
+ 2238 0b01 19       		.byte	0x19
+ 2239 0b02 0A       		.byte	0xa
+ 2240 0b03 1A       		.uleb128 0x1a
+ 2241 0b04 4B050000 		.4byte	.LASF114
+ 2242 0b08 4B050000 		.4byte	.LASF114
+ 2243 0b0c 0A       		.byte	0xa
+ 2244 0b0d 11       		.byte	0x11
+ 2245 0b0e 1A       		.uleb128 0x1a
+ 2246 0b0f 65080000 		.4byte	.LASF115
+ 2247 0b13 65080000 		.4byte	.LASF115
+ 2248 0b17 0D       		.byte	0xd
+ 2249 0b18 14       		.byte	0x14
+ 2250 0b19 1A       		.uleb128 0x1a
+ 2251 0b1a 12080000 		.4byte	.LASF116
+ 2252 0b1e 12080000 		.4byte	.LASF116
+ 2253 0b22 0C       		.byte	0xc
+ 2254 0b23 13       		.byte	0x13
+ 2255 0b24 1A       		.uleb128 0x1a
+ 2256 0b25 27030000 		.4byte	.LASF117
+ 2257 0b29 27030000 		.4byte	.LASF117
+ 2258 0b2d 08       		.byte	0x8
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 47
+
+
+ 2259 0b2e 14       		.byte	0x14
+ 2260 0b2f 00       		.byte	0
+ 2261              		.section	.debug_abbrev,"",%progbits
+ 2262              	.Ldebug_abbrev0:
+ 2263 0000 01       		.uleb128 0x1
+ 2264 0001 11       		.uleb128 0x11
+ 2265 0002 01       		.byte	0x1
+ 2266 0003 25       		.uleb128 0x25
+ 2267 0004 0E       		.uleb128 0xe
+ 2268 0005 13       		.uleb128 0x13
+ 2269 0006 0B       		.uleb128 0xb
+ 2270 0007 03       		.uleb128 0x3
+ 2271 0008 0E       		.uleb128 0xe
+ 2272 0009 1B       		.uleb128 0x1b
+ 2273 000a 0E       		.uleb128 0xe
+ 2274 000b 55       		.uleb128 0x55
+ 2275 000c 17       		.uleb128 0x17
+ 2276 000d 11       		.uleb128 0x11
+ 2277 000e 01       		.uleb128 0x1
+ 2278 000f 10       		.uleb128 0x10
+ 2279 0010 17       		.uleb128 0x17
+ 2280 0011 00       		.byte	0
+ 2281 0012 00       		.byte	0
+ 2282 0013 02       		.uleb128 0x2
+ 2283 0014 24       		.uleb128 0x24
+ 2284 0015 00       		.byte	0
+ 2285 0016 0B       		.uleb128 0xb
+ 2286 0017 0B       		.uleb128 0xb
+ 2287 0018 3E       		.uleb128 0x3e
+ 2288 0019 0B       		.uleb128 0xb
+ 2289 001a 03       		.uleb128 0x3
+ 2290 001b 0E       		.uleb128 0xe
+ 2291 001c 00       		.byte	0
+ 2292 001d 00       		.byte	0
+ 2293 001e 03       		.uleb128 0x3
+ 2294 001f 16       		.uleb128 0x16
+ 2295 0020 00       		.byte	0
+ 2296 0021 03       		.uleb128 0x3
+ 2297 0022 0E       		.uleb128 0xe
+ 2298 0023 3A       		.uleb128 0x3a
+ 2299 0024 0B       		.uleb128 0xb
+ 2300 0025 3B       		.uleb128 0x3b
+ 2301 0026 0B       		.uleb128 0xb
+ 2302 0027 49       		.uleb128 0x49
+ 2303 0028 13       		.uleb128 0x13
+ 2304 0029 00       		.byte	0
+ 2305 002a 00       		.byte	0
+ 2306 002b 04       		.uleb128 0x4
+ 2307 002c 24       		.uleb128 0x24
+ 2308 002d 00       		.byte	0
+ 2309 002e 0B       		.uleb128 0xb
+ 2310 002f 0B       		.uleb128 0xb
+ 2311 0030 3E       		.uleb128 0x3e
+ 2312 0031 0B       		.uleb128 0xb
+ 2313 0032 03       		.uleb128 0x3
+ 2314 0033 08       		.uleb128 0x8
+ 2315 0034 00       		.byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 48
+
+
+ 2316 0035 00       		.byte	0
+ 2317 0036 05       		.uleb128 0x5
+ 2318 0037 16       		.uleb128 0x16
+ 2319 0038 00       		.byte	0
+ 2320 0039 03       		.uleb128 0x3
+ 2321 003a 0E       		.uleb128 0xe
+ 2322 003b 3A       		.uleb128 0x3a
+ 2323 003c 0B       		.uleb128 0xb
+ 2324 003d 3B       		.uleb128 0x3b
+ 2325 003e 05       		.uleb128 0x5
+ 2326 003f 49       		.uleb128 0x49
+ 2327 0040 13       		.uleb128 0x13
+ 2328 0041 00       		.byte	0
+ 2329 0042 00       		.byte	0
+ 2330 0043 06       		.uleb128 0x6
+ 2331 0044 04       		.uleb128 0x4
+ 2332 0045 01       		.byte	0x1
+ 2333 0046 03       		.uleb128 0x3
+ 2334 0047 0E       		.uleb128 0xe
+ 2335 0048 0B       		.uleb128 0xb
+ 2336 0049 0B       		.uleb128 0xb
+ 2337 004a 49       		.uleb128 0x49
+ 2338 004b 13       		.uleb128 0x13
+ 2339 004c 3A       		.uleb128 0x3a
+ 2340 004d 0B       		.uleb128 0xb
+ 2341 004e 3B       		.uleb128 0x3b
+ 2342 004f 0B       		.uleb128 0xb
+ 2343 0050 01       		.uleb128 0x1
+ 2344 0051 13       		.uleb128 0x13
+ 2345 0052 00       		.byte	0
+ 2346 0053 00       		.byte	0
+ 2347 0054 07       		.uleb128 0x7
+ 2348 0055 28       		.uleb128 0x28
+ 2349 0056 00       		.byte	0
+ 2350 0057 03       		.uleb128 0x3
+ 2351 0058 0E       		.uleb128 0xe
+ 2352 0059 1C       		.uleb128 0x1c
+ 2353 005a 0B       		.uleb128 0xb
+ 2354 005b 00       		.byte	0
+ 2355 005c 00       		.byte	0
+ 2356 005d 08       		.uleb128 0x8
+ 2357 005e 2E       		.uleb128 0x2e
+ 2358 005f 01       		.byte	0x1
+ 2359 0060 3F       		.uleb128 0x3f
+ 2360 0061 19       		.uleb128 0x19
+ 2361 0062 03       		.uleb128 0x3
+ 2362 0063 0E       		.uleb128 0xe
+ 2363 0064 3A       		.uleb128 0x3a
+ 2364 0065 0B       		.uleb128 0xb
+ 2365 0066 3B       		.uleb128 0x3b
+ 2366 0067 0B       		.uleb128 0xb
+ 2367 0068 27       		.uleb128 0x27
+ 2368 0069 19       		.uleb128 0x19
+ 2369 006a 11       		.uleb128 0x11
+ 2370 006b 01       		.uleb128 0x1
+ 2371 006c 12       		.uleb128 0x12
+ 2372 006d 06       		.uleb128 0x6
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 49
+
+
+ 2373 006e 40       		.uleb128 0x40
+ 2374 006f 18       		.uleb128 0x18
+ 2375 0070 9742     		.uleb128 0x2117
+ 2376 0072 19       		.uleb128 0x19
+ 2377 0073 01       		.uleb128 0x1
+ 2378 0074 13       		.uleb128 0x13
+ 2379 0075 00       		.byte	0
+ 2380 0076 00       		.byte	0
+ 2381 0077 09       		.uleb128 0x9
+ 2382 0078 05       		.uleb128 0x5
+ 2383 0079 00       		.byte	0
+ 2384 007a 03       		.uleb128 0x3
+ 2385 007b 0E       		.uleb128 0xe
+ 2386 007c 3A       		.uleb128 0x3a
+ 2387 007d 0B       		.uleb128 0xb
+ 2388 007e 3B       		.uleb128 0x3b
+ 2389 007f 0B       		.uleb128 0xb
+ 2390 0080 49       		.uleb128 0x49
+ 2391 0081 13       		.uleb128 0x13
+ 2392 0082 02       		.uleb128 0x2
+ 2393 0083 17       		.uleb128 0x17
+ 2394 0084 00       		.byte	0
+ 2395 0085 00       		.byte	0
+ 2396 0086 0A       		.uleb128 0xa
+ 2397 0087 898201   		.uleb128 0x4109
+ 2398 008a 00       		.byte	0
+ 2399 008b 11       		.uleb128 0x11
+ 2400 008c 01       		.uleb128 0x1
+ 2401 008d 31       		.uleb128 0x31
+ 2402 008e 13       		.uleb128 0x13
+ 2403 008f 00       		.byte	0
+ 2404 0090 00       		.byte	0
+ 2405 0091 0B       		.uleb128 0xb
+ 2406 0092 898201   		.uleb128 0x4109
+ 2407 0095 01       		.byte	0x1
+ 2408 0096 11       		.uleb128 0x11
+ 2409 0097 01       		.uleb128 0x1
+ 2410 0098 31       		.uleb128 0x31
+ 2411 0099 13       		.uleb128 0x13
+ 2412 009a 01       		.uleb128 0x1
+ 2413 009b 13       		.uleb128 0x13
+ 2414 009c 00       		.byte	0
+ 2415 009d 00       		.byte	0
+ 2416 009e 0C       		.uleb128 0xc
+ 2417 009f 8A8201   		.uleb128 0x410a
+ 2418 00a2 00       		.byte	0
+ 2419 00a3 02       		.uleb128 0x2
+ 2420 00a4 18       		.uleb128 0x18
+ 2421 00a5 9142     		.uleb128 0x2111
+ 2422 00a7 18       		.uleb128 0x18
+ 2423 00a8 00       		.byte	0
+ 2424 00a9 00       		.byte	0
+ 2425 00aa 0D       		.uleb128 0xd
+ 2426 00ab 898201   		.uleb128 0x4109
+ 2427 00ae 01       		.byte	0x1
+ 2428 00af 11       		.uleb128 0x11
+ 2429 00b0 01       		.uleb128 0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 50
+
+
+ 2430 00b1 31       		.uleb128 0x31
+ 2431 00b2 13       		.uleb128 0x13
+ 2432 00b3 00       		.byte	0
+ 2433 00b4 00       		.byte	0
+ 2434 00b5 0E       		.uleb128 0xe
+ 2435 00b6 0F       		.uleb128 0xf
+ 2436 00b7 00       		.byte	0
+ 2437 00b8 0B       		.uleb128 0xb
+ 2438 00b9 0B       		.uleb128 0xb
+ 2439 00ba 49       		.uleb128 0x49
+ 2440 00bb 13       		.uleb128 0x13
+ 2441 00bc 00       		.byte	0
+ 2442 00bd 00       		.byte	0
+ 2443 00be 0F       		.uleb128 0xf
+ 2444 00bf 2E       		.uleb128 0x2e
+ 2445 00c0 01       		.byte	0x1
+ 2446 00c1 3F       		.uleb128 0x3f
+ 2447 00c2 19       		.uleb128 0x19
+ 2448 00c3 03       		.uleb128 0x3
+ 2449 00c4 0E       		.uleb128 0xe
+ 2450 00c5 3A       		.uleb128 0x3a
+ 2451 00c6 0B       		.uleb128 0xb
+ 2452 00c7 3B       		.uleb128 0x3b
+ 2453 00c8 0B       		.uleb128 0xb
+ 2454 00c9 27       		.uleb128 0x27
+ 2455 00ca 19       		.uleb128 0x19
+ 2456 00cb 11       		.uleb128 0x11
+ 2457 00cc 01       		.uleb128 0x1
+ 2458 00cd 12       		.uleb128 0x12
+ 2459 00ce 06       		.uleb128 0x6
+ 2460 00cf 40       		.uleb128 0x40
+ 2461 00d0 18       		.uleb128 0x18
+ 2462 00d1 9642     		.uleb128 0x2116
+ 2463 00d3 19       		.uleb128 0x19
+ 2464 00d4 01       		.uleb128 0x1
+ 2465 00d5 13       		.uleb128 0x13
+ 2466 00d6 00       		.byte	0
+ 2467 00d7 00       		.byte	0
+ 2468 00d8 10       		.uleb128 0x10
+ 2469 00d9 34       		.uleb128 0x34
+ 2470 00da 00       		.byte	0
+ 2471 00db 03       		.uleb128 0x3
+ 2472 00dc 0E       		.uleb128 0xe
+ 2473 00dd 3A       		.uleb128 0x3a
+ 2474 00de 0B       		.uleb128 0xb
+ 2475 00df 3B       		.uleb128 0x3b
+ 2476 00e0 05       		.uleb128 0x5
+ 2477 00e1 49       		.uleb128 0x49
+ 2478 00e2 13       		.uleb128 0x13
+ 2479 00e3 02       		.uleb128 0x2
+ 2480 00e4 17       		.uleb128 0x17
+ 2481 00e5 00       		.byte	0
+ 2482 00e6 00       		.byte	0
+ 2483 00e7 11       		.uleb128 0x11
+ 2484 00e8 0B       		.uleb128 0xb
+ 2485 00e9 01       		.byte	0x1
+ 2486 00ea 11       		.uleb128 0x11
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 51
+
+
+ 2487 00eb 01       		.uleb128 0x1
+ 2488 00ec 12       		.uleb128 0x12
+ 2489 00ed 06       		.uleb128 0x6
+ 2490 00ee 01       		.uleb128 0x1
+ 2491 00ef 13       		.uleb128 0x13
+ 2492 00f0 00       		.byte	0
+ 2493 00f1 00       		.byte	0
+ 2494 00f2 12       		.uleb128 0x12
+ 2495 00f3 2E       		.uleb128 0x2e
+ 2496 00f4 01       		.byte	0x1
+ 2497 00f5 3F       		.uleb128 0x3f
+ 2498 00f6 19       		.uleb128 0x19
+ 2499 00f7 03       		.uleb128 0x3
+ 2500 00f8 0E       		.uleb128 0xe
+ 2501 00f9 3A       		.uleb128 0x3a
+ 2502 00fa 0B       		.uleb128 0xb
+ 2503 00fb 3B       		.uleb128 0x3b
+ 2504 00fc 05       		.uleb128 0x5
+ 2505 00fd 27       		.uleb128 0x27
+ 2506 00fe 19       		.uleb128 0x19
+ 2507 00ff 11       		.uleb128 0x11
+ 2508 0100 01       		.uleb128 0x1
+ 2509 0101 12       		.uleb128 0x12
+ 2510 0102 06       		.uleb128 0x6
+ 2511 0103 40       		.uleb128 0x40
+ 2512 0104 18       		.uleb128 0x18
+ 2513 0105 9742     		.uleb128 0x2117
+ 2514 0107 19       		.uleb128 0x19
+ 2515 0108 01       		.uleb128 0x1
+ 2516 0109 13       		.uleb128 0x13
+ 2517 010a 00       		.byte	0
+ 2518 010b 00       		.byte	0
+ 2519 010c 13       		.uleb128 0x13
+ 2520 010d 34       		.uleb128 0x34
+ 2521 010e 00       		.byte	0
+ 2522 010f 03       		.uleb128 0x3
+ 2523 0110 08       		.uleb128 0x8
+ 2524 0111 3A       		.uleb128 0x3a
+ 2525 0112 0B       		.uleb128 0xb
+ 2526 0113 3B       		.uleb128 0x3b
+ 2527 0114 05       		.uleb128 0x5
+ 2528 0115 49       		.uleb128 0x49
+ 2529 0116 13       		.uleb128 0x13
+ 2530 0117 02       		.uleb128 0x2
+ 2531 0118 17       		.uleb128 0x17
+ 2532 0119 00       		.byte	0
+ 2533 011a 00       		.byte	0
+ 2534 011b 14       		.uleb128 0x14
+ 2535 011c 2E       		.uleb128 0x2e
+ 2536 011d 01       		.byte	0x1
+ 2537 011e 3F       		.uleb128 0x3f
+ 2538 011f 19       		.uleb128 0x19
+ 2539 0120 03       		.uleb128 0x3
+ 2540 0121 0E       		.uleb128 0xe
+ 2541 0122 3A       		.uleb128 0x3a
+ 2542 0123 0B       		.uleb128 0xb
+ 2543 0124 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 52
+
+
+ 2544 0125 05       		.uleb128 0x5
+ 2545 0126 27       		.uleb128 0x27
+ 2546 0127 19       		.uleb128 0x19
+ 2547 0128 49       		.uleb128 0x49
+ 2548 0129 13       		.uleb128 0x13
+ 2549 012a 8701     		.uleb128 0x87
+ 2550 012c 19       		.uleb128 0x19
+ 2551 012d 11       		.uleb128 0x11
+ 2552 012e 01       		.uleb128 0x1
+ 2553 012f 12       		.uleb128 0x12
+ 2554 0130 06       		.uleb128 0x6
+ 2555 0131 40       		.uleb128 0x40
+ 2556 0132 18       		.uleb128 0x18
+ 2557 0133 9742     		.uleb128 0x2117
+ 2558 0135 19       		.uleb128 0x19
+ 2559 0136 01       		.uleb128 0x1
+ 2560 0137 13       		.uleb128 0x13
+ 2561 0138 00       		.byte	0
+ 2562 0139 00       		.byte	0
+ 2563 013a 15       		.uleb128 0x15
+ 2564 013b 34       		.uleb128 0x34
+ 2565 013c 00       		.byte	0
+ 2566 013d 03       		.uleb128 0x3
+ 2567 013e 0E       		.uleb128 0xe
+ 2568 013f 3A       		.uleb128 0x3a
+ 2569 0140 0B       		.uleb128 0xb
+ 2570 0141 3B       		.uleb128 0x3b
+ 2571 0142 05       		.uleb128 0x5
+ 2572 0143 49       		.uleb128 0x49
+ 2573 0144 13       		.uleb128 0x13
+ 2574 0145 3F       		.uleb128 0x3f
+ 2575 0146 19       		.uleb128 0x19
+ 2576 0147 3C       		.uleb128 0x3c
+ 2577 0148 19       		.uleb128 0x19
+ 2578 0149 00       		.byte	0
+ 2579 014a 00       		.byte	0
+ 2580 014b 16       		.uleb128 0x16
+ 2581 014c 35       		.uleb128 0x35
+ 2582 014d 00       		.byte	0
+ 2583 014e 49       		.uleb128 0x49
+ 2584 014f 13       		.uleb128 0x13
+ 2585 0150 00       		.byte	0
+ 2586 0151 00       		.byte	0
+ 2587 0152 17       		.uleb128 0x17
+ 2588 0153 34       		.uleb128 0x34
+ 2589 0154 00       		.byte	0
+ 2590 0155 03       		.uleb128 0x3
+ 2591 0156 0E       		.uleb128 0xe
+ 2592 0157 3A       		.uleb128 0x3a
+ 2593 0158 0B       		.uleb128 0xb
+ 2594 0159 3B       		.uleb128 0x3b
+ 2595 015a 0B       		.uleb128 0xb
+ 2596 015b 49       		.uleb128 0x49
+ 2597 015c 13       		.uleb128 0x13
+ 2598 015d 3F       		.uleb128 0x3f
+ 2599 015e 19       		.uleb128 0x19
+ 2600 015f 02       		.uleb128 0x2
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 53
+
+
+ 2601 0160 18       		.uleb128 0x18
+ 2602 0161 00       		.byte	0
+ 2603 0162 00       		.byte	0
+ 2604 0163 18       		.uleb128 0x18
+ 2605 0164 01       		.uleb128 0x1
+ 2606 0165 01       		.byte	0x1
+ 2607 0166 49       		.uleb128 0x49
+ 2608 0167 13       		.uleb128 0x13
+ 2609 0168 01       		.uleb128 0x1
+ 2610 0169 13       		.uleb128 0x13
+ 2611 016a 00       		.byte	0
+ 2612 016b 00       		.byte	0
+ 2613 016c 19       		.uleb128 0x19
+ 2614 016d 21       		.uleb128 0x21
+ 2615 016e 00       		.byte	0
+ 2616 016f 49       		.uleb128 0x49
+ 2617 0170 13       		.uleb128 0x13
+ 2618 0171 2F       		.uleb128 0x2f
+ 2619 0172 0B       		.uleb128 0xb
+ 2620 0173 00       		.byte	0
+ 2621 0174 00       		.byte	0
+ 2622 0175 1A       		.uleb128 0x1a
+ 2623 0176 2E       		.uleb128 0x2e
+ 2624 0177 00       		.byte	0
+ 2625 0178 3F       		.uleb128 0x3f
+ 2626 0179 19       		.uleb128 0x19
+ 2627 017a 3C       		.uleb128 0x3c
+ 2628 017b 19       		.uleb128 0x19
+ 2629 017c 6E       		.uleb128 0x6e
+ 2630 017d 0E       		.uleb128 0xe
+ 2631 017e 03       		.uleb128 0x3
+ 2632 017f 0E       		.uleb128 0xe
+ 2633 0180 3A       		.uleb128 0x3a
+ 2634 0181 0B       		.uleb128 0xb
+ 2635 0182 3B       		.uleb128 0x3b
+ 2636 0183 0B       		.uleb128 0xb
+ 2637 0184 00       		.byte	0
+ 2638 0185 00       		.byte	0
+ 2639 0186 00       		.byte	0
+ 2640              		.section	.debug_loc,"",%progbits
+ 2641              	.Ldebug_loc0:
+ 2642              	.LLST0:
+ 2643 0000 00000000 		.4byte	.LVL0
+ 2644 0004 13000000 		.4byte	.LVL1-1
+ 2645 0008 0100     		.2byte	0x1
+ 2646 000a 50       		.byte	0x50
+ 2647 000b 13000000 		.4byte	.LVL1-1
+ 2648 000f 3C000000 		.4byte	.LVL7
+ 2649 0013 0400     		.2byte	0x4
+ 2650 0015 F3       		.byte	0xf3
+ 2651 0016 01       		.uleb128 0x1
+ 2652 0017 50       		.byte	0x50
+ 2653 0018 9F       		.byte	0x9f
+ 2654 0019 3C000000 		.4byte	.LVL7
+ 2655 001d 3F000000 		.4byte	.LVL8-1
+ 2656 0021 0100     		.2byte	0x1
+ 2657 0023 50       		.byte	0x50
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 54
+
+
+ 2658 0024 3F000000 		.4byte	.LVL8-1
+ 2659 0028 72000000 		.4byte	.LVL15
+ 2660 002c 0400     		.2byte	0x4
+ 2661 002e F3       		.byte	0xf3
+ 2662 002f 01       		.uleb128 0x1
+ 2663 0030 50       		.byte	0x50
+ 2664 0031 9F       		.byte	0x9f
+ 2665 0032 72000000 		.4byte	.LVL15
+ 2666 0036 7A000000 		.4byte	.LVL17
+ 2667 003a 0300     		.2byte	0x3
+ 2668 003c 08       		.byte	0x8
+ 2669 003d 6F       		.byte	0x6f
+ 2670 003e 9F       		.byte	0x9f
+ 2671 003f 7A000000 		.4byte	.LVL17
+ 2672 0043 82000000 		.4byte	.LVL18
+ 2673 0047 0100     		.2byte	0x1
+ 2674 0049 50       		.byte	0x50
+ 2675 004a 82000000 		.4byte	.LVL18
+ 2676 004e A0000000 		.4byte	.LFE65
+ 2677 0052 0400     		.2byte	0x4
+ 2678 0054 F3       		.byte	0xf3
+ 2679 0055 01       		.uleb128 0x1
+ 2680 0056 50       		.byte	0x50
+ 2681 0057 9F       		.byte	0x9f
+ 2682 0058 00000000 		.4byte	0
+ 2683 005c 00000000 		.4byte	0
+ 2684              	.LLST1:
+ 2685 0060 00000000 		.4byte	.LVL22
+ 2686 0064 04000000 		.4byte	.LVL23
+ 2687 0068 0100     		.2byte	0x1
+ 2688 006a 50       		.byte	0x50
+ 2689 006b 04000000 		.4byte	.LVL23
+ 2690 006f 3C000000 		.4byte	.LFE64
+ 2691 0073 0400     		.2byte	0x4
+ 2692 0075 F3       		.byte	0xf3
+ 2693 0076 01       		.uleb128 0x1
+ 2694 0077 50       		.byte	0x50
+ 2695 0078 9F       		.byte	0x9f
+ 2696 0079 00000000 		.4byte	0
+ 2697 007d 00000000 		.4byte	0
+ 2698              	.LLST2:
+ 2699 0081 08000000 		.4byte	.LVL52
+ 2700 0085 14000000 		.4byte	.LVL55
+ 2701 0089 0100     		.2byte	0x1
+ 2702 008b 54       		.byte	0x54
+ 2703 008c 16000000 		.4byte	.LVL56
+ 2704 0090 1C000000 		.4byte	.LFE69
+ 2705 0094 0100     		.2byte	0x1
+ 2706 0096 54       		.byte	0x54
+ 2707 0097 00000000 		.4byte	0
+ 2708 009b 00000000 		.4byte	0
+ 2709              	.LLST3:
+ 2710 009f 0E000000 		.4byte	.LVL53
+ 2711 00a3 11000000 		.4byte	.LVL54-1
+ 2712 00a7 0100     		.2byte	0x1
+ 2713 00a9 50       		.byte	0x50
+ 2714 00aa 00000000 		.4byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 55
+
+
+ 2715 00ae 00000000 		.4byte	0
+ 2716              	.LLST4:
+ 2717 00b2 0A000000 		.4byte	.LVL58
+ 2718 00b6 0E000000 		.4byte	.LVL59
+ 2719 00ba 0200     		.2byte	0x2
+ 2720 00bc 30       		.byte	0x30
+ 2721 00bd 9F       		.byte	0x9f
+ 2722 00be 0E000000 		.4byte	.LVL59
+ 2723 00c2 28000000 		.4byte	.LVL64
+ 2724 00c6 0100     		.2byte	0x1
+ 2725 00c8 54       		.byte	0x54
+ 2726 00c9 2A000000 		.4byte	.LVL65
+ 2727 00cd 3C000000 		.4byte	.LFE70
+ 2728 00d1 0100     		.2byte	0x1
+ 2729 00d3 54       		.byte	0x54
+ 2730 00d4 00000000 		.4byte	0
+ 2731 00d8 00000000 		.4byte	0
+ 2732              	.LLST5:
+ 2733 00dc 02000000 		.4byte	.LVL74
+ 2734 00e0 06000000 		.4byte	.LVL75
+ 2735 00e4 0200     		.2byte	0x2
+ 2736 00e6 30       		.byte	0x30
+ 2737 00e7 9F       		.byte	0x9f
+ 2738 00e8 06000000 		.4byte	.LVL75
+ 2739 00ec 20000000 		.4byte	.LVL80
+ 2740 00f0 0100     		.2byte	0x1
+ 2741 00f2 54       		.byte	0x54
+ 2742 00f3 22000000 		.4byte	.LVL81
+ 2743 00f7 36000000 		.4byte	.LVL84
+ 2744 00fb 0100     		.2byte	0x1
+ 2745 00fd 54       		.byte	0x54
+ 2746 00fe 00000000 		.4byte	0
+ 2747 0102 00000000 		.4byte	0
+ 2748              	.LLST6:
+ 2749 0106 02000000 		.4byte	.LVL90
+ 2750 010a 06000000 		.4byte	.LVL91
+ 2751 010e 0200     		.2byte	0x2
+ 2752 0110 30       		.byte	0x30
+ 2753 0111 9F       		.byte	0x9f
+ 2754 0112 06000000 		.4byte	.LVL91
+ 2755 0116 20000000 		.4byte	.LVL96
+ 2756 011a 0100     		.2byte	0x1
+ 2757 011c 54       		.byte	0x54
+ 2758 011d 22000000 		.4byte	.LVL97
+ 2759 0121 3E000000 		.4byte	.LFE74
+ 2760 0125 0100     		.2byte	0x1
+ 2761 0127 54       		.byte	0x54
+ 2762 0128 00000000 		.4byte	0
+ 2763 012c 00000000 		.4byte	0
+ 2764              		.section	.debug_aranges,"",%progbits
+ 2765 0000 6C000000 		.4byte	0x6c
+ 2766 0004 0200     		.2byte	0x2
+ 2767 0006 00000000 		.4byte	.Ldebug_info0
+ 2768 000a 04       		.byte	0x4
+ 2769 000b 00       		.byte	0
+ 2770 000c 0000     		.2byte	0
+ 2771 000e 0000     		.2byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 56
+
+
+ 2772 0010 00000000 		.4byte	.LFB65
+ 2773 0014 A0000000 		.4byte	.LFE65-.LFB65
+ 2774 0018 00000000 		.4byte	.LFB64
+ 2775 001c 3C000000 		.4byte	.LFE64-.LFB64
+ 2776 0020 00000000 		.4byte	.LFB66
+ 2777 0024 18000000 		.4byte	.LFE66-.LFB66
+ 2778 0028 00000000 		.4byte	.LFB67
+ 2779 002c A0000000 		.4byte	.LFE67-.LFB67
+ 2780 0030 00000000 		.4byte	.LFB68
+ 2781 0034 48000000 		.4byte	.LFE68-.LFB68
+ 2782 0038 00000000 		.4byte	.LFB69
+ 2783 003c 1C000000 		.4byte	.LFE69-.LFB69
+ 2784 0040 00000000 		.4byte	.LFB70
+ 2785 0044 3C000000 		.4byte	.LFE70-.LFB70
+ 2786 0048 00000000 		.4byte	.LFB71
+ 2787 004c 1E000000 		.4byte	.LFE71-.LFB71
+ 2788 0050 00000000 		.4byte	.LFB72
+ 2789 0054 3C000000 		.4byte	.LFE72-.LFB72
+ 2790 0058 00000000 		.4byte	.LFB73
+ 2791 005c 1E000000 		.4byte	.LFE73-.LFB73
+ 2792 0060 00000000 		.4byte	.LFB74
+ 2793 0064 3E000000 		.4byte	.LFE74-.LFB74
+ 2794 0068 00000000 		.4byte	0
+ 2795 006c 00000000 		.4byte	0
+ 2796              		.section	.debug_ranges,"",%progbits
+ 2797              	.Ldebug_ranges0:
+ 2798 0000 00000000 		.4byte	.LFB65
+ 2799 0004 A0000000 		.4byte	.LFE65
+ 2800 0008 00000000 		.4byte	.LFB64
+ 2801 000c 3C000000 		.4byte	.LFE64
+ 2802 0010 00000000 		.4byte	.LFB66
+ 2803 0014 18000000 		.4byte	.LFE66
+ 2804 0018 00000000 		.4byte	.LFB67
+ 2805 001c A0000000 		.4byte	.LFE67
+ 2806 0020 00000000 		.4byte	.LFB68
+ 2807 0024 48000000 		.4byte	.LFE68
+ 2808 0028 00000000 		.4byte	.LFB69
+ 2809 002c 1C000000 		.4byte	.LFE69
+ 2810 0030 00000000 		.4byte	.LFB70
+ 2811 0034 3C000000 		.4byte	.LFE70
+ 2812 0038 00000000 		.4byte	.LFB71
+ 2813 003c 1E000000 		.4byte	.LFE71
+ 2814 0040 00000000 		.4byte	.LFB72
+ 2815 0044 3C000000 		.4byte	.LFE72
+ 2816 0048 00000000 		.4byte	.LFB73
+ 2817 004c 1E000000 		.4byte	.LFE73
+ 2818 0050 00000000 		.4byte	.LFB74
+ 2819 0054 3E000000 		.4byte	.LFE74
+ 2820 0058 00000000 		.4byte	0
+ 2821 005c 00000000 		.4byte	0
+ 2822              		.section	.debug_line,"",%progbits
+ 2823              	.Ldebug_line0:
+ 2824 0000 FD030000 		.section	.debug_str,"MS",%progbits,1
+ 2824      02008602 
+ 2824      00000201 
+ 2824      FB0E0D00 
+ 2824      01010101 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 57
+
+
+ 2825              	.LASF59:
+ 2826 0000 736C6176 		.ascii	"slave_rx_interrupt_handler\000"
+ 2826      655F7278 
+ 2826      5F696E74 
+ 2826      65727275 
+ 2826      70745F68 
+ 2827              	.LASF32:
+ 2828 001b 55534552 		.ascii	"USER_SAVED_TRIP\000"
+ 2828      5F534156 
+ 2828      45445F54 
+ 2828      52495000 
+ 2829              	.LASF76:
+ 2830 002b 74696D65 		.ascii	"time_temp\000"
+ 2830      5F74656D 
+ 2830      7000
+ 2831              	.LASF106:
+ 2832 0035 50696E5F 		.ascii	"Pin_1_ac_idle_ClearInterrupt\000"
+ 2832      315F6163 
+ 2832      5F69646C 
+ 2832      655F436C 
+ 2832      65617249 
+ 2833              	.LASF109:
+ 2834 0052 496E5F31 		.ascii	"In_1_Write\000"
+ 2834      5F577269 
+ 2834      746500
+ 2835              	.LASF58:
+ 2836 005d 72784275 		.ascii	"rxBuffer\000"
+ 2836      66666572 
+ 2836      00
+ 2837              	.LASF57:
+ 2838 0066 53544154 		.ascii	"STATE\000"
+ 2838      4500
+ 2839              	.LASF2:
+ 2840 006c 73686F72 		.ascii	"short int\000"
+ 2840      7420696E 
+ 2840      7400
+ 2841              	.LASF12:
+ 2842 0076 73697A65 		.ascii	"sizetype\000"
+ 2842      74797065 
+ 2842      00
+ 2843              	.LASF20:
+ 2844 007f 63686172 		.ascii	"char8\000"
+ 2844      3800
+ 2845              	.LASF89:
+ 2846 0085 72656365 		.ascii	"receiveSPI\000"
+ 2846      69766553 
+ 2846      504900
+ 2847              	.LASF35:
+ 2848 0090 50494E5F 		.ascii	"PIN_VALIDATE_RETURNED_TIMEOUT\000"
+ 2848      56414C49 
+ 2848      44415445 
+ 2848      5F524554 
+ 2848      55524E45 
+ 2849              	.LASF63:
+ 2850 00ae 62797465 		.ascii	"bytesToRead\000"
+ 2850      73546F52 
+ 2850      65616400 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 58
+
+
+ 2851              	.LASF88:
+ 2852 00ba 63616C63 		.ascii	"calcWheelCirc\000"
+ 2852      57686565 
+ 2852      6C436972 
+ 2852      6300
+ 2853              	.LASF96:
+ 2854 00c8 73657453 		.ascii	"setSpeedToZero\000"
+ 2854      70656564 
+ 2854      546F5A65 
+ 2854      726F00
+ 2855              	.LASF50:
+ 2856 00d7 5345434F 		.ascii	"SECOND_EVENT_INDEX\000"
+ 2856      4E445F45 
+ 2856      56454E54 
+ 2856      5F494E44 
+ 2856      455800
+ 2857              	.LASF67:
+ 2858 00ea 62696B65 		.ascii	"bike_stopped_handler\000"
+ 2858      5F73746F 
+ 2858      70706564 
+ 2858      5F68616E 
+ 2858      646C6572 
+ 2859              	.LASF17:
+ 2860 00ff 75696E74 		.ascii	"uint16\000"
+ 2860      313600
+ 2861              	.LASF29:
+ 2862 0106 55534552 		.ascii	"USER_REQUESTS_RIDES\000"
+ 2862      5F524551 
+ 2862      55455354 
+ 2862      535F5249 
+ 2862      44455300 
+ 2863              	.LASF91:
+ 2864 011a 72657365 		.ascii	"resetSpeedTimer\000"
+ 2864      74537065 
+ 2864      65645469 
+ 2864      6D657200 
+ 2865              	.LASF14:
+ 2866 012a 75696E74 		.ascii	"uint8_t\000"
+ 2866      385F7400 
+ 2867              	.LASF94:
+ 2868 0132 63726561 		.ascii	"createParityBits\000"
+ 2868      74655061 
+ 2868      72697479 
+ 2868      42697473 
+ 2868      00
+ 2869              	.LASF60:
+ 2870 0143 6973725F 		.ascii	"isr_wheel_tick_Handler\000"
+ 2870      77686565 
+ 2870      6C5F7469 
+ 2870      636B5F48 
+ 2870      616E646C 
+ 2871              	.LASF21:
+ 2872 015a 554E4C4F 		.ascii	"UNLOCKING\000"
+ 2872      434B494E 
+ 2872      4700
+ 2873              	.LASF70:
+ 2874 0164 74784275 		.ascii	"txBuffer\000"
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 59
+
+
+ 2874      66666572 
+ 2874      00
+ 2875              	.LASF84:
+ 2876 016d 6C6F636B 		.ascii	"lockBike\000"
+ 2876      42696B65 
+ 2876      00
+ 2877              	.LASF80:
+ 2878 0176 4C45445F 		.ascii	"LED_pin_Write\000"
+ 2878      70696E5F 
+ 2878      57726974 
+ 2878      6500
+ 2879              	.LASF68:
+ 2880 0184 6973725F 		.ascii	"isr_bikelock\000"
+ 2880      62696B65 
+ 2880      6C6F636B 
+ 2880      00
+ 2881              	.LASF64:
+ 2882 0191 62797465 		.ascii	"byteReceived\000"
+ 2882      52656365 
+ 2882      69766564 
+ 2882      00
+ 2883              	.LASF18:
+ 2884 019e 666C6F61 		.ascii	"float\000"
+ 2884      7400
+ 2885              	.LASF8:
+ 2886 01a4 6C6F6E67 		.ascii	"long long int\000"
+ 2886      206C6F6E 
+ 2886      6720696E 
+ 2886      7400
+ 2887              	.LASF81:
+ 2888 01b2 6C6F6164 		.ascii	"loadToSpecificTxBufferIndex\000"
+ 2888      546F5370 
+ 2888      65636966 
+ 2888      69635478 
+ 2888      42756666 
+ 2889              	.LASF13:
+ 2890 01ce 63686172 		.ascii	"char\000"
+ 2890      00
+ 2891              	.LASF102:
+ 2892 01d3 50696E5F 		.ascii	"Pin_2_ac_moving_ClearInterrupt\000"
+ 2892      325F6163 
+ 2892      5F6D6F76 
+ 2892      696E675F 
+ 2892      436C6561 
+ 2893              	.LASF6:
+ 2894 01f2 6C6F6E67 		.ascii	"long int\000"
+ 2894      20696E74 
+ 2894      00
+ 2895              	.LASF52:
+ 2896 01fb 4C495645 		.ascii	"LIVE_DATA_TRANSMISSION\000"
+ 2896      5F444154 
+ 2896      415F5452 
+ 2896      414E534D 
+ 2896      49535349 
+ 2897              	.LASF118:
+ 2898 0212 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2898      43313120 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 60
+
+
+ 2898      352E342E 
+ 2898      31203230 
+ 2898      31363036 
+ 2899 0245 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2899      20726576 
+ 2899      6973696F 
+ 2899      6E203233 
+ 2899      37373135 
+ 2900 0278 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2900      66756E63 
+ 2900      74696F6E 
+ 2900      2D736563 
+ 2900      74696F6E 
+ 2901              	.LASF26:
+ 2902 02a0 4C4F434B 		.ascii	"LOCKED\000"
+ 2902      454400
+ 2903              	.LASF42:
+ 2904 02a7 62696B65 		.ascii	"bikeState\000"
+ 2904      53746174 
+ 2904      6500
+ 2905              	.LASF104:
+ 2906 02b1 73746172 		.ascii	"startAccelerometerTimer\000"
+ 2906      74416363 
+ 2906      656C6572 
+ 2906      6F6D6574 
+ 2906      65725469 
+ 2907              	.LASF39:
+ 2908 02c9 53455256 		.ascii	"SERVER_SENT_LIVEDATA\000"
+ 2908      45525F53 
+ 2908      454E545F 
+ 2908      4C495645 
+ 2908      44415441 
+ 2909              	.LASF48:
+ 2910 02de 6576656E 		.ascii	"event_transmission_indexes\000"
+ 2910      745F7472 
+ 2910      616E736D 
+ 2910      69737369 
+ 2910      6F6E5F69 
+ 2911              	.LASF45:
+ 2912 02f9 53504545 		.ascii	"SPEED_INDEX\000"
+ 2912      445F494E 
+ 2912      44455800 
+ 2913              	.LASF112:
+ 2914 0305 4D6F746F 		.ascii	"MotorLockTimer_ReadStatusRegister\000"
+ 2914      724C6F63 
+ 2914      6B54696D 
+ 2914      65725F52 
+ 2914      65616453 
+ 2915              	.LASF117:
+ 2916 0327 696E6974 		.ascii	"initLockUnit\000"
+ 2916      4C6F636B 
+ 2916      556E6974 
+ 2916      00
+ 2917              	.LASF66:
+ 2918 0334 62696B65 		.ascii	"bike_is_moving_handler\000"
+ 2918      5F69735F 
+ 2918      6D6F7669 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 61
+
+
+ 2918      6E675F68 
+ 2918      616E646C 
+ 2919              	.LASF73:
+ 2920 034b 77686565 		.ascii	"wheel_revolutions\000"
+ 2920      6C5F7265 
+ 2920      766F6C75 
+ 2920      74696F6E 
+ 2920      7300
+ 2921              	.LASF33:
+ 2922 035d 55534552 		.ascii	"USER_DELETED_TRIP\000"
+ 2922      5F44454C 
+ 2922      45544544 
+ 2922      5F545249 
+ 2922      5000
+ 2923              	.LASF11:
+ 2924 036f 6C6F6E67 		.ascii	"long double\000"
+ 2924      20646F75 
+ 2924      626C6500 
+ 2925              	.LASF1:
+ 2926 037b 756E7369 		.ascii	"unsigned char\000"
+ 2926      676E6564 
+ 2926      20636861 
+ 2926      7200
+ 2927              	.LASF37:
+ 2928 0389 55534552 		.ascii	"USER_UNLOCK\000"
+ 2928      5F554E4C 
+ 2928      4F434B00 
+ 2929              	.LASF110:
+ 2930 0395 496E5F32 		.ascii	"In_2_Write\000"
+ 2930      5F577269 
+ 2930      746500
+ 2931              	.LASF105:
+ 2932 03a0 72657365 		.ascii	"resetAccelerometerTimer\000"
+ 2932      74416363 
+ 2932      656C6572 
+ 2932      6F6D6574 
+ 2932      65725469 
+ 2933              	.LASF24:
+ 2934 03b8 554E4C4F 		.ascii	"UNLOCKED_AND_IDLE_READY_TO_LOCK\000"
+ 2934      434B4544 
+ 2934      5F414E44 
+ 2934      5F49444C 
+ 2934      455F5245 
+ 2935              	.LASF0:
+ 2936 03d8 7369676E 		.ascii	"signed char\000"
+ 2936      65642063 
+ 2936      68617200 
+ 2937              	.LASF9:
+ 2938 03e4 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2938      206C6F6E 
+ 2938      6720756E 
+ 2938      7369676E 
+ 2938      65642069 
+ 2939              	.LASF47:
+ 2940 03fb 4552524F 		.ascii	"ERROR_CHECK_INDEX\000"
+ 2940      525F4348 
+ 2940      45434B5F 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 62
+
+
+ 2940      494E4445 
+ 2940      5800
+ 2941              	.LASF10:
+ 2942 040d 756E7369 		.ascii	"unsigned int\000"
+ 2942      676E6564 
+ 2942      20696E74 
+ 2942      00
+ 2943              	.LASF51:
+ 2944 041a 53504974 		.ascii	"SPItransmissionIdentifiers\000"
+ 2944      72616E73 
+ 2944      6D697373 
+ 2944      696F6E49 
+ 2944      64656E74 
+ 2945              	.LASF49:
+ 2946 0435 46495253 		.ascii	"FIRST_EVENT_INDEX\000"
+ 2946      545F4556 
+ 2946      454E545F 
+ 2946      494E4445 
+ 2946      5800
+ 2947              	.LASF4:
+ 2948 0447 5F5F7569 		.ascii	"__uint8_t\000"
+ 2948      6E74385F 
+ 2948      7400
+ 2949              	.LASF74:
+ 2950 0451 73706565 		.ascii	"speed\000"
+ 2950      6400
+ 2951              	.LASF120:
+ 2952 0457 433A5C55 		.ascii	"C:\\Users\\sebbe\\Desktop\\spi_slave_v15\\sensor_re"
+ 2952      73657273 
+ 2952      5C736562 
+ 2952      62655C44 
+ 2952      65736B74 
+ 2953 0485 6164696E 		.ascii	"ading_unit\\spi_slave.cydsn\000"
+ 2953      675F756E 
+ 2953      69745C73 
+ 2953      70695F73 
+ 2953      6C617665 
+ 2954              	.LASF95:
+ 2955 04a0 57686565 		.ascii	"WheelTickPin_ClearInterrupt\000"
+ 2955      6C546963 
+ 2955      6B50696E 
+ 2955      5F436C65 
+ 2955      6172496E 
+ 2956              	.LASF75:
+ 2957 04bc 64697374 		.ascii	"dist\000"
+ 2957      00
+ 2958              	.LASF77:
+ 2959 04c1 77686565 		.ascii	"wheelRadius\000"
+ 2959      6C526164 
+ 2959      69757300 
+ 2960              	.LASF93:
+ 2961 04cd 63616C63 		.ascii	"calcSpeed\000"
+ 2961      53706565 
+ 2961      6400
+ 2962              	.LASF44:
+ 2963 04d7 4D455353 		.ascii	"MESSAGE_TYPE_ID_INDEX\000"
+ 2963      4147455F 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 63
+
+
+ 2963      54595045 
+ 2963      5F49445F 
+ 2963      494E4445 
+ 2964              	.LASF27:
+ 2965 04ed 55534552 		.ascii	"USER_LOCK\000"
+ 2965      5F4C4F43 
+ 2965      4B00
+ 2966              	.LASF113:
+ 2967 04f7 696E6974 		.ascii	"initUART\000"
+ 2967      55415254 
+ 2967      00
+ 2968              	.LASF30:
+ 2969 0500 55534552 		.ascii	"USER_SET_WHEELCIRCUMFERENCE\000"
+ 2969      5F534554 
+ 2969      5F574845 
+ 2969      454C4349 
+ 2969      5243554D 
+ 2970              	.LASF97:
+ 2971 051c 57686565 		.ascii	"WheelTickTimer_ReadStatusRegister\000"
+ 2971      6C546963 
+ 2971      6B54696D 
+ 2971      65725F52 
+ 2971      65616453 
+ 2972              	.LASF69:
+ 2973 053e 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2973      52784275 
+ 2973      66666572 
+ 2973      00
+ 2974              	.LASF114:
+ 2975 054b 696E6974 		.ascii	"initSPI\000"
+ 2975      53504900 
+ 2976              	.LASF121:
+ 2977 0553 6D61696E 		.ascii	"main\000"
+ 2977      00
+ 2978              	.LASF56:
+ 2979 0558 68616E64 		.ascii	"handleCommandReceived\000"
+ 2979      6C65436F 
+ 2979      6D6D616E 
+ 2979      64526563 
+ 2979      65697665 
+ 2980              	.LASF15:
+ 2981 056e 696E7433 		.ascii	"int32_t\000"
+ 2981      325F7400 
+ 2982              	.LASF3:
+ 2983 0576 73686F72 		.ascii	"short unsigned int\000"
+ 2983      7420756E 
+ 2983      7369676E 
+ 2983      65642069 
+ 2983      6E7400
+ 2984              	.LASF38:
+ 2985 0589 53455256 		.ascii	"SERVER_SENT_NUMBER_OF_RIDES\000"
+ 2985      45525F53 
+ 2985      454E545F 
+ 2985      4E554D42 
+ 2985      45525F4F 
+ 2986              	.LASF16:
+ 2987 05a5 75696E74 		.ascii	"uint8\000"
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 64
+
+
+ 2987      3800
+ 2988              	.LASF34:
+ 2989 05ab 50494E5F 		.ascii	"PIN_VALIDATE_RETURNED_WRONG_PIN\000"
+ 2989      56414C49 
+ 2989      44415445 
+ 2989      5F524554 
+ 2989      55524E45 
+ 2990              	.LASF98:
+ 2991 05cb 55415254 		.ascii	"UART_1_ReadRxData\000"
+ 2991      5F315F52 
+ 2991      65616452 
+ 2991      78446174 
+ 2991      6100
+ 2992              	.LASF53:
+ 2993 05dd 4556454E 		.ascii	"EVENT_TRANSMISSION_TO_MASTER\000"
+ 2993      545F5452 
+ 2993      414E534D 
+ 2993      49535349 
+ 2993      4F4E5F54 
+ 2994              	.LASF43:
+ 2995 05fa 64617461 		.ascii	"data_transmission_indexes\000"
+ 2995      5F747261 
+ 2995      6E736D69 
+ 2995      7373696F 
+ 2995      6E5F696E 
+ 2996              	.LASF92:
+ 2997 0614 63616C63 		.ascii	"calcDistance\000"
+ 2997      44697374 
+ 2997      616E6365 
+ 2997      00
+ 2998              	.LASF41:
+ 2999 0621 56414C49 		.ascii	"VALIDATEWHEELSIZE_RETURNED_FALSE\000"
+ 2999      44415445 
+ 2999      57484545 
+ 2999      4C53495A 
+ 2999      455F5245 
+ 3000              	.LASF40:
+ 3001 0642 56414C49 		.ascii	"VALIDATEWHEELSIZE_RETURNED_TRUE\000"
+ 3001      44415445 
+ 3001      57484545 
+ 3001      4C53495A 
+ 3001      455F5245 
+ 3002              	.LASF119:
+ 3003 0662 6D61696E 		.ascii	"main.c\000"
+ 3003      2E6300
+ 3004              	.LASF7:
+ 3005 0669 6C6F6E67 		.ascii	"long unsigned int\000"
+ 3005      20756E73 
+ 3005      69676E65 
+ 3005      6420696E 
+ 3005      7400
+ 3006              	.LASF85:
+ 3007 067b 6973725F 		.ascii	"isr_bike_is_idle_Disable\000"
+ 3007      62696B65 
+ 3007      5F69735F 
+ 3007      69646C65 
+ 3007      5F446973 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 65
+
+
+ 3008              	.LASF100:
+ 3009 0694 55415254 		.ascii	"UART_1_GetRxBufferSize\000"
+ 3009      5F315F47 
+ 3009      65745278 
+ 3009      42756666 
+ 3009      65725369 
+ 3010              	.LASF19:
+ 3011 06ab 646F7562 		.ascii	"double\000"
+ 3011      6C6500
+ 3012              	.LASF82:
+ 3013 06b2 7472616E 		.ascii	"transferIsReady\000"
+ 3013      73666572 
+ 3013      49735265 
+ 3013      61647900 
+ 3014              	.LASF111:
+ 3015 06c2 45415F57 		.ascii	"EA_Write\000"
+ 3015      72697465 
+ 3015      00
+ 3016              	.LASF79:
+ 3017 06cb 756E6C6F 		.ascii	"unlockBike\000"
+ 3017      636B4269 
+ 3017      6B6500
+ 3018              	.LASF99:
+ 3019 06d6 55415254 		.ascii	"UART_1_WriteTxData\000"
+ 3019      5F315F57 
+ 3019      72697465 
+ 3019      54784461 
+ 3019      746100
+ 3020              	.LASF71:
+ 3021 06e9 7478436C 		.ascii	"txCloneBuffer\000"
+ 3021      6F6E6542 
+ 3021      75666665 
+ 3021      7200
+ 3022              	.LASF72:
+ 3023 06f7 55415254 		.ascii	"UART_buffer\000"
+ 3023      5F627566 
+ 3023      66657200 
+ 3024              	.LASF103:
+ 3025 0703 6973725F 		.ascii	"isr_bike_is_idle_ClearPending\000"
+ 3025      62696B65 
+ 3025      5F69735F 
+ 3025      69646C65 
+ 3025      5F436C65 
+ 3026              	.LASF28:
+ 3027 0721 55534552 		.ascii	"USER_UNLOCK_TRY\000"
+ 3027      5F554E4C 
+ 3027      4F434B5F 
+ 3027      54525900 
+ 3028              	.LASF5:
+ 3029 0731 5F5F696E 		.ascii	"__int32_t\000"
+ 3029      7433325F 
+ 3029      7400
+ 3030              	.LASF65:
+ 3031 073b 62696B65 		.ascii	"bike_is_idle_handler\000"
+ 3031      5F69735F 
+ 3031      69646C65 
+ 3031      5F68616E 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 66
+
+
+ 3031      646C6572 
+ 3032              	.LASF46:
+ 3033 0750 44495354 		.ascii	"DISTANCE_INDEX\000"
+ 3033      414E4345 
+ 3033      5F494E44 
+ 3033      455800
+ 3034              	.LASF83:
+ 3035 075f 6973725F 		.ascii	"isr_bike_is_idle_Enable\000"
+ 3035      62696B65 
+ 3035      5F69735F 
+ 3035      69646C65 
+ 3035      5F456E61 
+ 3036              	.LASF90:
+ 3037 0777 57686565 		.ascii	"WheelTickTimer_ReadCounter\000"
+ 3037      6C546963 
+ 3037      6B54696D 
+ 3037      65725F52 
+ 3037      65616443 
+ 3038              	.LASF86:
+ 3039 0792 73746F70 		.ascii	"stopAccelerometerTimer\000"
+ 3039      41636365 
+ 3039      6C65726F 
+ 3039      6D657465 
+ 3039      7254696D 
+ 3040              	.LASF108:
+ 3041 07a9 73746F70 		.ascii	"stopLockTimer\000"
+ 3041      4C6F636B 
+ 3041      54696D65 
+ 3041      7200
+ 3042              	.LASF87:
+ 3043 07b7 57686565 		.ascii	"WheelRadiusToMetres\000"
+ 3043      6C526164 
+ 3043      69757354 
+ 3043      6F4D6574 
+ 3043      72657300 
+ 3044              	.LASF23:
+ 3045 07cb 554E4C4F 		.ascii	"UNLOCKED_AND_IDLE\000"
+ 3045      434B4544 
+ 3045      5F414E44 
+ 3045      5F49444C 
+ 3045      4500
+ 3046              	.LASF61:
+ 3047 07dd 54696D65 		.ascii	"Timer_Isr_BikeIsStopping_handler\000"
+ 3047      725F4973 
+ 3047      725F4269 
+ 3047      6B654973 
+ 3047      53746F70 
+ 3048              	.LASF22:
+ 3049 07fe 554E4C4F 		.ascii	"UNLOCKED_AND_ACTIVE\000"
+ 3049      434B4544 
+ 3049      5F414E44 
+ 3049      5F414354 
+ 3049      49564500 
+ 3050              	.LASF116:
+ 3051 0812 696E6974 		.ascii	"init_accelerometer\000"
+ 3051      5F616363 
+ 3051      656C6572 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccx6NImA.s 			page 67
+
+
+ 3051      6F6D6574 
+ 3051      657200
+ 3052              	.LASF78:
+ 3053 0825 77686565 		.ascii	"wheelCirc\000"
+ 3053      6C436972 
+ 3053      6300
+ 3054              	.LASF31:
+ 3055 082f 55534552 		.ascii	"USER_DISCARDED_TRIP\000"
+ 3055      5F444953 
+ 3055      43415244 
+ 3055      45445F54 
+ 3055      52495000 
+ 3056              	.LASF101:
+ 3057 0843 43794465 		.ascii	"CyDelay\000"
+ 3057      6C617900 
+ 3058              	.LASF62:
+ 3059 084b 55415254 		.ascii	"UART_rx_interrupt_handler\000"
+ 3059      5F72785F 
+ 3059      696E7465 
+ 3059      72727570 
+ 3059      745F6861 
+ 3060              	.LASF115:
+ 3061 0865 696E6974 		.ascii	"initWheelSensor\000"
+ 3061      57686565 
+ 3061      6C53656E 
+ 3061      736F7200 
+ 3062              	.LASF107:
+ 3063 0875 41636365 		.ascii	"AccelerometerTimer_ReadStatusRegister\000"
+ 3063      6C65726F 
+ 3063      6D657465 
+ 3063      7254696D 
+ 3063      65725F52 
+ 3064              	.LASF36:
+ 3065 089b 50494E5F 		.ascii	"PIN_VALIDATE_RETURNED_CORRECT_PIN\000"
+ 3065      56414C49 
+ 3065      44415445 
+ 3065      5F524554 
+ 3065      55524E45 
+ 3066              	.LASF55:
+ 3067 08bd 63656E74 		.ascii	"centralDispatcher\000"
+ 3067      72616C44 
+ 3067      69737061 
+ 3067      74636865 
+ 3067      7200
+ 3068              	.LASF25:
+ 3069 08cf 4C4F434B 		.ascii	"LOCKING\000"
+ 3069      494E4700 
+ 3070              	.LASF54:
+ 3071 08d7 4556454E 		.ascii	"EVENT_TRANSMISSION_FROM_MASTER\000"
+ 3071      545F5452 
+ 3071      414E534D 
+ 3071      49535349 
+ 3071      4F4E5F46 
+ 3072              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

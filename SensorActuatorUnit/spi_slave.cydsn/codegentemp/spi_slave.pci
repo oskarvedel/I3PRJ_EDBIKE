@@ -1,0 +1,22 @@
+# spi_slave
+# 2019-12-11 07:49:00Z
+
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+set_io "mosi(0)" iocell 2 5
+set_io "sclk(0)" iocell 2 4
+set_io "ss(0)" iocell 2 3
+set_io "miso(0)" iocell 2 6
+set_io "LED_pin(0)" iocell 2 1
+set_io "Tx_1(0)" iocell 12 7
+set_io "Rx_1(0)" iocell 12 6
+set_io "WheelTickPin(0)" iocell 0 3
+set_io "Pin_1_ac_idle(0)" iocell 1 2
+set_io "Pin_2_ac_moving(0)" iocell 2 0
+set_io "In_1(0)" iocell 0 0
+set_io "In_2(0)" iocell 0 1
+set_io "EA(0)" iocell 0 2

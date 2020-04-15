@@ -1,0 +1,122 @@
+\hypertarget{classDataBase}{}\section{Data\+Base Class Reference}
+\label{classDataBase}\index{Data\+Base@{Data\+Base}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDataBase_a9fbd4936704ce4de391f92e92a072074}\label{classDataBase_a9fbd4936704ce4de391f92e92a072074}} 
+\hyperlink{classDataBase_a9fbd4936704ce4de391f92e92a072074}{Data\+Base} ()
+\begin{DoxyCompactList}\small\item\em Klassens constructor. Opretter et database tekst dokument, hvis der ikke ligger et i forvejen. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDataBase_a9d4629e705ccaa4897e9650222a2a648}\label{classDataBase_a9d4629e705ccaa4897e9650222a2a648}} 
+\hyperlink{classDataBase_a9d4629e705ccaa4897e9650222a2a648}{$\sim$\+Data\+Base} ()
+\begin{DoxyCompactList}\small\item\em Klassens destructor Har ingen funktionalitet, men er deklareret for en sikkerheds skyld. \end{DoxyCompactList}\item 
+void \hyperlink{classDataBase_aaf94c591c9119fd3fa06fa90ebb56654}{save\+Ride} (int, int, int, float, string, string, string)
+\begin{DoxyCompactList}\small\item\em Gemmer en tur i Data\+Basen Kaldes når brugeren har kørt en tur og vil gemme den. Benytter sig af get funktioner til at hente dataen fra \hyperlink{classRideData}{Ride\+Data}. Gemmer turen på én linje og laver så linjeskift så den er klar til næste tur. Funktionen sørger også for at formateringen bliver lavet så det passer til at skrive ud på brugerfladen. \end{DoxyCompactList}\item 
+void \hyperlink{classDataBase_a66af12bc7cb83beb4d8720786f2c6093}{delete\+Ride} (string)
+\begin{DoxyCompactList}\small\item\em Fjerner en tur fra Data\+Basen Bruges til at fjerne en tur fra Data\+Basen. Tager en int Ride\+Num som er den tur man gernve vil slette. Så laver den en temp tekst fil hvor den overføre alt fra Database tekstdokumentet til. Hvis den finder den tur man gernve vil slette lader den værd med at overføre den. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDataBase_acbbb2aaff1e6a78f5e61a77ea1257057}\label{classDataBase_acbbb2aaff1e6a78f5e61a77ea1257057}} 
+int \hyperlink{classDataBase_acbbb2aaff1e6a78f5e61a77ea1257057}{get\+Number\+Of\+Rides} ()
+\begin{DoxyCompactList}\small\item\em Henter antallet af ture Bruges til at hente antallet af ture i databasen. Løber linjerne i tekstdokumentet igennem og tæller en op per linje. Returnere så antalet af ture. \end{DoxyCompactList}\item 
+string \hyperlink{classDataBase_afc5c8eb0a4af1217df3c0590550f4854}{get\+Ride\+By\+ID} (int)
+\begin{DoxyCompactList}\small\item\em Henter en tur fra Data\+Basen ud fra dens ID Bruges til at hente bestemt tur i databasen. Tager en int Ride\+Num som er den tur man gerne vil hente. Den benytter sig af find\+In\+DB funktionen som tjekker efter om. \end{DoxyCompactList}\item 
+string \hyperlink{classDataBase_af54cca48be1b450a8b9bf9cc0267b2e1}{get\+Ride\+By\+Num} (int)
+\begin{DoxyCompactList}\small\item\em Henter en tur fra Data\+Basen ud fra dens position i Data\+Basen Bruges til at hente bestemt tur i databasen. Tager en int Ride\+Num som er den tur man gerne vil hente. Den løber linjerne igennem intil den finder den tur man gerne vil have ud og så returnere den turen. \end{DoxyCompactList}\item 
+bool \hyperlink{classDataBase_a90b58b8a905fb9a66eea7a2e74f6c207}{find\+In\+DB} (const string \&line, string tur)
+\begin{DoxyCompactList}\small\item\em Tjekker om input er ens med noget der ligger på en linje Bruges når vi skal finde tur på ID. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classDataBase_a66af12bc7cb83beb4d8720786f2c6093}\label{classDataBase_a66af12bc7cb83beb4d8720786f2c6093}} 
+\index{Data\+Base@{Data\+Base}!delete\+Ride@{delete\+Ride}}
+\index{delete\+Ride@{delete\+Ride}!Data\+Base@{Data\+Base}}
+\subsubsection{\texorpdfstring{delete\+Ride()}{deleteRide()}}
+{\footnotesize\ttfamily void Data\+Base\+::delete\+Ride (\begin{DoxyParamCaption}\item[{string}]{ride\+Num }\end{DoxyParamCaption})}
+
+
+
+Fjerner en tur fra Data\+Basen Bruges til at fjerne en tur fra Data\+Basen. Tager en int Ride\+Num som er den tur man gernve vil slette. Så laver den en temp tekst fil hvor den overføre alt fra Database tekstdokumentet til. Hvis den finder den tur man gernve vil slette lader den værd med at overføre den. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & ride\+Num, turen man gerne vil slette \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classDataBase_a90b58b8a905fb9a66eea7a2e74f6c207}\label{classDataBase_a90b58b8a905fb9a66eea7a2e74f6c207}} 
+\index{Data\+Base@{Data\+Base}!find\+In\+DB@{find\+In\+DB}}
+\index{find\+In\+DB@{find\+In\+DB}!Data\+Base@{Data\+Base}}
+\subsubsection{\texorpdfstring{find\+In\+D\+B()}{findInDB()}}
+{\footnotesize\ttfamily bool Data\+Base\+::find\+In\+DB (\begin{DoxyParamCaption}\item[{const string \&}]{line,  }\item[{string}]{tur }\end{DoxyParamCaption})}
+
+
+
+Tjekker om input er ens med noget der ligger på en linje Bruges når vi skal finde tur på ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em string} & \&line, det er en const string \\
+\hline
+{\em string} & turs \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classDataBase_afc5c8eb0a4af1217df3c0590550f4854}\label{classDataBase_afc5c8eb0a4af1217df3c0590550f4854}} 
+\index{Data\+Base@{Data\+Base}!get\+Ride\+By\+ID@{get\+Ride\+By\+ID}}
+\index{get\+Ride\+By\+ID@{get\+Ride\+By\+ID}!Data\+Base@{Data\+Base}}
+\subsubsection{\texorpdfstring{get\+Ride\+By\+I\+D()}{getRideByID()}}
+{\footnotesize\ttfamily string Data\+Base\+::get\+Ride\+By\+ID (\begin{DoxyParamCaption}\item[{int}]{Ride\+Num }\end{DoxyParamCaption})}
+
+
+
+Henter en tur fra Data\+Basen ud fra dens ID Bruges til at hente bestemt tur i databasen. Tager en int Ride\+Num som er den tur man gerne vil hente. Den benytter sig af find\+In\+DB funktionen som tjekker efter om. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & Ride\+Num, turen man gerne vil hente på ID \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classDataBase_af54cca48be1b450a8b9bf9cc0267b2e1}\label{classDataBase_af54cca48be1b450a8b9bf9cc0267b2e1}} 
+\index{Data\+Base@{Data\+Base}!get\+Ride\+By\+Num@{get\+Ride\+By\+Num}}
+\index{get\+Ride\+By\+Num@{get\+Ride\+By\+Num}!Data\+Base@{Data\+Base}}
+\subsubsection{\texorpdfstring{get\+Ride\+By\+Num()}{getRideByNum()}}
+{\footnotesize\ttfamily string Data\+Base\+::get\+Ride\+By\+Num (\begin{DoxyParamCaption}\item[{int}]{Ride\+Num }\end{DoxyParamCaption})}
+
+
+
+Henter en tur fra Data\+Basen ud fra dens position i Data\+Basen Bruges til at hente bestemt tur i databasen. Tager en int Ride\+Num som er den tur man gerne vil hente. Den løber linjerne igennem intil den finder den tur man gerne vil have ud og så returnere den turen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & Ride\+Num, turen man gerne vil hente på position \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classDataBase_aaf94c591c9119fd3fa06fa90ebb56654}\label{classDataBase_aaf94c591c9119fd3fa06fa90ebb56654}} 
+\index{Data\+Base@{Data\+Base}!save\+Ride@{save\+Ride}}
+\index{save\+Ride@{save\+Ride}!Data\+Base@{Data\+Base}}
+\subsubsection{\texorpdfstring{save\+Ride()}{saveRide()}}
+{\footnotesize\ttfamily void Data\+Base\+::save\+Ride (\begin{DoxyParamCaption}\item[{int}]{ID,  }\item[{int}]{distance,  }\item[{int}]{top\+Speed,  }\item[{float}]{average\+Speed,  }\item[{string}]{start\+Time,  }\item[{string}]{end\+Time,  }\item[{string}]{date }\end{DoxyParamCaption})}
+
+
+
+Gemmer en tur i Data\+Basen Kaldes når brugeren har kørt en tur og vil gemme den. Benytter sig af get funktioner til at hente dataen fra \hyperlink{classRideData}{Ride\+Data}. Gemmer turen på én linje og laver så linjeskift så den er klar til næste tur. Funktionen sørger også for at formateringen bliver lavet så det passer til at skrive ud på brugerfladen. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em int} & ID \\
+\hline
+{\em float} & Distance \\
+\hline
+{\em int} & Topspeed \\
+\hline
+{\em float} & Avragespeed \\
+\hline
+{\em string} & Start\+Time \\
+\hline
+{\em string} & End\+Time \\
+\hline
+{\em string} & Date \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{DataBase_8hpp}{Data\+Base.\+hpp}\item 
+\hyperlink{DataBase_8cpp}{Data\+Base.\+cpp}\end{DoxyCompactItemize}

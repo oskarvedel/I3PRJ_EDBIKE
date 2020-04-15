@@ -1,0 +1,175 @@
+\hypertarget{wheelSensor_8h}{}\section{wheel\+Sensor.\+h File Reference}
+\label{wheelSensor_8h}\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+
+
+Indeholder Funktions implementeringer til wheel revolution sensor.  
+
+
+{\ttfamily \#include $<$project.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+Include dependency graph for wheel\+Sensor.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=330pt]{wheelSensor_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=161pt]{wheelSensor_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{wheelSensor_8h_a0d17b051af54d6f930860c7df88d8419}\label{wheelSensor_8h_a0d17b051af54d6f930860c7df88d8419}} 
+void \hyperlink{wheelSensor_8h_a0d17b051af54d6f930860c7df88d8419}{init\+Wheel\+Sensor} ()
+\begin{DoxyCompactList}\small\item\em Init funktion til Wheel\+Sensor Initierer wheel\+Sensor ved at ved hjælp af wheel\+Tick\+Timer\+\_\+\+Start() A\+PI funktionen, og initierering interrupt handlers. \end{DoxyCompactList}\item 
+double \hyperlink{wheelSensor_8h_a77ce324fe6e22324d32f62c0fd529b02}{Wheel\+Radius\+To\+Metres} (uint8)
+\begin{DoxyCompactList}\small\item\em Funktion til ændring af radius i cm til radius i m Når funktionen modtager en radius i cm ændre den det til m, så radiussen kan bruges til udregning af hjulets omkreds. \end{DoxyCompactList}\item 
+double \hyperlink{wheelSensor_8h_a5124c7c730314a9c8f45460158fa0c32}{calc\+Wheel\+Circ} (double)
+\begin{DoxyCompactList}\small\item\em Funktion til udregning af hjulets omkreds Når funktionen modtager en radius i m. udregner den hjulets omkreds i km, så det kan bruges til udregning af hastighed og distance kørt. \end{DoxyCompactList}\item 
+double \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance} (int, double)
+\begin{DoxyCompactList}\small\item\em Funktion til udregning af distance kørt. Funktionen \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()}, indeholder funktionaliteten til distanceberegninger. Til dette anvendes parameteren wheel\+Circumference. \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()} multiplicerer antal omdrejninger detekteret med omkredsen af hjulet, opbevaret i variablen wheel\+Circumference. \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()} returnerer distanceværdien i enheden km. \end{DoxyCompactList}\item 
+double \hyperlink{wheelSensor_8h_aea8e5e1a1ead23be679149302ec1d72e}{calc\+Speed} (double counter\+\_\+value, double circumference)
+\begin{DoxyCompactList}\small\item\em Funktion til udregning af hastighed. Til beregning af hastigheden tages der udgangspunkt i hjulets omkreds samt tiden siden sidste gang, der blev foretaget en omdrejning af hjulet. \end{DoxyCompactList}\item 
+void \hyperlink{wheelSensor_8h_a69517cf5b2648ce4a6dd5dbe49ed8420}{set\+Speed\+To\+Zero} (uint8 $\ast$)
+\begin{DoxyCompactList}\small\item\em Funktion til at sætte hastigheden til 0. Sætter hastigheden til 0, efter 3 sekunder ved hjælp af en timer. \end{DoxyCompactList}\item 
+void \hyperlink{wheelSensor_8h_ac9a707cad628e31ba45190ca497e60ab}{reset\+Speed\+Timer} ()
+\begin{DoxyCompactList}\small\item\em Funktion til reset af Wheel\+Tick\+Timer Skriver til timerens counter, for at reset den. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Indeholder Funktions implementeringer til wheel revolution sensor. 
+
+Funktions og interrupt prototyper til Wheel revolution sensor.
+
+Indeholder implementeringer af funktionerne fra \hyperlink{wheelSensor_8h}{wheel\+Sensor.\+h}
+
+\begin{DoxyAuthor}{Author}
+Jonathan Hartvigsen Juncker 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000012}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}
+
+
+Indeholder prototyperne til interrupt handlers som relaterer til S\+PI og funktions prototyperne til wheel\+Sensor.\+c
+
+\begin{DoxyAuthor}{Author}
+Jonathan Hartvigsen Juncker 
+\end{DoxyAuthor}
+\begin{DoxyRefDesc}{Bug}
+\item[\hyperlink{bug__bug000013}{Bug}]Ingen kendte bugs. \end{DoxyRefDesc}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}\label{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!calc\+Distance@{calc\+Distance}}
+\index{calc\+Distance@{calc\+Distance}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{calc\+Distance()}{calcDistance()}}
+{\footnotesize\ttfamily double calc\+Distance (\begin{DoxyParamCaption}\item[{int}]{,  }\item[{double}]{ }\end{DoxyParamCaption})}
+
+
+
+Funktion til udregning af distance kørt. Funktionen \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()}, indeholder funktionaliteten til distanceberegninger. Til dette anvendes parameteren wheel\+Circumference. \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()} multiplicerer antal omdrejninger detekteret med omkredsen af hjulet, opbevaret i variablen wheel\+Circumference. \hyperlink{wheelSensor_8h_acf2e76c364916dd1e63f11f79a9a97d8}{calc\+Distance()} returnerer distanceværdien i enheden km. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Wheelticks} & Antallet af omdrejninger som hjulet har lavet.\\
+\hline
+{\em wheel\+Circumference} & Hjulets omkreds i km.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Distance Antal km cyklen har kørt 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wheelSensor_8h_aea8e5e1a1ead23be679149302ec1d72e}\label{wheelSensor_8h_aea8e5e1a1ead23be679149302ec1d72e}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!calc\+Speed@{calc\+Speed}}
+\index{calc\+Speed@{calc\+Speed}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{calc\+Speed()}{calcSpeed()}}
+{\footnotesize\ttfamily double calc\+Speed (\begin{DoxyParamCaption}\item[{double}]{counter\+\_\+value,  }\item[{double}]{circumference }\end{DoxyParamCaption})}
+
+
+
+Funktion til udregning af hastighed. Til beregning af hastigheden tages der udgangspunkt i hjulets omkreds samt tiden siden sidste gang, der blev foretaget en omdrejning af hjulet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Time} & Tiden siden sidste hjul omdrejning\\
+\hline
+{\em wheel\+Circumference} & hjulets omkreds i km.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Speed returnerer en Hhastighed i km/t 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wheelSensor_8h_a5124c7c730314a9c8f45460158fa0c32}\label{wheelSensor_8h_a5124c7c730314a9c8f45460158fa0c32}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!calc\+Wheel\+Circ@{calc\+Wheel\+Circ}}
+\index{calc\+Wheel\+Circ@{calc\+Wheel\+Circ}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{calc\+Wheel\+Circ()}{calcWheelCirc()}}
+{\footnotesize\ttfamily double calc\+Wheel\+Circ (\begin{DoxyParamCaption}\item[{double}]{ }\end{DoxyParamCaption})}
+
+
+
+Funktion til udregning af hjulets omkreds Når funktionen modtager en radius i m. udregner den hjulets omkreds i km, så det kan bruges til udregning af hastighed og distance kørt. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em radius} & radius i m.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+hjulets omkreds returnerer hjulets omkreds i km. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wheelSensor_8h_ac9a707cad628e31ba45190ca497e60ab}\label{wheelSensor_8h_ac9a707cad628e31ba45190ca497e60ab}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!reset\+Speed\+Timer@{reset\+Speed\+Timer}}
+\index{reset\+Speed\+Timer@{reset\+Speed\+Timer}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{reset\+Speed\+Timer()}{resetSpeedTimer()}}
+{\footnotesize\ttfamily void reset\+Speed\+Timer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Funktion til reset af Wheel\+Tick\+Timer Skriver til timerens counter, for at reset den. 
+
+\mbox{\Hypertarget{wheelSensor_8h_a69517cf5b2648ce4a6dd5dbe49ed8420}\label{wheelSensor_8h_a69517cf5b2648ce4a6dd5dbe49ed8420}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!set\+Speed\+To\+Zero@{set\+Speed\+To\+Zero}}
+\index{set\+Speed\+To\+Zero@{set\+Speed\+To\+Zero}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{set\+Speed\+To\+Zero()}{setSpeedToZero()}}
+{\footnotesize\ttfamily void set\+Speed\+To\+Zero (\begin{DoxyParamCaption}\item[{uint8 $\ast$}]{ }\end{DoxyParamCaption})}
+
+
+
+Funktion til at sætte hastigheden til 0. Sætter hastigheden til 0, efter 3 sekunder ved hjælp af en timer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em uint8$\ast$} & speed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Speed returnerer en hastighed på 0 km/t 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wheelSensor_8h_a77ce324fe6e22324d32f62c0fd529b02}\label{wheelSensor_8h_a77ce324fe6e22324d32f62c0fd529b02}} 
+\index{wheel\+Sensor.\+h@{wheel\+Sensor.\+h}!Wheel\+Radius\+To\+Metres@{Wheel\+Radius\+To\+Metres}}
+\index{Wheel\+Radius\+To\+Metres@{Wheel\+Radius\+To\+Metres}!wheel\+Sensor.\+h@{wheel\+Sensor.\+h}}
+\subsubsection{\texorpdfstring{Wheel\+Radius\+To\+Metres()}{WheelRadiusToMetres()}}
+{\footnotesize\ttfamily double Wheel\+Radius\+To\+Metres (\begin{DoxyParamCaption}\item[{uint8}]{ }\end{DoxyParamCaption})}
+
+
+
+Funktion til ændring af radius i cm til radius i m Når funktionen modtager en radius i cm ændre den det til m, så radiussen kan bruges til udregning af hjulets omkreds. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em radius} & radius i cm.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+radius radius i m. 
+\end{DoxyReturn}

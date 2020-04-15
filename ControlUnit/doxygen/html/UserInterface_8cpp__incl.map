@@ -1,0 +1,14 @@
+<map id="UserInterface.cpp" name="UserInterface.cpp">
+<area shape="rect" id="node2" href="$UserInterface_8hpp.html" title="Funktionsprototyper til UserInterface&#45;klassen. " alt="" coords="1057,80,1183,107"/>
+<area shape="rect" id="node3" href="$MessageQ_8hpp.html" title="Implementation af MessageQ&#45;klassen Denne klasse implementerer en MessageQueue, der bruges til at komm..." alt="" coords="681,393,791,420"/>
+<area shape="rect" id="node10" href="$threadFunctionality_8hpp_source.html" title="threadFunctionality.hpp" alt="" coords="541,162,699,189"/>
+<area shape="rect" id="node4" href="$Message_8hpp.html" title="Implementation af Message&#45;klassen Denne klasse implementerer en Message&#45;klasse, der bruges som base&#45;c..." alt="" coords="746,468,846,495"/>
+<area shape="rect" id="node11" href="$DataBase_8hpp.html" title="Funktionsprototyper til DataBasen. " alt="" coords="1151,468,1257,495"/>
+<area shape="rect" id="node17" href="$EDBikeProtocol_8hpp_source.html" title="EDBikeProtocol.hpp" alt="" coords="507,319,647,345"/>
+<area shape="rect" id="node18" href="$LockUnit_8hpp_source.html" title="LockUnit.hpp" alt="" coords="328,244,427,271"/>
+<area shape="rect" id="node19" href="$SPIprotocol_8hpp_source.html" title="SPIprotocol.hpp" alt="" coords="317,319,432,345"/>
+<area shape="rect" id="node26" href="$RideData_8hpp.html" title="Funktionsprototyper til RideData. " alt="" coords="922,468,1025,495"/>
+<area shape="rect" id="node28" href="$SPI_8hpp_source.html" title="SPI.hpp" alt="" coords="32,393,101,420"/>
+<area shape="rect" id="node30" href="$SensorUnit_8hpp_source.html" title="SensorUnit.hpp" alt="" coords="517,244,629,271"/>
+<area shape="rect" id="node21" href="$SerialUnit_8hpp_source.html" title="SerialUnit.hpp" alt="" coords="212,468,316,495"/>
+</map>

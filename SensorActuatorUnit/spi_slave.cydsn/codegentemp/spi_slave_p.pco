@@ -1,0 +1,98 @@
+dont_use_io iocell 1 0
+dont_use_io iocell 1 1
+dont_use_io iocell 1 3
+set_location "\SPI_slave:BSPIS:mosi_to_dp\" macrocell 2 1 0 0
+set_location "\SPI_slave:BSPIS:inv_ss\" macrocell 1 1 0 3
+set_location "\MotorLockTimer:TimerUDB:rstSts:stsreg\" statusicell 0 4 4 
+set_location "\UART_1:BUART:sRX:RxShifter:u0\" datapathcell 1 1 2 
+set_location "\SPI_slave:BSPIS:TxStsReg\" statusicell 2 0 4 
+set_location "\MotorLockTimer:TimerUDB:sT16:timerdp:u0\" datapathcell 1 4 2 
+set_location "\UART_1:BUART:rx_status_4\" macrocell 1 1 1 2
+set_location "\AccelerometerTimer:TimerUDB:sT24:timerdp:u0\" datapathcell 2 0 2 
+set_location "\UART_1:BUART:sTX:TxSts\" statusicell 0 2 4 
+set_location "\UART_1:BUART:txn\" macrocell 0 3 0 2
+set_location "\UART_1:BUART:tx_ctrl_mark_last\" macrocell 1 4 1 3
+set_location "\SPI_slave:BSPIS:dpcounter_one\" macrocell 2 3 0 2
+set_location "\UART_1:BUART:counter_load_not\" macrocell 1 3 1 2
+set_location "\SPI_slave:BSPIS:mosi_tmp\" macrocell 2 3 0 1
+set_location "\UART_1:BUART:pollcount_1\" macrocell 1 1 0 1
+set_location "Net_24" macrocell 0 2 0 3
+set_location "\SPI_slave:BSPIS:mosi_buf_overrun\" macrocell 2 1 1 2
+set_location "\SPI_slave:BSPIS:rx_status_4\" macrocell 2 3 1 1
+set_location "\AccelerometerTimer:TimerUDB:sT24:timerdp:u2\" datapathcell 3 1 2 
+set_location "\UART_1:BUART:rx_state_3\" macrocell 1 2 0 0
+set_location "Net_56" macrocell 0 1 0 3
+set_location "\MotorLockTimer:TimerUDB:sT16:timerdp:u1\" datapathcell 0 4 2 
+set_location "\WheelTickTimer:TimerUDB:sT16:timerdp:u1\" datapathcell 3 3 2 
+set_location "\SPI_slave:BSPIS:sR8:Dp:u0\" datapathcell 2 1 2 
+set_location "\UART_1:BUART:sRX:RxSts\" statusicell 0 1 4 
+set_location "\UART_1:BUART:rx_bitclk_enable\" macrocell 1 3 1 1
+set_location "\SPI_slave:BSPIS:rx_buf_overrun\" macrocell 2 0 0 3
+set_location "\UART_1:BUART:rx_counter_load\" macrocell 1 4 1 2
+set_location "\UART_1:BUART:rx_state_0\" macrocell 1 3 0 0
+set_location "\UART_1:BUART:tx_status_0\" macrocell 0 2 0 0
+set_location "\UART_1:BUART:rx_state_2\" macrocell 1 2 1 0
+set_location "\WheelTickTimer:TimerUDB:status_tc\" macrocell 3 3 0 2
+set_location "\UART_1:BUART:rx_last\" macrocell 1 1 1 1
+set_location "\UART_1:BUART:tx_status_2\" macrocell 0 2 1 0
+set_location "\UART_1:BUART:rx_load_fifo\" macrocell 1 2 1 1
+set_location "\AccelerometerTimer:TimerUDB:sT24:timerdp:u1\" datapathcell 3 0 2 
+set_location "\SPI_slave:BSPIS:tx_load\" macrocell 2 3 1 0
+set_location "\SPI_slave:BSPIS:RxStsReg\" statusicell 2 3 4 
+set_location "\UART_1:BUART:tx_state_1\" macrocell 0 4 0 3
+set_location "\SPI_slave:BSPIS:tx_status_0\" macrocell 2 0 0 1
+set_location "\UART_1:BUART:tx_bitclk\" macrocell 1 4 1 1
+set_location "\UART_1:BUART:tx_state_0\" macrocell 0 3 1 0
+set_location "\SPI_slave:BSPIS:BitCounter\" count7cell 1 1 7 
+set_location "\WheelTickTimer:TimerUDB:sT16:timerdp:u0\" datapathcell 2 3 2 
+set_location "\UART_1:BUART:rx_status_5\" macrocell 1 1 0 0
+set_location "\UART_1:BUART:rx_state_stop1_reg\" macrocell 1 1 0 2
+set_location "\UART_1:BUART:sRX:RxBitCounter\" count7cell 1 3 7 
+set_location "\SPI_slave:BSPIS:byte_complete\" macrocell 2 0 1 0
+set_location "\AccelerometerTimer:TimerUDB:rstSts:stsreg\" statusicell 3 0 4 
+set_location "\MotorLockTimer:TimerUDB:status_tc\" macrocell 0 4 0 0
+set_location "\AccelerometerTimer:TimerUDB:status_tc\" macrocell 3 0 0 3
+set_location "\SPI_slave:BSPIS:mosi_buf_overrun_fin\" macrocell 2 0 1 1
+set_location "\UART_1:BUART:rx_status_3\" macrocell 1 2 1 2
+set_location "\SPI_slave:BSPIS:dpcounter_one_reg\" macrocell 2 3 1 2
+set_location "\UART_1:BUART:tx_state_2\" macrocell 1 4 0 1
+set_location "\UART_1:BUART:sTX:TxShifter:u0\" datapathcell 0 2 2 
+set_location "\UART_1:BUART:pollcount_0\" macrocell 1 1 1 3
+set_location "\UART_1:BUART:sTX:sCLOCK:TxBitClkGen\" datapathcell 1 3 2 
+set_location "\UART_1:BUART:rx_postpoll\" macrocell 1 1 1 0
+set_location "\WheelTickTimer:TimerUDB:rstSts:stsreg\" statusicell 3 3 4 
+set_location "\SPI_slave:BSPIS:sync_4\" synccell 2 1 5 0
+set_location "\SPI_slave:BSPIS:sync_3\" synccell 2 1 5 1
+set_io "sclk(0)" iocell 2 4
+set_location "ClockBlock" clockblockcell -1 -1 0
+set_io "Pin_1_ac_idle(0)" iocell 1 2
+set_io "miso(0)" iocell 2 6
+set_io "WheelTickPin(0)" iocell 0 3
+set_location "\SPI_slave:BSPIS:sync_1\" synccell 2 1 5 2
+set_location "\SPI_slave:BSPIS:sync_2\" synccell 2 1 5 3
+set_io "mosi(0)" iocell 2 5
+set_io "ss(0)" iocell 2 3
+set_location "\MotorLockTimer:TimerUDB:sCTRLReg:SyncCtl:ctrlreg\" controlcell 1 4 6 
+# Note: port 12 is the logical name for port 7
+set_io "Rx_1(0)" iocell 12 6
+set_location "\WheelTickTimer:TimerUDB:sCTRLReg:SyncCtl:ctrlreg\" controlcell 1 2 6 
+set_location "\AccelerometerTimer:TimerUDB:sCTRLReg:SyncCtl:ctrlreg\" controlcell 3 0 6 
+set_location "WheelTickPin" logicalport -1 -1 0
+set_location "Pin_1_ac_idle" logicalport -1 -1 1
+set_location "Pin_2_ac_moving" logicalport -1 -1 2
+# Note: port 12 is the logical name for port 7
+set_io "Tx_1(0)" iocell 12 7
+set_location "slave_rx_interrupt" interrupt -1 -1 8
+set_location "UART_rx_interrupt" interrupt -1 -1 1
+set_location "isr_wheel_tick" interrupt -1 -1 7
+set_location "Timer_Isr_BikeIsStopping" interrupt -1 -1 0
+set_location "isr_bike_is_idle" interrupt -1 -1 5
+set_location "isr_bike_is_moving" interrupt -1 -1 6
+set_location "isr_bikelock" interrupt -1 -1 4
+set_location "\SPI_slave:TxInternalInterrupt\" interrupt -1 -1 2
+set_location "isr_bike_stopped" interrupt -1 -1 3
+set_io "LED_pin(0)" iocell 2 1
+set_io "In_1(0)" iocell 0 0
+set_io "In_2(0)" iocell 0 1
+set_io "EA(0)" iocell 0 2
+set_io "Pin_2_ac_moving(0)" iocell 2 0

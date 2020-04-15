@@ -1,0 +1,1369 @@
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"wheelSensor.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.initWheelSensor,"ax",%progbits
+  20              		.align	2
+  21              		.global	initWheelSensor
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	initWheelSensor, %function
+  25              	initWheelSensor:
+  26              	.LFB64:
+  27              		.file 1 "wheelSensor.c"
+   1:wheelSensor.c **** /* ========================================
+   2:wheelSensor.c ****  *
+   3:wheelSensor.c ****  * Copyright YOUR COMPANY, THE YEAR
+   4:wheelSensor.c ****  * All Rights Reserved
+   5:wheelSensor.c ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:wheelSensor.c ****  *
+   7:wheelSensor.c ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:wheelSensor.c ****  * WHICH IS THE PROPERTY OF your company.
+   9:wheelSensor.c ****  *
+  10:wheelSensor.c ****  * ========================================
+  11:wheelSensor.c **** */
+  12:wheelSensor.c **** #include "wheelSensor.h"
+  13:wheelSensor.c **** 
+  14:wheelSensor.c **** void initWheelSensor()
+  15:wheelSensor.c **** {
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  16:wheelSensor.c ****     isr_wheel_tick_StartEx(isr_wheel_tick_Handler);
+  36              		.loc 1 16 0
+  37 0002 0448     		ldr	r0, .L3
+  38 0004 FFF7FEFF 		bl	isr_wheel_tick_StartEx
+  39              	.LVL0:
+  17:wheelSensor.c ****     
+  18:wheelSensor.c ****     WheelTickTimer_Start();
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 2
+
+
+  40              		.loc 1 18 0
+  41 0008 FFF7FEFF 		bl	WheelTickTimer_Start
+  42              	.LVL1:
+  19:wheelSensor.c ****     
+  20:wheelSensor.c ****     Timer_Isr_BikeIsStopping_StartEx(Timer_Isr_BikeIsStopping_handler);
+  43              		.loc 1 20 0
+  44 000c 0248     		ldr	r0, .L3+4
+  45 000e FFF7FEFF 		bl	Timer_Isr_BikeIsStopping_StartEx
+  46              	.LVL2:
+  47 0012 08BD     		pop	{r3, pc}
+  48              	.L4:
+  49              		.align	2
+  50              	.L3:
+  51 0014 00000000 		.word	isr_wheel_tick_Handler
+  52 0018 00000000 		.word	Timer_Isr_BikeIsStopping_handler
+  53              		.cfi_endproc
+  54              	.LFE64:
+  55              		.size	initWheelSensor, .-initWheelSensor
+  56              		.global	__aeabi_i2d
+  57              		.global	__aeabi_dmul
+  58              		.section	.text.calcDistance,"ax",%progbits
+  59              		.align	2
+  60              		.global	calcDistance
+  61              		.thumb
+  62              		.thumb_func
+  63              		.type	calcDistance, %function
+  64              	calcDistance:
+  65              	.LFB65:
+  21:wheelSensor.c ****     
+  22:wheelSensor.c **** }
+  23:wheelSensor.c **** 
+  24:wheelSensor.c **** double calcDistance(int wheelRevolutions, double wheelCirc)
+  25:wheelSensor.c ****    {
+  66              		.loc 1 25 0
+  67              		.cfi_startproc
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              	.LVL3:
+  71 0000 38B5     		push	{r3, r4, r5, lr}
+  72              		.cfi_def_cfa_offset 16
+  73              		.cfi_offset 3, -16
+  74              		.cfi_offset 4, -12
+  75              		.cfi_offset 5, -8
+  76              		.cfi_offset 14, -4
+  77 0002 1446     		mov	r4, r2
+  78 0004 1D46     		mov	r5, r3
+  26:wheelSensor.c ****         double dist = wheelRevolutions * wheelCirc; 
+  79              		.loc 1 26 0
+  80 0006 FFF7FEFF 		bl	__aeabi_i2d
+  81              	.LVL4:
+  82 000a 2246     		mov	r2, r4
+  83 000c 2B46     		mov	r3, r5
+  84 000e FFF7FEFF 		bl	__aeabi_dmul
+  85              	.LVL5:
+  27:wheelSensor.c ****         
+  28:wheelSensor.c ****         return dist;
+  29:wheelSensor.c ****    } 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 3
+
+
+  86              		.loc 1 29 0
+  87 0012 38BD     		pop	{r3, r4, r5, pc}
+  88              		.cfi_endproc
+  89              	.LFE65:
+  90              		.size	calcDistance, .-calcDistance
+  91              		.global	__aeabi_ddiv
+  92              		.section	.text.calcSpeed,"ax",%progbits
+  93              		.align	2
+  94              		.global	calcSpeed
+  95              		.thumb
+  96              		.thumb_func
+  97              		.type	calcSpeed, %function
+  98              	calcSpeed:
+  99              	.LFB66:
+  30:wheelSensor.c ****     
+  31:wheelSensor.c **** double calcSpeed(double time_ms, double dist)
+  32:wheelSensor.c ****     {
+ 100              		.loc 1 32 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104              	.LVL6:
+ 105 0000 38B5     		push	{r3, r4, r5, lr}
+ 106              		.cfi_def_cfa_offset 16
+ 107              		.cfi_offset 3, -16
+ 108              		.cfi_offset 4, -12
+ 109              		.cfi_offset 5, -8
+ 110              		.cfi_offset 14, -4
+ 111 0002 1446     		mov	r4, r2
+ 112 0004 1D46     		mov	r5, r3
+  33:wheelSensor.c ****         double time_temp = time_ms/3600000;
+ 113              		.loc 1 33 0
+ 114 0006 06A3     		adr	r3, .L9
+ 115 0008 D3E90023 		ldrd	r2, [r3]
+ 116              	.LVL7:
+ 117 000c FFF7FEFF 		bl	__aeabi_ddiv
+ 118              	.LVL8:
+  34:wheelSensor.c ****         double  speed = dist/time_temp;
+ 119              		.loc 1 34 0
+ 120 0010 0246     		mov	r2, r0
+ 121 0012 0B46     		mov	r3, r1
+ 122 0014 2046     		mov	r0, r4
+ 123              	.LVL9:
+ 124 0016 2946     		mov	r1, r5
+ 125 0018 FFF7FEFF 		bl	__aeabi_ddiv
+ 126              	.LVL10:
+  35:wheelSensor.c ****     
+  36:wheelSensor.c ****         return speed;    
+  37:wheelSensor.c ****     }    
+ 127              		.loc 1 37 0
+ 128 001c 38BD     		pop	{r3, r4, r5, pc}
+ 129              	.L10:
+ 130 001e 00BF     		.align	3
+ 131              	.L9:
+ 132 0020 00000000 		.word	0
+ 133 0024 40774B41 		.word	1095464768
+ 134              		.cfi_endproc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 4
+
+
+ 135              	.LFE66:
+ 136              		.size	calcSpeed, .-calcSpeed
+ 137              		.global	__aeabi_ui2d
+ 138              		.section	.text.WheelRadiusToMetres,"ax",%progbits
+ 139              		.align	2
+ 140              		.global	WheelRadiusToMetres
+ 141              		.thumb
+ 142              		.thumb_func
+ 143              		.type	WheelRadiusToMetres, %function
+ 144              	WheelRadiusToMetres:
+ 145              	.LFB67:
+  38:wheelSensor.c **** 
+  39:wheelSensor.c **** double WheelRadiusToMetres(uint8 userInputInCentimeters)
+  40:wheelSensor.c ****     {
+ 146              		.loc 1 40 0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              	.LVL11:
+ 151 0000 08B5     		push	{r3, lr}
+ 152              		.cfi_def_cfa_offset 8
+ 153              		.cfi_offset 3, -8
+ 154              		.cfi_offset 14, -4
+  41:wheelSensor.c ****         double wheelRadiusInMeters = (double)userInputInCentimeters/100;
+ 155              		.loc 1 41 0
+ 156 0002 FFF7FEFF 		bl	__aeabi_ui2d
+ 157              	.LVL12:
+ 158 0006 0022     		movs	r2, #0
+ 159 0008 014B     		ldr	r3, .L13
+ 160 000a FFF7FEFF 		bl	__aeabi_ddiv
+ 161              	.LVL13:
+  42:wheelSensor.c ****     
+  43:wheelSensor.c ****         return wheelRadiusInMeters;
+  44:wheelSensor.c ****     }
+ 162              		.loc 1 44 0
+ 163 000e 08BD     		pop	{r3, pc}
+ 164              	.L14:
+ 165              		.align	2
+ 166              	.L13:
+ 167 0010 00005940 		.word	1079574528
+ 168              		.cfi_endproc
+ 169              	.LFE67:
+ 170              		.size	WheelRadiusToMetres, .-WheelRadiusToMetres
+ 171              		.global	__aeabi_dadd
+ 172              		.section	.text.calcWheelCirc,"ax",%progbits
+ 173              		.align	2
+ 174              		.global	calcWheelCirc
+ 175              		.thumb
+ 176              		.thumb_func
+ 177              		.type	calcWheelCirc, %function
+ 178              	calcWheelCirc:
+ 179              	.LFB68:
+  45:wheelSensor.c **** 
+  46:wheelSensor.c **** double calcWheelCirc(double radius)
+  47:wheelSensor.c ****     {
+ 180              		.loc 1 47 0
+ 181              		.cfi_startproc
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 5
+
+
+ 182              		@ args = 0, pretend = 0, frame = 0
+ 183              		@ frame_needed = 0, uses_anonymous_args = 0
+ 184              	.LVL14:
+ 185 0000 08B5     		push	{r3, lr}
+ 186              		.cfi_def_cfa_offset 8
+ 187              		.cfi_offset 3, -8
+ 188              		.cfi_offset 14, -4
+  48:wheelSensor.c ****         double wheelCirc = (radius * 3.14 * 2)/1000;
+ 189              		.loc 1 48 0
+ 190 0002 07A3     		adr	r3, .L17
+ 191 0004 D3E90023 		ldrd	r2, [r3]
+ 192 0008 FFF7FEFF 		bl	__aeabi_dmul
+ 193              	.LVL15:
+ 194 000c 0246     		mov	r2, r0
+ 195 000e 0B46     		mov	r3, r1
+ 196 0010 FFF7FEFF 		bl	__aeabi_dadd
+ 197              	.LVL16:
+ 198 0014 0022     		movs	r2, #0
+ 199 0016 044B     		ldr	r3, .L17+8
+ 200 0018 FFF7FEFF 		bl	__aeabi_ddiv
+ 201              	.LVL17:
+  49:wheelSensor.c ****     
+  50:wheelSensor.c ****         return wheelCirc;
+  51:wheelSensor.c ****     }
+ 202              		.loc 1 51 0
+ 203 001c 08BD     		pop	{r3, pc}
+ 204              	.L18:
+ 205 001e 00BF     		.align	3
+ 206              	.L17:
+ 207 0020 1F85EB51 		.word	1374389535
+ 208 0024 B81E0940 		.word	1074339512
+ 209 0028 00408F40 		.word	1083129856
+ 210              		.cfi_endproc
+ 211              	.LFE68:
+ 212              		.size	calcWheelCirc, .-calcWheelCirc
+ 213              		.section	.text.setSpeedToZero,"ax",%progbits
+ 214              		.align	2
+ 215              		.global	setSpeedToZero
+ 216              		.thumb
+ 217              		.thumb_func
+ 218              		.type	setSpeedToZero, %function
+ 219              	setSpeedToZero:
+ 220              	.LFB69:
+  52:wheelSensor.c **** 
+  53:wheelSensor.c ****     void setSpeedToZero(uint8* speed)
+  54:wheelSensor.c ****     {
+ 221              		.loc 1 54 0
+ 222              		.cfi_startproc
+ 223              		@ args = 0, pretend = 0, frame = 0
+ 224              		@ frame_needed = 0, uses_anonymous_args = 0
+ 225              		@ link register save eliminated.
+ 226              	.LVL18:
+  55:wheelSensor.c ****         *speed = 0;
+ 227              		.loc 1 55 0
+ 228 0000 0023     		movs	r3, #0
+ 229 0002 0370     		strb	r3, [r0]
+ 230 0004 7047     		bx	lr
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 6
+
+
+ 231              		.cfi_endproc
+ 232              	.LFE69:
+ 233              		.size	setSpeedToZero, .-setSpeedToZero
+ 234 0006 00BF     		.section	.text.resetSpeedTimer,"ax",%progbits
+ 235              		.align	2
+ 236              		.global	resetSpeedTimer
+ 237              		.thumb
+ 238              		.thumb_func
+ 239              		.type	resetSpeedTimer, %function
+ 240              	resetSpeedTimer:
+ 241              	.LFB70:
+  56:wheelSensor.c ****     }
+  57:wheelSensor.c **** 
+  58:wheelSensor.c ****     void resetSpeedTimer()
+  59:wheelSensor.c ****     {
+ 242              		.loc 1 59 0
+ 243              		.cfi_startproc
+ 244              		@ args = 0, pretend = 0, frame = 0
+ 245              		@ frame_needed = 0, uses_anonymous_args = 0
+ 246 0000 08B5     		push	{r3, lr}
+ 247              		.cfi_def_cfa_offset 8
+ 248              		.cfi_offset 3, -8
+ 249              		.cfi_offset 14, -4
+  60:wheelSensor.c ****         WheelTickTimer_WriteCounter(3000);
+ 250              		.loc 1 60 0
+ 251 0002 40F6B830 		movw	r0, #3000
+ 252 0006 FFF7FEFF 		bl	WheelTickTimer_WriteCounter
+ 253              	.LVL19:
+ 254 000a 08BD     		pop	{r3, pc}
+ 255              		.cfi_endproc
+ 256              	.LFE70:
+ 257              		.size	resetSpeedTimer, .-resetSpeedTimer
+ 258              		.text
+ 259              	.Letext0:
+ 260              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 261              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.2\\psoc creator\\import\\gnu\\arm\\5.4.
+ 262              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 263              		.file 5 "Generated_Source\\PSoC5/isr_wheel_tick.h"
+ 264              		.file 6 "Generated_Source\\PSoC5/WheelTickTimer.h"
+ 265              		.file 7 "Generated_Source\\PSoC5/Timer_Isr_BikeIsStopping.h"
+ 266              		.file 8 "Generated_Source\\PSoC5/core_cm3.h"
+ 267              		.section	.debug_info,"",%progbits
+ 268              	.Ldebug_info0:
+ 269 0000 84020000 		.4byte	0x284
+ 270 0004 0400     		.2byte	0x4
+ 271 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 272 000a 04       		.byte	0x4
+ 273 000b 01       		.uleb128 0x1
+ 274 000c BC000000 		.4byte	.LASF36
+ 275 0010 0C       		.byte	0xc
+ 276 0011 14020000 		.4byte	.LASF37
+ 277 0015 4A000000 		.4byte	.LASF38
+ 278 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 279 001d 00000000 		.4byte	0
+ 280 0021 00000000 		.4byte	.Ldebug_line0
+ 281 0025 02       		.uleb128 0x2
+ 282 0026 08       		.byte	0x8
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 7
+
+
+ 283 0027 04       		.byte	0x4
+ 284 0028 DC010000 		.4byte	.LASF0
+ 285 002c 02       		.uleb128 0x2
+ 286 002d 01       		.byte	0x1
+ 287 002e 06       		.byte	0x6
+ 288 002f CD020000 		.4byte	.LASF1
+ 289 0033 02       		.uleb128 0x2
+ 290 0034 01       		.byte	0x1
+ 291 0035 08       		.byte	0x8
+ 292 0036 AE000000 		.4byte	.LASF2
+ 293 003a 02       		.uleb128 0x2
+ 294 003b 02       		.byte	0x2
+ 295 003c 05       		.byte	0x5
+ 296 003d 6E020000 		.4byte	.LASF3
+ 297 0041 02       		.uleb128 0x2
+ 298 0042 02       		.byte	0x2
+ 299 0043 07       		.byte	0x7
+ 300 0044 9A010000 		.4byte	.LASF4
+ 301 0048 03       		.uleb128 0x3
+ 302 0049 1B000000 		.4byte	.LASF10
+ 303 004d 02       		.byte	0x2
+ 304 004e 3F       		.byte	0x3f
+ 305 004f 53000000 		.4byte	0x53
+ 306 0053 02       		.uleb128 0x2
+ 307 0054 04       		.byte	0x4
+ 308 0055 05       		.byte	0x5
+ 309 0056 9A020000 		.4byte	.LASF5
+ 310 005a 02       		.uleb128 0x2
+ 311 005b 04       		.byte	0x4
+ 312 005c 07       		.byte	0x7
+ 313 005d 78010000 		.4byte	.LASF6
+ 314 0061 02       		.uleb128 0x2
+ 315 0062 08       		.byte	0x8
+ 316 0063 05       		.byte	0x5
+ 317 0064 5B020000 		.4byte	.LASF7
+ 318 0068 02       		.uleb128 0x2
+ 319 0069 08       		.byte	0x8
+ 320 006a 07       		.byte	0x7
+ 321 006b FD010000 		.4byte	.LASF8
+ 322 006f 04       		.uleb128 0x4
+ 323 0070 04       		.byte	0x4
+ 324 0071 05       		.byte	0x5
+ 325 0072 696E7400 		.ascii	"int\000"
+ 326 0076 02       		.uleb128 0x2
+ 327 0077 04       		.byte	0x4
+ 328 0078 07       		.byte	0x7
+ 329 0079 F0010000 		.4byte	.LASF9
+ 330 007d 03       		.uleb128 0x3
+ 331 007e 42000000 		.4byte	.LASF11
+ 332 0082 03       		.byte	0x3
+ 333 0083 2C       		.byte	0x2c
+ 334 0084 48000000 		.4byte	0x48
+ 335 0088 05       		.uleb128 0x5
+ 336 0089 78020000 		.4byte	.LASF12
+ 337 008d 04       		.byte	0x4
+ 338 008e E401     		.2byte	0x1e4
+ 339 0090 33000000 		.4byte	0x33
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 8
+
+
+ 340 0094 02       		.uleb128 0x2
+ 341 0095 04       		.byte	0x4
+ 342 0096 04       		.byte	0x4
+ 343 0097 93000000 		.4byte	.LASF13
+ 344 009b 02       		.uleb128 0x2
+ 345 009c 01       		.byte	0x1
+ 346 009d 08       		.byte	0x8
+ 347 009e 69020000 		.4byte	.LASF14
+ 348 00a2 02       		.uleb128 0x2
+ 349 00a3 08       		.byte	0x8
+ 350 00a4 04       		.byte	0x4
+ 351 00a5 C1020000 		.4byte	.LASF15
+ 352 00a9 02       		.uleb128 0x2
+ 353 00aa 04       		.byte	0x4
+ 354 00ab 07       		.byte	0x7
+ 355 00ac 52020000 		.4byte	.LASF16
+ 356 00b0 06       		.uleb128 0x6
+ 357 00b1 8A010000 		.4byte	.LASF30
+ 358 00b5 01       		.byte	0x1
+ 359 00b6 0E       		.byte	0xe
+ 360 00b7 00000000 		.4byte	.LFB64
+ 361 00bb 1C000000 		.4byte	.LFE64-.LFB64
+ 362 00bf 01       		.uleb128 0x1
+ 363 00c0 9C       		.byte	0x9c
+ 364 00c1 E1000000 		.4byte	0xe1
+ 365 00c5 07       		.uleb128 0x7
+ 366 00c6 08000000 		.4byte	.LVL0
+ 367 00ca 5B020000 		.4byte	0x25b
+ 368 00ce 07       		.uleb128 0x7
+ 369 00cf 0C000000 		.4byte	.LVL1
+ 370 00d3 66020000 		.4byte	0x266
+ 371 00d7 07       		.uleb128 0x7
+ 372 00d8 12000000 		.4byte	.LVL2
+ 373 00dc 71020000 		.4byte	0x271
+ 374 00e0 00       		.byte	0
+ 375 00e1 08       		.uleb128 0x8
+ 376 00e2 35000000 		.4byte	.LASF19
+ 377 00e6 01       		.byte	0x1
+ 378 00e7 18       		.byte	0x18
+ 379 00e8 25000000 		.4byte	0x25
+ 380 00ec 00000000 		.4byte	.LFB65
+ 381 00f0 14000000 		.4byte	.LFE65-.LFB65
+ 382 00f4 01       		.uleb128 0x1
+ 383 00f5 9C       		.byte	0x9c
+ 384 00f6 2B010000 		.4byte	0x12b
+ 385 00fa 09       		.uleb128 0x9
+ 386 00fb 31020000 		.4byte	.LASF17
+ 387 00ff 01       		.byte	0x1
+ 388 0100 18       		.byte	0x18
+ 389 0101 6F000000 		.4byte	0x6f
+ 390 0105 00000000 		.4byte	.LLST0
+ 391 0109 09       		.uleb128 0x9
+ 392 010a B7020000 		.4byte	.LASF18
+ 393 010e 01       		.byte	0x1
+ 394 010f 18       		.byte	0x18
+ 395 0110 25000000 		.4byte	0x25
+ 396 0114 21000000 		.4byte	.LLST1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 9
+
+
+ 397 0118 0A       		.uleb128 0xa
+ 398 0119 2C020000 		.4byte	.LASF22
+ 399 011d 01       		.byte	0x1
+ 400 011e 1A       		.byte	0x1a
+ 401 011f 25000000 		.4byte	0x25
+ 402 0123 06       		.uleb128 0x6
+ 403 0124 50       		.byte	0x50
+ 404 0125 93       		.byte	0x93
+ 405 0126 04       		.uleb128 0x4
+ 406 0127 51       		.byte	0x51
+ 407 0128 93       		.byte	0x93
+ 408 0129 04       		.uleb128 0x4
+ 409 012a 00       		.byte	0
+ 410 012b 08       		.uleb128 0x8
+ 411 012c 48020000 		.4byte	.LASF20
+ 412 0130 01       		.byte	0x1
+ 413 0131 1F       		.byte	0x1f
+ 414 0132 25000000 		.4byte	0x25
+ 415 0136 00000000 		.4byte	.LFB66
+ 416 013a 28000000 		.4byte	.LFE66-.LFB66
+ 417 013e 01       		.uleb128 0x1
+ 418 013f 9C       		.byte	0x9c
+ 419 0140 84010000 		.4byte	0x184
+ 420 0144 09       		.uleb128 0x9
+ 421 0145 E8020000 		.4byte	.LASF21
+ 422 0149 01       		.byte	0x1
+ 423 014a 1F       		.byte	0x1f
+ 424 014b 25000000 		.4byte	0x25
+ 425 014f 49000000 		.4byte	.LLST2
+ 426 0153 09       		.uleb128 0x9
+ 427 0154 2C020000 		.4byte	.LASF22
+ 428 0158 01       		.byte	0x1
+ 429 0159 1F       		.byte	0x1f
+ 430 015a 25000000 		.4byte	0x25
+ 431 015e 71000000 		.4byte	.LLST3
+ 432 0162 0B       		.uleb128 0xb
+ 433 0163 22020000 		.4byte	.LASF23
+ 434 0167 01       		.byte	0x1
+ 435 0168 21       		.byte	0x21
+ 436 0169 25000000 		.4byte	0x25
+ 437 016d 99000000 		.4byte	.LLST4
+ 438 0171 0A       		.uleb128 0xa
+ 439 0172 42020000 		.4byte	.LASF24
+ 440 0176 01       		.byte	0x1
+ 441 0177 22       		.byte	0x22
+ 442 0178 25000000 		.4byte	0x25
+ 443 017c 06       		.uleb128 0x6
+ 444 017d 50       		.byte	0x50
+ 445 017e 93       		.byte	0x93
+ 446 017f 04       		.uleb128 0x4
+ 447 0180 51       		.byte	0x51
+ 448 0181 93       		.byte	0x93
+ 449 0182 04       		.uleb128 0x4
+ 450 0183 00       		.byte	0
+ 451 0184 08       		.uleb128 0x8
+ 452 0185 A3020000 		.4byte	.LASF25
+ 453 0189 01       		.byte	0x1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 10
+
+
+ 454 018a 27       		.byte	0x27
+ 455 018b 25000000 		.4byte	0x25
+ 456 018f 00000000 		.4byte	.LFB67
+ 457 0193 14000000 		.4byte	.LFE67-.LFB67
+ 458 0197 01       		.uleb128 0x1
+ 459 0198 9C       		.byte	0x9c
+ 460 0199 BF010000 		.4byte	0x1bf
+ 461 019d 09       		.uleb128 0x9
+ 462 019e 4A010000 		.4byte	.LASF26
+ 463 01a2 01       		.byte	0x1
+ 464 01a3 27       		.byte	0x27
+ 465 01a4 88000000 		.4byte	0x88
+ 466 01a8 B1000000 		.4byte	.LLST5
+ 467 01ac 0A       		.uleb128 0xa
+ 468 01ad 07000000 		.4byte	.LASF27
+ 469 01b1 01       		.byte	0x1
+ 470 01b2 29       		.byte	0x29
+ 471 01b3 25000000 		.4byte	0x25
+ 472 01b7 06       		.uleb128 0x6
+ 473 01b8 50       		.byte	0x50
+ 474 01b9 93       		.byte	0x93
+ 475 01ba 04       		.uleb128 0x4
+ 476 01bb 51       		.byte	0x51
+ 477 01bc 93       		.byte	0x93
+ 478 01bd 04       		.uleb128 0x4
+ 479 01be 00       		.byte	0
+ 480 01bf 08       		.uleb128 0x8
+ 481 01c0 AD010000 		.4byte	.LASF28
+ 482 01c4 01       		.byte	0x1
+ 483 01c5 2E       		.byte	0x2e
+ 484 01c6 25000000 		.4byte	0x25
+ 485 01ca 00000000 		.4byte	.LFB68
+ 486 01ce 2C000000 		.4byte	.LFE68-.LFB68
+ 487 01d2 01       		.uleb128 0x1
+ 488 01d3 9C       		.byte	0x9c
+ 489 01d4 FA010000 		.4byte	0x1fa
+ 490 01d8 09       		.uleb128 0x9
+ 491 01d9 00000000 		.4byte	.LASF29
+ 492 01dd 01       		.byte	0x1
+ 493 01de 2E       		.byte	0x2e
+ 494 01df 25000000 		.4byte	0x25
+ 495 01e3 D2000000 		.4byte	.LLST6
+ 496 01e7 0A       		.uleb128 0xa
+ 497 01e8 B7020000 		.4byte	.LASF18
+ 498 01ec 01       		.byte	0x1
+ 499 01ed 30       		.byte	0x30
+ 500 01ee 25000000 		.4byte	0x25
+ 501 01f2 06       		.uleb128 0x6
+ 502 01f3 50       		.byte	0x50
+ 503 01f4 93       		.byte	0x93
+ 504 01f5 04       		.uleb128 0x4
+ 505 01f6 51       		.byte	0x51
+ 506 01f7 93       		.byte	0x93
+ 507 01f8 04       		.uleb128 0x4
+ 508 01f9 00       		.byte	0
+ 509 01fa 0C       		.uleb128 0xc
+ 510 01fb D9020000 		.4byte	.LASF39
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 11
+
+
+ 511 01ff 01       		.byte	0x1
+ 512 0200 35       		.byte	0x35
+ 513 0201 00000000 		.4byte	.LFB69
+ 514 0205 06000000 		.4byte	.LFE69-.LFB69
+ 515 0209 01       		.uleb128 0x1
+ 516 020a 9C       		.byte	0x9c
+ 517 020b 1D020000 		.4byte	0x21d
+ 518 020f 0D       		.uleb128 0xd
+ 519 0210 42020000 		.4byte	.LASF24
+ 520 0214 01       		.byte	0x1
+ 521 0215 35       		.byte	0x35
+ 522 0216 1D020000 		.4byte	0x21d
+ 523 021a 01       		.uleb128 0x1
+ 524 021b 50       		.byte	0x50
+ 525 021c 00       		.byte	0
+ 526 021d 0E       		.uleb128 0xe
+ 527 021e 04       		.byte	0x4
+ 528 021f 88000000 		.4byte	0x88
+ 529 0223 06       		.uleb128 0x6
+ 530 0224 25000000 		.4byte	.LASF31
+ 531 0228 01       		.byte	0x1
+ 532 0229 3A       		.byte	0x3a
+ 533 022a 00000000 		.4byte	.LFB70
+ 534 022e 0C000000 		.4byte	.LFE70-.LFB70
+ 535 0232 01       		.uleb128 0x1
+ 536 0233 9C       		.byte	0x9c
+ 537 0234 4A020000 		.4byte	0x24a
+ 538 0238 0F       		.uleb128 0xf
+ 539 0239 0A000000 		.4byte	.LVL19
+ 540 023d 7C020000 		.4byte	0x27c
+ 541 0241 10       		.uleb128 0x10
+ 542 0242 01       		.uleb128 0x1
+ 543 0243 50       		.byte	0x50
+ 544 0244 03       		.uleb128 0x3
+ 545 0245 0A       		.byte	0xa
+ 546 0246 B80B     		.2byte	0xbb8
+ 547 0248 00       		.byte	0
+ 548 0249 00       		.byte	0
+ 549 024a 11       		.uleb128 0x11
+ 550 024b E3010000 		.4byte	.LASF40
+ 551 024f 08       		.byte	0x8
+ 552 0250 1207     		.2byte	0x712
+ 553 0252 56020000 		.4byte	0x256
+ 554 0256 12       		.uleb128 0x12
+ 555 0257 7D000000 		.4byte	0x7d
+ 556 025b 13       		.uleb128 0x13
+ 557 025c 61010000 		.4byte	.LASF32
+ 558 0260 61010000 		.4byte	.LASF32
+ 559 0264 05       		.byte	0x5
+ 560 0265 18       		.byte	0x18
+ 561 0266 13       		.uleb128 0x13
+ 562 0267 99000000 		.4byte	.LASF33
+ 563 026b 99000000 		.4byte	.LASF33
+ 564 026f 06       		.byte	0x6
+ 565 0270 5A       		.byte	0x5a
+ 566 0271 13       		.uleb128 0x13
+ 567 0272 BB010000 		.4byte	.LASF34
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 12
+
+
+ 568 0276 BB010000 		.4byte	.LASF34
+ 569 027a 07       		.byte	0x7
+ 570 027b 18       		.byte	0x18
+ 571 027c 13       		.uleb128 0x13
+ 572 027d 7E020000 		.4byte	.LASF35
+ 573 0281 7E020000 		.4byte	.LASF35
+ 574 0285 06       		.byte	0x6
+ 575 0286 6A       		.byte	0x6a
+ 576 0287 00       		.byte	0
+ 577              		.section	.debug_abbrev,"",%progbits
+ 578              	.Ldebug_abbrev0:
+ 579 0000 01       		.uleb128 0x1
+ 580 0001 11       		.uleb128 0x11
+ 581 0002 01       		.byte	0x1
+ 582 0003 25       		.uleb128 0x25
+ 583 0004 0E       		.uleb128 0xe
+ 584 0005 13       		.uleb128 0x13
+ 585 0006 0B       		.uleb128 0xb
+ 586 0007 03       		.uleb128 0x3
+ 587 0008 0E       		.uleb128 0xe
+ 588 0009 1B       		.uleb128 0x1b
+ 589 000a 0E       		.uleb128 0xe
+ 590 000b 55       		.uleb128 0x55
+ 591 000c 17       		.uleb128 0x17
+ 592 000d 11       		.uleb128 0x11
+ 593 000e 01       		.uleb128 0x1
+ 594 000f 10       		.uleb128 0x10
+ 595 0010 17       		.uleb128 0x17
+ 596 0011 00       		.byte	0
+ 597 0012 00       		.byte	0
+ 598 0013 02       		.uleb128 0x2
+ 599 0014 24       		.uleb128 0x24
+ 600 0015 00       		.byte	0
+ 601 0016 0B       		.uleb128 0xb
+ 602 0017 0B       		.uleb128 0xb
+ 603 0018 3E       		.uleb128 0x3e
+ 604 0019 0B       		.uleb128 0xb
+ 605 001a 03       		.uleb128 0x3
+ 606 001b 0E       		.uleb128 0xe
+ 607 001c 00       		.byte	0
+ 608 001d 00       		.byte	0
+ 609 001e 03       		.uleb128 0x3
+ 610 001f 16       		.uleb128 0x16
+ 611 0020 00       		.byte	0
+ 612 0021 03       		.uleb128 0x3
+ 613 0022 0E       		.uleb128 0xe
+ 614 0023 3A       		.uleb128 0x3a
+ 615 0024 0B       		.uleb128 0xb
+ 616 0025 3B       		.uleb128 0x3b
+ 617 0026 0B       		.uleb128 0xb
+ 618 0027 49       		.uleb128 0x49
+ 619 0028 13       		.uleb128 0x13
+ 620 0029 00       		.byte	0
+ 621 002a 00       		.byte	0
+ 622 002b 04       		.uleb128 0x4
+ 623 002c 24       		.uleb128 0x24
+ 624 002d 00       		.byte	0
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 13
+
+
+ 625 002e 0B       		.uleb128 0xb
+ 626 002f 0B       		.uleb128 0xb
+ 627 0030 3E       		.uleb128 0x3e
+ 628 0031 0B       		.uleb128 0xb
+ 629 0032 03       		.uleb128 0x3
+ 630 0033 08       		.uleb128 0x8
+ 631 0034 00       		.byte	0
+ 632 0035 00       		.byte	0
+ 633 0036 05       		.uleb128 0x5
+ 634 0037 16       		.uleb128 0x16
+ 635 0038 00       		.byte	0
+ 636 0039 03       		.uleb128 0x3
+ 637 003a 0E       		.uleb128 0xe
+ 638 003b 3A       		.uleb128 0x3a
+ 639 003c 0B       		.uleb128 0xb
+ 640 003d 3B       		.uleb128 0x3b
+ 641 003e 05       		.uleb128 0x5
+ 642 003f 49       		.uleb128 0x49
+ 643 0040 13       		.uleb128 0x13
+ 644 0041 00       		.byte	0
+ 645 0042 00       		.byte	0
+ 646 0043 06       		.uleb128 0x6
+ 647 0044 2E       		.uleb128 0x2e
+ 648 0045 01       		.byte	0x1
+ 649 0046 3F       		.uleb128 0x3f
+ 650 0047 19       		.uleb128 0x19
+ 651 0048 03       		.uleb128 0x3
+ 652 0049 0E       		.uleb128 0xe
+ 653 004a 3A       		.uleb128 0x3a
+ 654 004b 0B       		.uleb128 0xb
+ 655 004c 3B       		.uleb128 0x3b
+ 656 004d 0B       		.uleb128 0xb
+ 657 004e 11       		.uleb128 0x11
+ 658 004f 01       		.uleb128 0x1
+ 659 0050 12       		.uleb128 0x12
+ 660 0051 06       		.uleb128 0x6
+ 661 0052 40       		.uleb128 0x40
+ 662 0053 18       		.uleb128 0x18
+ 663 0054 9742     		.uleb128 0x2117
+ 664 0056 19       		.uleb128 0x19
+ 665 0057 01       		.uleb128 0x1
+ 666 0058 13       		.uleb128 0x13
+ 667 0059 00       		.byte	0
+ 668 005a 00       		.byte	0
+ 669 005b 07       		.uleb128 0x7
+ 670 005c 898201   		.uleb128 0x4109
+ 671 005f 00       		.byte	0
+ 672 0060 11       		.uleb128 0x11
+ 673 0061 01       		.uleb128 0x1
+ 674 0062 31       		.uleb128 0x31
+ 675 0063 13       		.uleb128 0x13
+ 676 0064 00       		.byte	0
+ 677 0065 00       		.byte	0
+ 678 0066 08       		.uleb128 0x8
+ 679 0067 2E       		.uleb128 0x2e
+ 680 0068 01       		.byte	0x1
+ 681 0069 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 14
+
+
+ 682 006a 19       		.uleb128 0x19
+ 683 006b 03       		.uleb128 0x3
+ 684 006c 0E       		.uleb128 0xe
+ 685 006d 3A       		.uleb128 0x3a
+ 686 006e 0B       		.uleb128 0xb
+ 687 006f 3B       		.uleb128 0x3b
+ 688 0070 0B       		.uleb128 0xb
+ 689 0071 27       		.uleb128 0x27
+ 690 0072 19       		.uleb128 0x19
+ 691 0073 49       		.uleb128 0x49
+ 692 0074 13       		.uleb128 0x13
+ 693 0075 11       		.uleb128 0x11
+ 694 0076 01       		.uleb128 0x1
+ 695 0077 12       		.uleb128 0x12
+ 696 0078 06       		.uleb128 0x6
+ 697 0079 40       		.uleb128 0x40
+ 698 007a 18       		.uleb128 0x18
+ 699 007b 9642     		.uleb128 0x2116
+ 700 007d 19       		.uleb128 0x19
+ 701 007e 01       		.uleb128 0x1
+ 702 007f 13       		.uleb128 0x13
+ 703 0080 00       		.byte	0
+ 704 0081 00       		.byte	0
+ 705 0082 09       		.uleb128 0x9
+ 706 0083 05       		.uleb128 0x5
+ 707 0084 00       		.byte	0
+ 708 0085 03       		.uleb128 0x3
+ 709 0086 0E       		.uleb128 0xe
+ 710 0087 3A       		.uleb128 0x3a
+ 711 0088 0B       		.uleb128 0xb
+ 712 0089 3B       		.uleb128 0x3b
+ 713 008a 0B       		.uleb128 0xb
+ 714 008b 49       		.uleb128 0x49
+ 715 008c 13       		.uleb128 0x13
+ 716 008d 02       		.uleb128 0x2
+ 717 008e 17       		.uleb128 0x17
+ 718 008f 00       		.byte	0
+ 719 0090 00       		.byte	0
+ 720 0091 0A       		.uleb128 0xa
+ 721 0092 34       		.uleb128 0x34
+ 722 0093 00       		.byte	0
+ 723 0094 03       		.uleb128 0x3
+ 724 0095 0E       		.uleb128 0xe
+ 725 0096 3A       		.uleb128 0x3a
+ 726 0097 0B       		.uleb128 0xb
+ 727 0098 3B       		.uleb128 0x3b
+ 728 0099 0B       		.uleb128 0xb
+ 729 009a 49       		.uleb128 0x49
+ 730 009b 13       		.uleb128 0x13
+ 731 009c 02       		.uleb128 0x2
+ 732 009d 18       		.uleb128 0x18
+ 733 009e 00       		.byte	0
+ 734 009f 00       		.byte	0
+ 735 00a0 0B       		.uleb128 0xb
+ 736 00a1 34       		.uleb128 0x34
+ 737 00a2 00       		.byte	0
+ 738 00a3 03       		.uleb128 0x3
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 15
+
+
+ 739 00a4 0E       		.uleb128 0xe
+ 740 00a5 3A       		.uleb128 0x3a
+ 741 00a6 0B       		.uleb128 0xb
+ 742 00a7 3B       		.uleb128 0x3b
+ 743 00a8 0B       		.uleb128 0xb
+ 744 00a9 49       		.uleb128 0x49
+ 745 00aa 13       		.uleb128 0x13
+ 746 00ab 02       		.uleb128 0x2
+ 747 00ac 17       		.uleb128 0x17
+ 748 00ad 00       		.byte	0
+ 749 00ae 00       		.byte	0
+ 750 00af 0C       		.uleb128 0xc
+ 751 00b0 2E       		.uleb128 0x2e
+ 752 00b1 01       		.byte	0x1
+ 753 00b2 3F       		.uleb128 0x3f
+ 754 00b3 19       		.uleb128 0x19
+ 755 00b4 03       		.uleb128 0x3
+ 756 00b5 0E       		.uleb128 0xe
+ 757 00b6 3A       		.uleb128 0x3a
+ 758 00b7 0B       		.uleb128 0xb
+ 759 00b8 3B       		.uleb128 0x3b
+ 760 00b9 0B       		.uleb128 0xb
+ 761 00ba 27       		.uleb128 0x27
+ 762 00bb 19       		.uleb128 0x19
+ 763 00bc 11       		.uleb128 0x11
+ 764 00bd 01       		.uleb128 0x1
+ 765 00be 12       		.uleb128 0x12
+ 766 00bf 06       		.uleb128 0x6
+ 767 00c0 40       		.uleb128 0x40
+ 768 00c1 18       		.uleb128 0x18
+ 769 00c2 9742     		.uleb128 0x2117
+ 770 00c4 19       		.uleb128 0x19
+ 771 00c5 01       		.uleb128 0x1
+ 772 00c6 13       		.uleb128 0x13
+ 773 00c7 00       		.byte	0
+ 774 00c8 00       		.byte	0
+ 775 00c9 0D       		.uleb128 0xd
+ 776 00ca 05       		.uleb128 0x5
+ 777 00cb 00       		.byte	0
+ 778 00cc 03       		.uleb128 0x3
+ 779 00cd 0E       		.uleb128 0xe
+ 780 00ce 3A       		.uleb128 0x3a
+ 781 00cf 0B       		.uleb128 0xb
+ 782 00d0 3B       		.uleb128 0x3b
+ 783 00d1 0B       		.uleb128 0xb
+ 784 00d2 49       		.uleb128 0x49
+ 785 00d3 13       		.uleb128 0x13
+ 786 00d4 02       		.uleb128 0x2
+ 787 00d5 18       		.uleb128 0x18
+ 788 00d6 00       		.byte	0
+ 789 00d7 00       		.byte	0
+ 790 00d8 0E       		.uleb128 0xe
+ 791 00d9 0F       		.uleb128 0xf
+ 792 00da 00       		.byte	0
+ 793 00db 0B       		.uleb128 0xb
+ 794 00dc 0B       		.uleb128 0xb
+ 795 00dd 49       		.uleb128 0x49
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 16
+
+
+ 796 00de 13       		.uleb128 0x13
+ 797 00df 00       		.byte	0
+ 798 00e0 00       		.byte	0
+ 799 00e1 0F       		.uleb128 0xf
+ 800 00e2 898201   		.uleb128 0x4109
+ 801 00e5 01       		.byte	0x1
+ 802 00e6 11       		.uleb128 0x11
+ 803 00e7 01       		.uleb128 0x1
+ 804 00e8 31       		.uleb128 0x31
+ 805 00e9 13       		.uleb128 0x13
+ 806 00ea 00       		.byte	0
+ 807 00eb 00       		.byte	0
+ 808 00ec 10       		.uleb128 0x10
+ 809 00ed 8A8201   		.uleb128 0x410a
+ 810 00f0 00       		.byte	0
+ 811 00f1 02       		.uleb128 0x2
+ 812 00f2 18       		.uleb128 0x18
+ 813 00f3 9142     		.uleb128 0x2111
+ 814 00f5 18       		.uleb128 0x18
+ 815 00f6 00       		.byte	0
+ 816 00f7 00       		.byte	0
+ 817 00f8 11       		.uleb128 0x11
+ 818 00f9 34       		.uleb128 0x34
+ 819 00fa 00       		.byte	0
+ 820 00fb 03       		.uleb128 0x3
+ 821 00fc 0E       		.uleb128 0xe
+ 822 00fd 3A       		.uleb128 0x3a
+ 823 00fe 0B       		.uleb128 0xb
+ 824 00ff 3B       		.uleb128 0x3b
+ 825 0100 05       		.uleb128 0x5
+ 826 0101 49       		.uleb128 0x49
+ 827 0102 13       		.uleb128 0x13
+ 828 0103 3F       		.uleb128 0x3f
+ 829 0104 19       		.uleb128 0x19
+ 830 0105 3C       		.uleb128 0x3c
+ 831 0106 19       		.uleb128 0x19
+ 832 0107 00       		.byte	0
+ 833 0108 00       		.byte	0
+ 834 0109 12       		.uleb128 0x12
+ 835 010a 35       		.uleb128 0x35
+ 836 010b 00       		.byte	0
+ 837 010c 49       		.uleb128 0x49
+ 838 010d 13       		.uleb128 0x13
+ 839 010e 00       		.byte	0
+ 840 010f 00       		.byte	0
+ 841 0110 13       		.uleb128 0x13
+ 842 0111 2E       		.uleb128 0x2e
+ 843 0112 00       		.byte	0
+ 844 0113 3F       		.uleb128 0x3f
+ 845 0114 19       		.uleb128 0x19
+ 846 0115 3C       		.uleb128 0x3c
+ 847 0116 19       		.uleb128 0x19
+ 848 0117 6E       		.uleb128 0x6e
+ 849 0118 0E       		.uleb128 0xe
+ 850 0119 03       		.uleb128 0x3
+ 851 011a 0E       		.uleb128 0xe
+ 852 011b 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 17
+
+
+ 853 011c 0B       		.uleb128 0xb
+ 854 011d 3B       		.uleb128 0x3b
+ 855 011e 0B       		.uleb128 0xb
+ 856 011f 00       		.byte	0
+ 857 0120 00       		.byte	0
+ 858 0121 00       		.byte	0
+ 859              		.section	.debug_loc,"",%progbits
+ 860              	.Ldebug_loc0:
+ 861              	.LLST0:
+ 862 0000 00000000 		.4byte	.LVL3
+ 863 0004 09000000 		.4byte	.LVL4-1
+ 864 0008 0100     		.2byte	0x1
+ 865 000a 50       		.byte	0x50
+ 866 000b 09000000 		.4byte	.LVL4-1
+ 867 000f 14000000 		.4byte	.LFE65
+ 868 0013 0400     		.2byte	0x4
+ 869 0015 F3       		.byte	0xf3
+ 870 0016 01       		.uleb128 0x1
+ 871 0017 50       		.byte	0x50
+ 872 0018 9F       		.byte	0x9f
+ 873 0019 00000000 		.4byte	0
+ 874 001d 00000000 		.4byte	0
+ 875              	.LLST1:
+ 876 0021 00000000 		.4byte	.LVL3
+ 877 0025 09000000 		.4byte	.LVL4-1
+ 878 0029 0600     		.2byte	0x6
+ 879 002b 52       		.byte	0x52
+ 880 002c 93       		.byte	0x93
+ 881 002d 04       		.uleb128 0x4
+ 882 002e 53       		.byte	0x53
+ 883 002f 93       		.byte	0x93
+ 884 0030 04       		.uleb128 0x4
+ 885 0031 09000000 		.4byte	.LVL4-1
+ 886 0035 14000000 		.4byte	.LFE65
+ 887 0039 0600     		.2byte	0x6
+ 888 003b F3       		.byte	0xf3
+ 889 003c 03       		.uleb128 0x3
+ 890 003d F5       		.byte	0xf5
+ 891 003e 02       		.uleb128 0x2
+ 892 003f 25       		.uleb128 0x25
+ 893 0040 9F       		.byte	0x9f
+ 894 0041 00000000 		.4byte	0
+ 895 0045 00000000 		.4byte	0
+ 896              	.LLST2:
+ 897 0049 00000000 		.4byte	.LVL6
+ 898 004d 0F000000 		.4byte	.LVL8-1
+ 899 0051 0600     		.2byte	0x6
+ 900 0053 50       		.byte	0x50
+ 901 0054 93       		.byte	0x93
+ 902 0055 04       		.uleb128 0x4
+ 903 0056 51       		.byte	0x51
+ 904 0057 93       		.byte	0x93
+ 905 0058 04       		.uleb128 0x4
+ 906 0059 0F000000 		.4byte	.LVL8-1
+ 907 005d 28000000 		.4byte	.LFE66
+ 908 0061 0600     		.2byte	0x6
+ 909 0063 F3       		.byte	0xf3
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 18
+
+
+ 910 0064 03       		.uleb128 0x3
+ 911 0065 F5       		.byte	0xf5
+ 912 0066 00       		.uleb128 0
+ 913 0067 25       		.uleb128 0x25
+ 914 0068 9F       		.byte	0x9f
+ 915 0069 00000000 		.4byte	0
+ 916 006d 00000000 		.4byte	0
+ 917              	.LLST3:
+ 918 0071 00000000 		.4byte	.LVL6
+ 919 0075 0C000000 		.4byte	.LVL7
+ 920 0079 0600     		.2byte	0x6
+ 921 007b 52       		.byte	0x52
+ 922 007c 93       		.byte	0x93
+ 923 007d 04       		.uleb128 0x4
+ 924 007e 53       		.byte	0x53
+ 925 007f 93       		.byte	0x93
+ 926 0080 04       		.uleb128 0x4
+ 927 0081 0C000000 		.4byte	.LVL7
+ 928 0085 28000000 		.4byte	.LFE66
+ 929 0089 0600     		.2byte	0x6
+ 930 008b F3       		.byte	0xf3
+ 931 008c 03       		.uleb128 0x3
+ 932 008d F5       		.byte	0xf5
+ 933 008e 02       		.uleb128 0x2
+ 934 008f 25       		.uleb128 0x25
+ 935 0090 9F       		.byte	0x9f
+ 936 0091 00000000 		.4byte	0
+ 937 0095 00000000 		.4byte	0
+ 938              	.LLST4:
+ 939 0099 10000000 		.4byte	.LVL8
+ 940 009d 16000000 		.4byte	.LVL9
+ 941 00a1 0600     		.2byte	0x6
+ 942 00a3 50       		.byte	0x50
+ 943 00a4 93       		.byte	0x93
+ 944 00a5 04       		.uleb128 0x4
+ 945 00a6 51       		.byte	0x51
+ 946 00a7 93       		.byte	0x93
+ 947 00a8 04       		.uleb128 0x4
+ 948 00a9 00000000 		.4byte	0
+ 949 00ad 00000000 		.4byte	0
+ 950              	.LLST5:
+ 951 00b1 00000000 		.4byte	.LVL11
+ 952 00b5 05000000 		.4byte	.LVL12-1
+ 953 00b9 0100     		.2byte	0x1
+ 954 00bb 50       		.byte	0x50
+ 955 00bc 05000000 		.4byte	.LVL12-1
+ 956 00c0 14000000 		.4byte	.LFE67
+ 957 00c4 0400     		.2byte	0x4
+ 958 00c6 F3       		.byte	0xf3
+ 959 00c7 01       		.uleb128 0x1
+ 960 00c8 50       		.byte	0x50
+ 961 00c9 9F       		.byte	0x9f
+ 962 00ca 00000000 		.4byte	0
+ 963 00ce 00000000 		.4byte	0
+ 964              	.LLST6:
+ 965 00d2 00000000 		.4byte	.LVL14
+ 966 00d6 0B000000 		.4byte	.LVL15-1
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 19
+
+
+ 967 00da 0600     		.2byte	0x6
+ 968 00dc 50       		.byte	0x50
+ 969 00dd 93       		.byte	0x93
+ 970 00de 04       		.uleb128 0x4
+ 971 00df 51       		.byte	0x51
+ 972 00e0 93       		.byte	0x93
+ 973 00e1 04       		.uleb128 0x4
+ 974 00e2 0B000000 		.4byte	.LVL15-1
+ 975 00e6 2C000000 		.4byte	.LFE68
+ 976 00ea 0600     		.2byte	0x6
+ 977 00ec F3       		.byte	0xf3
+ 978 00ed 03       		.uleb128 0x3
+ 979 00ee F5       		.byte	0xf5
+ 980 00ef 00       		.uleb128 0
+ 981 00f0 25       		.uleb128 0x25
+ 982 00f1 9F       		.byte	0x9f
+ 983 00f2 00000000 		.4byte	0
+ 984 00f6 00000000 		.4byte	0
+ 985              		.section	.debug_aranges,"",%progbits
+ 986 0000 4C000000 		.4byte	0x4c
+ 987 0004 0200     		.2byte	0x2
+ 988 0006 00000000 		.4byte	.Ldebug_info0
+ 989 000a 04       		.byte	0x4
+ 990 000b 00       		.byte	0
+ 991 000c 0000     		.2byte	0
+ 992 000e 0000     		.2byte	0
+ 993 0010 00000000 		.4byte	.LFB64
+ 994 0014 1C000000 		.4byte	.LFE64-.LFB64
+ 995 0018 00000000 		.4byte	.LFB65
+ 996 001c 14000000 		.4byte	.LFE65-.LFB65
+ 997 0020 00000000 		.4byte	.LFB66
+ 998 0024 28000000 		.4byte	.LFE66-.LFB66
+ 999 0028 00000000 		.4byte	.LFB67
+ 1000 002c 14000000 		.4byte	.LFE67-.LFB67
+ 1001 0030 00000000 		.4byte	.LFB68
+ 1002 0034 2C000000 		.4byte	.LFE68-.LFB68
+ 1003 0038 00000000 		.4byte	.LFB69
+ 1004 003c 06000000 		.4byte	.LFE69-.LFB69
+ 1005 0040 00000000 		.4byte	.LFB70
+ 1006 0044 0C000000 		.4byte	.LFE70-.LFB70
+ 1007 0048 00000000 		.4byte	0
+ 1008 004c 00000000 		.4byte	0
+ 1009              		.section	.debug_ranges,"",%progbits
+ 1010              	.Ldebug_ranges0:
+ 1011 0000 00000000 		.4byte	.LFB64
+ 1012 0004 1C000000 		.4byte	.LFE64
+ 1013 0008 00000000 		.4byte	.LFB65
+ 1014 000c 14000000 		.4byte	.LFE65
+ 1015 0010 00000000 		.4byte	.LFB66
+ 1016 0014 28000000 		.4byte	.LFE66
+ 1017 0018 00000000 		.4byte	.LFB67
+ 1018 001c 14000000 		.4byte	.LFE67
+ 1019 0020 00000000 		.4byte	.LFB68
+ 1020 0024 2C000000 		.4byte	.LFE68
+ 1021 0028 00000000 		.4byte	.LFB69
+ 1022 002c 06000000 		.4byte	.LFE69
+ 1023 0030 00000000 		.4byte	.LFB70
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 20
+
+
+ 1024 0034 0C000000 		.4byte	.LFE70
+ 1025 0038 00000000 		.4byte	0
+ 1026 003c 00000000 		.4byte	0
+ 1027              		.section	.debug_line,"",%progbits
+ 1028              	.Ldebug_line0:
+ 1029 0000 16020000 		.section	.debug_str,"MS",%progbits,1
+ 1029      02009901 
+ 1029      00000201 
+ 1029      FB0E0D00 
+ 1029      01010101 
+ 1030              	.LASF29:
+ 1031 0000 72616469 		.ascii	"radius\000"
+ 1031      757300
+ 1032              	.LASF27:
+ 1033 0007 77686565 		.ascii	"wheelRadiusInMeters\000"
+ 1033      6C526164 
+ 1033      69757349 
+ 1033      6E4D6574 
+ 1033      65727300 
+ 1034              	.LASF10:
+ 1035 001b 5F5F696E 		.ascii	"__int32_t\000"
+ 1035      7433325F 
+ 1035      7400
+ 1036              	.LASF31:
+ 1037 0025 72657365 		.ascii	"resetSpeedTimer\000"
+ 1037      74537065 
+ 1037      65645469 
+ 1037      6D657200 
+ 1038              	.LASF19:
+ 1039 0035 63616C63 		.ascii	"calcDistance\000"
+ 1039      44697374 
+ 1039      616E6365 
+ 1039      00
+ 1040              	.LASF11:
+ 1041 0042 696E7433 		.ascii	"int32_t\000"
+ 1041      325F7400 
+ 1042              	.LASF38:
+ 1043 004a 433A5C55 		.ascii	"C:\\Users\\sebbe\\Desktop\\spi_slave_v15\\sensor_re"
+ 1043      73657273 
+ 1043      5C736562 
+ 1043      62655C44 
+ 1043      65736B74 
+ 1044 0078 6164696E 		.ascii	"ading_unit\\spi_slave.cydsn\000"
+ 1044      675F756E 
+ 1044      69745C73 
+ 1044      70695F73 
+ 1044      6C617665 
+ 1045              	.LASF13:
+ 1046 0093 666C6F61 		.ascii	"float\000"
+ 1046      7400
+ 1047              	.LASF33:
+ 1048 0099 57686565 		.ascii	"WheelTickTimer_Start\000"
+ 1048      6C546963 
+ 1048      6B54696D 
+ 1048      65725F53 
+ 1048      74617274 
+ 1049              	.LASF2:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 21
+
+
+ 1050 00ae 756E7369 		.ascii	"unsigned char\000"
+ 1050      676E6564 
+ 1050      20636861 
+ 1050      7200
+ 1051              	.LASF36:
+ 1052 00bc 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 1052      43313120 
+ 1052      352E342E 
+ 1052      31203230 
+ 1052      31363036 
+ 1053 00ef 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 1053      20726576 
+ 1053      6973696F 
+ 1053      6E203233 
+ 1053      37373135 
+ 1054 0122 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1054      66756E63 
+ 1054      74696F6E 
+ 1054      2D736563 
+ 1054      74696F6E 
+ 1055              	.LASF26:
+ 1056 014a 75736572 		.ascii	"userInputInCentimeters\000"
+ 1056      496E7075 
+ 1056      74496E43 
+ 1056      656E7469 
+ 1056      6D657465 
+ 1057              	.LASF32:
+ 1058 0161 6973725F 		.ascii	"isr_wheel_tick_StartEx\000"
+ 1058      77686565 
+ 1058      6C5F7469 
+ 1058      636B5F53 
+ 1058      74617274 
+ 1059              	.LASF6:
+ 1060 0178 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1060      20756E73 
+ 1060      69676E65 
+ 1060      6420696E 
+ 1060      7400
+ 1061              	.LASF30:
+ 1062 018a 696E6974 		.ascii	"initWheelSensor\000"
+ 1062      57686565 
+ 1062      6C53656E 
+ 1062      736F7200 
+ 1063              	.LASF4:
+ 1064 019a 73686F72 		.ascii	"short unsigned int\000"
+ 1064      7420756E 
+ 1064      7369676E 
+ 1064      65642069 
+ 1064      6E7400
+ 1065              	.LASF28:
+ 1066 01ad 63616C63 		.ascii	"calcWheelCirc\000"
+ 1066      57686565 
+ 1066      6C436972 
+ 1066      6300
+ 1067              	.LASF34:
+ 1068 01bb 54696D65 		.ascii	"Timer_Isr_BikeIsStopping_StartEx\000"
+ 1068      725F4973 
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 22
+
+
+ 1068      725F4269 
+ 1068      6B654973 
+ 1068      53746F70 
+ 1069              	.LASF0:
+ 1070 01dc 646F7562 		.ascii	"double\000"
+ 1070      6C6500
+ 1071              	.LASF40:
+ 1072 01e3 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1072      52784275 
+ 1072      66666572 
+ 1072      00
+ 1073              	.LASF9:
+ 1074 01f0 756E7369 		.ascii	"unsigned int\000"
+ 1074      676E6564 
+ 1074      20696E74 
+ 1074      00
+ 1075              	.LASF8:
+ 1076 01fd 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1076      206C6F6E 
+ 1076      6720756E 
+ 1076      7369676E 
+ 1076      65642069 
+ 1077              	.LASF37:
+ 1078 0214 77686565 		.ascii	"wheelSensor.c\000"
+ 1078      6C53656E 
+ 1078      736F722E 
+ 1078      6300
+ 1079              	.LASF23:
+ 1080 0222 74696D65 		.ascii	"time_temp\000"
+ 1080      5F74656D 
+ 1080      7000
+ 1081              	.LASF22:
+ 1082 022c 64697374 		.ascii	"dist\000"
+ 1082      00
+ 1083              	.LASF17:
+ 1084 0231 77686565 		.ascii	"wheelRevolutions\000"
+ 1084      6C526576 
+ 1084      6F6C7574 
+ 1084      696F6E73 
+ 1084      00
+ 1085              	.LASF24:
+ 1086 0242 73706565 		.ascii	"speed\000"
+ 1086      6400
+ 1087              	.LASF20:
+ 1088 0248 63616C63 		.ascii	"calcSpeed\000"
+ 1088      53706565 
+ 1088      6400
+ 1089              	.LASF16:
+ 1090 0252 73697A65 		.ascii	"sizetype\000"
+ 1090      74797065 
+ 1090      00
+ 1091              	.LASF7:
+ 1092 025b 6C6F6E67 		.ascii	"long long int\000"
+ 1092      206C6F6E 
+ 1092      6720696E 
+ 1092      7400
+ 1093              	.LASF14:
+ARM GAS  C:\Users\sebbe\AppData\Local\Temp\ccJW8qrc.s 			page 23
+
+
+ 1094 0269 63686172 		.ascii	"char\000"
+ 1094      00
+ 1095              	.LASF3:
+ 1096 026e 73686F72 		.ascii	"short int\000"
+ 1096      7420696E 
+ 1096      7400
+ 1097              	.LASF12:
+ 1098 0278 75696E74 		.ascii	"uint8\000"
+ 1098      3800
+ 1099              	.LASF35:
+ 1100 027e 57686565 		.ascii	"WheelTickTimer_WriteCounter\000"
+ 1100      6C546963 
+ 1100      6B54696D 
+ 1100      65725F57 
+ 1100      72697465 
+ 1101              	.LASF5:
+ 1102 029a 6C6F6E67 		.ascii	"long int\000"
+ 1102      20696E74 
+ 1102      00
+ 1103              	.LASF25:
+ 1104 02a3 57686565 		.ascii	"WheelRadiusToMetres\000"
+ 1104      6C526164 
+ 1104      69757354 
+ 1104      6F4D6574 
+ 1104      72657300 
+ 1105              	.LASF18:
+ 1106 02b7 77686565 		.ascii	"wheelCirc\000"
+ 1106      6C436972 
+ 1106      6300
+ 1107              	.LASF15:
+ 1108 02c1 6C6F6E67 		.ascii	"long double\000"
+ 1108      20646F75 
+ 1108      626C6500 
+ 1109              	.LASF1:
+ 1110 02cd 7369676E 		.ascii	"signed char\000"
+ 1110      65642063 
+ 1110      68617200 
+ 1111              	.LASF39:
+ 1112 02d9 73657453 		.ascii	"setSpeedToZero\000"
+ 1112      70656564 
+ 1112      546F5A65 
+ 1112      726F00
+ 1113              	.LASF21:
+ 1114 02e8 74696D65 		.ascii	"time_ms\000"
+ 1114      5F6D7300 
+ 1115              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
